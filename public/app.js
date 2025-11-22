@@ -1,0 +1,1020 @@
+// Application State - Stored in Memory Only (No localStorage)
+const appState = {
+  currentScreen: 'home',
+  currentFamily: 0,
+  currentPhraseCategory: 'greetings',
+  documentsUnlocked: false,
+  familyMembers: [
+    { name: 'Сергей', role: 'Папа', emoji: '👨', birthday: null },
+    { name: 'Алена', role: 'Мама', emoji: '👩', birthday: null },
+    { name: 'Варвара', role: 'Дочь', emoji: '👧', birthday: '2025-12-29' },
+    { name: 'Иван', role: 'Сын', emoji: '👦', birthday: null }
+  ],
+  places: [
+    {
+      name: 'Большой Королевский Дворец',
+      nameEn: 'Grand Palace',
+      category: 'Храм',
+      description: 'Главная достопримечательность Бангкока с храмом Изумрудного Будды',
+      history: 'Построен в 1782 году королем Рамой I как резиденция королевской семьи. Использовался как официальная резиденция 150 лет.',
+      facts: ['Комплекс занимает 218,000 квадратных метров', 'Содержит более 100 зданий', 'Храм Изумрудного Будды - самый священный храм Таиланда'],
+      hours: '8:30-15:30 ежедневно',
+      price: '500 бат (~14 USD)',
+      tips: 'Строгий дресс-код: закрытые плечи и колени обязательны. Приходите рано утром чтобы избежать толп и жары.',
+      mapLink: 'https://maps.google.com/maps?q=13.7500,100.4917',
+      image: 'https://images.unsplash.com/photo-1563492065213-f0e6c7d29e52?w=600',
+      emoji: '🏛️'
+    },
+    {
+      name: 'Храм Лежащего Будды',
+      nameEn: 'Wat Pho',
+      category: 'Храм',
+      description: 'Знаменитая 46-метровая статуя лежащего Будды, покрытая золотом',
+      history: 'Один из старейших храмов Бангкока, основан до 1782 года. Значительно расширен королем Рамой III.',
+      facts: ['Статуя 46 метров в длину и 15 метров в высоту', 'На подошвах ног 108 перламутровых символов Будды', 'Родина традиционного тайского массажа'],
+      hours: '8:00-18:30 ежедневно',
+      price: '100 бат (~3 USD)',
+      tips: 'Обязательно посетите школу массажа. 108 бронзовых чаш - бросьте монеты для удачи.',
+      mapLink: 'https://maps.google.com/maps?q=13.7465,100.4932',
+      image: 'https://images.unsplash.com/photo-1563492660-5a0e9c6eb591?w=600',
+      emoji: '🛕'
+    },
+    {
+      name: 'Храм Утренней Зари',
+      nameEn: 'Wat Arun',
+      category: 'Храм',
+      description: 'Величественный храм на берегу реки Чао Прайя с узнаваемой башней',
+      history: 'Построен в период Аюттхайи. Является символом Бангкока.',
+      facts: ['Высота центральной башни 79 метров', 'Украшен китайским фарфором и ракушками', 'Лучший вид на закате'],
+      hours: '8:00-18:00 ежедневно',
+      price: '50 бат',
+      tips: 'Крутая лестница на вершину. Посетите на закате для лучших фотографий.',
+      mapLink: 'https://maps.google.com/maps?q=13.7437,100.4891',
+      image: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=600',
+      emoji: '🌅'
+    },
+    {
+      name: 'Храм Золотой Горы',
+      nameEn: 'Wat Saket',
+      category: 'Храм',
+      description: 'Храм на искусственном холме с панорамным видом на Бангкок',
+      history: 'Построен в период Аюттхайи, холм создан королем Рамой III.',
+      facts: ['344 ступени на вершину', 'Панорамные виды на Бангкок', 'Золотая чеди содержит реликвии Будды'],
+      hours: '7:30-17:30 ежедневно',
+      price: '50 бат',
+      tips: 'Поднимайтесь рано утром или вечером, чтобы избежать жары.',
+      mapLink: 'https://maps.google.com/maps?q=13.7547,100.5056',
+      image: 'https://images.unsplash.com/photo-1528181304800-259b08848526?w=600',
+      emoji: '⛰️'
+    },
+    {
+      name: 'Дом Джима Томпсона',
+      nameEn: 'Jim Thompson House',
+      category: 'Музей',
+      description: 'Коллекция традиционных тайских домов и азиатского искусства',
+      history: 'Построен в 1959, американский бизнесмен возродил тайский шелк. Загадочно исчез в 1967.',
+      facts: ['6 традиционных тайских домов', 'Уникальная коллекция азиатского искусства', 'Тропический сад с редкими растениями'],
+      hours: '9:00-18:00, вторник выходной',
+      price: '200 бат',
+      tips: 'Экскурсии только с гидом. Фотографировать внутри запрещено.',
+      mapLink: 'https://maps.google.com/maps?q=13.7467,100.5344',
+      image: 'https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=600',
+      emoji: '🏠'
+    },
+    {
+      name: 'Рынок Чатучак',
+      nameEn: 'Chatuchak Weekend Market',
+      category: 'Рынок',
+      description: 'Крупнейший рынок выходного дня в мире',
+      history: 'Начал работу как блошиный рынок в 1942 году, переехал на нынешнее место в 1982.',
+      facts: ['15,000+ лавок на территории 35 акров', '200,000+ посетителей каждые выходные', '27 тематических секций'],
+      hours: 'Сб-Вс 9:00-18:00',
+      price: 'Вход бесплатный',
+      tips: 'Приезжайте рано утром (9:00). Наличные обязательны. Торгуйтесь! Носите удобную обувь.',
+      mapLink: 'https://maps.google.com/maps?q=13.7998,100.5501',
+      image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600',
+      emoji: '🛍️'
+    },
+    {
+      name: 'Плавучий рынок Дамноен Садуак',
+      nameEn: 'Damnoen Saduak',
+      category: 'Рынок',
+      description: 'Традиционный плавучий рынок с лодками, полными фруктов и еды',
+      history: 'Традиционный рынок с 1866 года. Построен по приказу короля Рамы IV.',
+      facts: ['Работает с 6:00 утра', 'Торговля с лодок', 'Экзотические фрукты и тайская еда'],
+      hours: '6:00-12:00 ежедневно',
+      price: 'Вход бесплатный, аренда лодки 200-600 бат',
+      tips: 'Приезжать к 7 утра до толп туристов. Торгуйтесь обязательно!',
+      mapLink: 'https://maps.google.com/maps?q=13.5180,99.9550',
+      image: 'https://images.unsplash.com/photo-1551633371-aa42f48d77b5?w=600',
+      emoji: '🛶'
+    },
+    {
+      name: 'Asiatique The Riverfront',
+      nameEn: 'Asiatique',
+      category: 'Рынок',
+      description: 'Ночной рынок на берегу реки с магазинами и ресторанами',
+      history: 'Бывший порт 19 века, открыт как рынок в 2012 году.',
+      facts: ['1,500+ магазинов', '40 ресторанов', 'Колесо обозрения с видом на реку'],
+      hours: '17:00-00:00 ежедневно',
+      price: 'Вход бесплатный',
+      tips: 'Добирайтесь на бесплатном пароме от пирса Saphan Taksin.',
+      mapLink: 'https://maps.google.com/maps?q=13.7043,100.5072',
+      image: 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=600',
+      emoji: '🎡'
+    },
+    {
+      name: 'Парк Люмпини',
+      nameEn: 'Lumpini Park',
+      category: 'Парк',
+      description: 'Зеленый оазис в центре Бангкока с варанами',
+      history: 'Открыт в 1920-х годах королем Рамой VI.',
+      facts: ['400+ варанов', '30+ видов птиц', '57 гектаров', 'Искусственное озеро с лодками'],
+      hours: '4:30-21:00 ежедневно',
+      price: 'Бесплатно',
+      tips: 'Вараны безопасны, не кормить. Утренняя зарядка с местными в 6 утра.',
+      mapLink: 'https://maps.google.com/maps?q=13.7307,100.5418',
+      image: 'https://images.unsplash.com/photo-1563492660-5a0b9b3d6e0b?w=600',
+      emoji: '🦎'
+    },
+    {
+      name: 'Sea Life Bangkok Ocean World',
+      nameEn: 'Sea Life Bangkok',
+      category: 'Развлечения',
+      description: 'Один из крупнейших океанариумов Юго-Восточной Азии',
+      history: 'Открыт в 2005 году под торговым центром Siam Paragon.',
+      facts: ['Стеклянный туннель 270°', '30,000+ морских обитателей', '7 тематических зон'],
+      hours: '10:00-21:00 ежедневно',
+      price: '990 бат',
+      tips: 'Детям понравится! Кормление акул в 13:00.',
+      mapLink: 'https://maps.google.com/maps?q=13.7467,100.5345',
+      image: 'https://images.unsplash.com/photo-1544552866-d3ed42536cfd?w=600',
+      emoji: '🐠'
+    },
+    {
+      name: 'Khao San Road',
+      nameEn: 'Khao San Road',
+      category: 'Развлечения',
+      description: 'Легендарная улица бэкпэкеров с барами и уличной едой',
+      history: 'Стала популярной среди путешественников в 1980-х годах.',
+      facts: ['400 метров улица', 'Эпицентр бэкпэкеров', 'Уличная еда, бары, массаж'],
+      hours: 'Круглосуточно, оживленнее вечером',
+      price: 'Бесплатно',
+      tips: 'Лучше вечером после захода солнца. Пробуйте уличную еду!',
+      mapLink: 'https://maps.google.com/maps?q=13.7589,100.4975',
+      image: 'https://images.unsplash.com/photo-1578986175247-7d60c6df07e7?w=600',
+      emoji: '🎉'
+    },
+    {
+      name: 'Чайнатаун (Yaowarat Road)',
+      nameEn: 'Yaowarat Road',
+      category: 'Рынок',
+      description: 'Оживленный китайский квартал с лучшим стрит-фудом Бангкока',
+      history: 'Основан в 1782 году, когда король Рама I перенес столицу.',
+      facts: ['Лучший стрит-фуд в Бангкоке', 'Золотые магазины', 'Неоновые вывески'],
+      hours: 'Вечером с 18:00 самое живое',
+      price: 'Бесплатно',
+      tips: 'Приходите голодными! Пробуйте димсамы и утку по-пекински.',
+      mapLink: 'https://maps.google.com/maps?q=13.7388,100.5098',
+      image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600',
+      emoji: '🏮'
+    },
+    {
+      name: 'Исторический парк Аюттхайя',
+      nameEn: 'Ayutthaya Historical Park',
+      category: 'Храм',
+      description: 'Древняя столица Сиама, объект всемирного наследия ЮНЕСКО',
+      history: 'Столица Сиама 1350-1767 годов, разрушена бирманцами.',
+      facts: ['67 храмов и дворцов', 'Объект ЮНЕСКО с 1991 года', '80 км от Бангкока'],
+      hours: '8:00-18:00 ежедневно',
+      price: '50 бат за храм или 220 бат комплексный билет',
+      tips: 'Арендуйте велосипед для осмотра. Посетите на рассвете.',
+      mapLink: 'https://maps.google.com/maps?q=14.3532,100.5776',
+      image: 'https://images.unsplash.com/photo-1563492660-5a0e9c6eb591?w=600',
+      emoji: '🏛️'
+    },
+    {
+      name: 'Wat Mahathat (Аюттхайя)',
+      nameEn: 'Wat Mahathat',
+      category: 'Храм',
+      description: 'Знаменитая голова Будды в корнях дерева',
+      history: 'Построен в 14 веке, разрушен бирманцами в 1767 году.',
+      facts: ['Голова Будды в корнях дерева - символ Аюттхайи', 'Центральный храм древней столицы', 'Когда-то 44 метра высотой'],
+      hours: '8:00-18:00 ежедневно',
+      price: '50 бат',
+      tips: 'Фотографируясь с головой Будды, присядьте ниже неё из уважения.',
+      mapLink: 'https://maps.google.com/maps?q=14.3569,100.5678',
+      image: 'https://images.unsplash.com/photo-1563492660-5a0b9b3d6e0a?w=600',
+      emoji: '🌳'
+    },
+    {
+      name: 'Wat Chaiwatthanaram',
+      nameEn: 'Wat Chaiwatthanaram',
+      category: 'Храм',
+      description: 'Величественный храм в кхмерском стиле на берегу реки',
+      history: 'Построен в 1630 году королем Прасат Тонгом в память о матери.',
+      facts: ['Кхмерский стиль Ангкор Ват', 'Лучший закат в Аюттхайе', '35 метров центральная башня'],
+      hours: '8:00-18:00 ежедневно',
+      price: '50 бат',
+      tips: 'Лучший закат в Аюттхайе. Приезжайте к 17:00.',
+      mapLink: 'https://maps.google.com/maps?q=14.3428,100.5388',
+      image: 'https://images.unsplash.com/photo-1528181304800-259b08848526?w=600',
+      emoji: '🌄'
+    },
+    {
+      name: 'Мраморный храм',
+      nameEn: 'Wat Benchamabophit',
+      category: 'Храм',
+      description: 'Элегантный храм из итальянского мрамора',
+      history: 'Построен в 1899 году королем Рамой V из каррарского мрамора.',
+      facts: ['Построен из итальянского мрамора', '52 статуи Будды во дворе', 'Один из красивейших храмов Бангкока'],
+      hours: '8:00-17:30 ежедневно',
+      price: '20 бат',
+      tips: 'Посетите утром во время молитв монахов.',
+      mapLink: 'https://maps.google.com/maps?q=13.7656,100.5152',
+      image: 'https://images.unsplash.com/photo-1563492660-5a0e9c6eb590?w=600',
+      emoji: '⚪'
+    },
+    {
+      name: 'Святилище Эраван',
+      nameEn: 'Erawan Shrine',
+      category: 'Храм',
+      description: 'Индуистская святыня в центре Бангкока',
+      history: 'Построена в 1956 году для защиты от неудач при строительстве отеля.',
+      facts: ['Индуистская святыня Брахмы', 'Традиционные танцы по заказу', 'Действующее место поклонения'],
+      hours: '6:00-23:00 ежедневно',
+      price: 'Бесплатно',
+      tips: 'Можно заказать танец в благодарность за исполненное желание.',
+      mapLink: 'https://maps.google.com/maps?q=13.7434,100.5404',
+      image: 'https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=600',
+      emoji: '🙏'
+    },
+    {
+      name: 'Храм Золотого Будды',
+      nameEn: 'Wat Traimit',
+      category: 'Храм',
+      description: 'Статуя Будды из 5.5 тонн чистого золота',
+      history: 'Статуя создана в 13-14 веках, спрятана под штукатуркой от бирманцев.',
+      facts: ['5.5 тонн чистого золота', 'Высота 3 метра', 'Стоимость более $250 миллионов'],
+      hours: '8:00-17:00 ежедневно',
+      price: '100 бат (включая музей)',
+      tips: 'Посетите музей истории Чайнатауна на верхних этажах.',
+      mapLink: 'https://maps.google.com/maps?q=13.7386,100.5149',
+      image: 'https://images.unsplash.com/photo-1563492660-5a0e9c6eb592?w=600',
+      emoji: '✨'
+    },
+    {
+      name: 'Древний город (Муанг Боран)',
+      nameEn: 'Muang Boran',
+      category: 'Музей',
+      description: 'Крупнейший музей под открытым небом в мире',
+      history: 'Открыт в 1963 году. Территория в форме карты Таиланда.',
+      facts: ['Копии 116 памятников Таиланда', '320 га территория', 'Можно взять напрокат велосипед или golf cart'],
+      hours: '9:00-19:00 ежедневно',
+      price: '700 бат',
+      tips: 'Арендуйте велосипед или машинку - территория огромная!',
+      mapLink: 'https://maps.google.com/maps?q=13.5339,100.6250',
+      image: 'https://images.unsplash.com/photo-1563492660-5a0e9c6eb593?w=600',
+      emoji: '🏰'
+    },
+    {
+      name: 'Ночной рынок Rot Fai',
+      nameEn: 'Talad Rot Fai',
+      category: 'Рынок',
+      description: 'Винтажный рынок с ретро-товарами и уличной едой',
+      history: 'Открыт в 2013 году как винтажный блошиный рынок.',
+      facts: ['Винтажные товары и антиквариат', 'Ретро-автомобили и мотоциклы', 'Живая музыка'],
+      hours: 'Чт-Вс 17:00-01:00',
+      price: 'Бесплатно',
+      tips: 'Отличное место для уникальных сувениров. Торгуйтесь!',
+      mapLink: 'https://maps.google.com/maps?q=13.8070,100.5638',
+      image: 'https://images.unsplash.com/photo-1533900298318-6b8da08a523e?w=600',
+      emoji: '🚂'
+    },
+    {
+      name: 'Terminal 21',
+      nameEn: 'Terminal 21',
+      category: 'Развлечения',
+      description: 'Тематический торговый центр с этажами-городами',
+      history: 'Открыт в 2011 году. Каждый этаж оформлен как известный город мира.',
+      facts: ['9 этажей - 9 городов мира', 'Лондон, Париж, Токио, Стамбул...', 'Фуд-корт в стиле Сан-Франциско'],
+      hours: '10:00-22:00 ежедневно',
+      price: 'Бесплатно',
+      tips: 'Фуд-корт на 5 этаже - отличная тайская еда по низким ценам.',
+      mapLink: 'https://maps.google.com/maps?q=13.7376,100.5601',
+      image: 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=600',
+      emoji: '🛒'
+    }
+  ],
+  currentFilter: 'Все',
+  searchQuery: '',
+  quizQuestions: [
+    { day: 1, question: 'Сколько ступеней ведет к храму Ват Пра Кео?', answer: '42', answers: {} },
+    { day: 2, question: 'Какое животное считается священным в Таиланде?', answer: 'слон', answers: {} },
+    { day: 3, question: 'Как называется традиционная тайская лодка на плавучем рынке?', answer: 'руа', answers: {} },
+    { day: 4, question: 'Сколько метров в длину статуя лежащего Будды в Wat Pho?', answer: '46', answers: {} },
+    { day: 5, question: 'Какого цвета знаменитый Будда в Большом Королевском Дворце?', answer: 'изумрудный', answers: {} },
+    { day: 6, question: 'Какие животные живут в парке Люмпини?', answer: 'вараны', answers: {} },
+    { day: 7, question: 'Как называется тайский традиционный массаж на тайском языке?', answer: 'нуад', answers: {} },
+    { day: 8, question: 'Какое море омывает берега Таиланда с запада?', answer: 'андаманское', answers: {} },
+    { day: 9, question: 'Какой фрукт называют "королем фруктов" в Таиланде?', answer: 'дуриан', answers: {} },
+    { day: 10, question: 'Сколько провинций в Таиланде?', answer: '76', answers: {} },
+    { day: 11, question: 'Как называется традиционная тайская валюта?', answer: 'бат', answers: {} },
+    { day: 12, question: 'Какого цвета такси в Бангкоке?', answer: 'розовый', answers: {} },
+    { day: 13, question: 'Как по-тайски звучит "Спасибо"?', answer: 'кхоп кхун', answers: {} },
+    { day: 14, question: 'Сколько островов входит в состав Таиланда?', answer: '1430', answers: {} },
+    { day: 15, question: 'Как называется столица Таиланда?', answer: 'бангкок', answers: {} }
+  ],
+  puzzlePieces: Array(15).fill(false),
+  diaryEntries: [
+    {
+      place: 'Большой Королевский Дворец',
+      date: '2025-12-30',
+      rating: 5,
+      comment: 'Невероятная архитектура! Дети в восторге от золотых статуй.',
+      author: 'Алена'
+    }
+  ],
+  phrases: {
+    greetings: [
+      { russian: 'Здравствуйте', thai: 'สวัสดี', transcription: 'Sawadee (khrap/kha)' },
+      { russian: 'Как дела?', thai: 'สบายดีไหม', transcription: 'Sabai dee mai?' },
+      { russian: 'Спасибо', thai: 'ขอบคุณ', transcription: 'Khop khun (khrap/kha)' },
+      { russian: 'Пожалуйста', thai: 'ด้วยความยินดี', transcription: 'Duai khwam yin dee' },
+      { russian: 'Извините', thai: 'ขอโทษ', transcription: 'Kho thot' }
+    ],
+    restaurant: [
+      { russian: 'Меню, пожалуйста', thai: 'เมนูค่ะ', transcription: 'Menu kha' },
+      { russian: 'Счет, пожалуйста', thai: 'เช็คบิล', transcription: 'Check bin' },
+      { russian: 'Не острое', thai: 'ไม่เผ็ด', transcription: 'Mai phet' },
+      { russian: 'Очень вкусно', thai: 'อร่อยมาก', transcription: 'Aroi mak' },
+      { russian: 'Вода, пожалуйста', thai: 'น้ำค่ะ', transcription: 'Nam kha' }
+    ],
+    market: [
+      { russian: 'Сколько стоит?', thai: 'ราคาเท่าไหร่', transcription: 'Rakha thao rai?' },
+      { russian: 'Дорого', thai: 'แพง', transcription: 'Phaeng' },
+      { russian: 'Дешевле', thai: 'ถูกกว่า', transcription: 'Thuk kwa' },
+      { russian: 'Я куплю это', thai: 'ฉันจะซื้อ', transcription: 'Chan ja sue' },
+      { russian: 'Можно скидку?', thai: 'ลดราคาได้ไหม', transcription: 'Lot rakha dai mai?' }
+    ],
+    hotel: [
+      { russian: 'Мой номер', thai: 'ห้องของฉัน', transcription: 'Hong khong chan' },
+      { russian: 'Завтрак', thai: 'อาหารเช้า', transcription: 'Ahan chao' },
+      { russian: 'Полотенце', thai: 'ผ้าเช็ดตัว', transcription: 'Pha chet tua' },
+      { russian: 'Wi-Fi пароль', thai: 'รหัส Wi-Fi', transcription: 'Rahat Wi-Fi' }
+    ],
+    transport: [
+      { russian: 'Такси', thai: 'แท็กซี่', transcription: 'Taxi' },
+      { russian: 'Автобус', thai: 'รถบัส', transcription: 'Rot bus' },
+      { russian: 'Поезд', thai: 'รถไฟ', transcription: 'Rot fai' },
+      { russian: 'Аэропорт', thai: 'สนามบิน', transcription: 'Sanam bin' }
+    ]
+  },
+  voting: {
+    question: 'Куда пойдем завтра?',
+    options: [
+      { place: 'Большой Королевский Дворец', votes: [] },
+      { place: 'Океанариум Siam Ocean World', votes: [] },
+      { place: 'Плавучий рынок', votes: [] }
+    ]
+  }
+};
+
+// Initialize App
+function initApp() {
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+  renderPlaces();
+  renderPuzzle();
+  renderFamilyTabs();
+  renderQuizContent();
+  renderPhraseCategories();
+  renderPhrases();
+  renderDiaryEntries();
+  updateAlbumProgress();
+  checkBirthday();
+}
+
+// Navigation
+function navigateTo(screen) {
+  // Hide all screens
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  
+  // Show selected screen
+  document.getElementById(screen).classList.add('active');
+  
+  // Update nav
+  const navItems = document.querySelectorAll('.nav-item');
+  navItems.forEach(item => {
+    if (item.onclick.toString().includes(screen)) {
+      item.classList.add('active');
+    }
+  });
+  
+  appState.currentScreen = screen;
+  
+  // Refresh content if needed
+  if (screen === 'quiz') {
+    renderQuizContent();
+  } else if (screen === 'album') {
+    updateAlbumProgress();
+  }
+}
+
+// Countdown Timer
+function updateCountdown() {
+  const tripStart = new Date('2025-12-28T07:10:00');
+  const now = new Date();
+  const diff = tripStart - now;
+  
+  if (diff <= 0) {
+    document.getElementById('countdown-timer').textContent = 'Мы в Таиланде! 🎉';
+    return;
+  }
+  
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+  
+  document.getElementById('countdown-timer').textContent = 
+    `${days}д ${hours}ч ${minutes}м ${seconds}с`;
+}
+
+// Render Places
+function renderPlaces() {
+  renderFilters();
+  const container = document.getElementById('places-container');
+  const searchInput = document.getElementById('places-search');
+  
+  if (!searchInput.hasAttribute('data-listener')) {
+    searchInput.addEventListener('input', (e) => {
+      appState.searchQuery = e.target.value.toLowerCase();
+      renderPlaces();
+    });
+    searchInput.setAttribute('data-listener', 'true');
+  }
+  
+  let filteredPlaces = appState.places;
+  
+  if (appState.currentFilter !== 'Все') {
+    filteredPlaces = filteredPlaces.filter(p => p.category === appState.currentFilter);
+  }
+  
+  if (appState.searchQuery) {
+    filteredPlaces = filteredPlaces.filter(p => 
+      p.name.toLowerCase().includes(appState.searchQuery) ||
+      p.nameEn.toLowerCase().includes(appState.searchQuery) ||
+      p.description.toLowerCase().includes(appState.searchQuery)
+    );
+  }
+  
+  if (filteredPlaces.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <p>Места не найдены</p>
+      </div>
+    `;
+    return;
+  }
+  
+  container.innerHTML = filteredPlaces.map((place, index) => `
+    <div class="place-card" onclick="openPlaceModal(${appState.places.indexOf(place)})">
+      <img src="${place.image}" alt="${place.name}" class="place-image" loading="lazy">
+      <div class="place-header">
+        <div class="place-emoji">${place.emoji}</div>
+        <div class="place-title">
+          <h4>${place.name}</h4>
+          <div class="place-category">${place.category}</div>
+        </div>
+      </div>
+      <div class="place-body">
+        <p class="place-description">${place.description}</p>
+        <div class="place-meta">
+          <span class="meta-item">⏰ ${place.hours}</span>
+          <span class="meta-item">💵 ${place.price}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderFilters() {
+  const container = document.getElementById('places-filters');
+  const categories = ['Все', 'Храм', 'Музей', 'Рынок', 'Парк', 'Развлечения'];
+  
+  container.innerHTML = categories.map(cat => `
+    <button class="filter-btn ${cat === appState.currentFilter ? 'active' : ''}" 
+      onclick="filterPlaces('${cat}')">
+      ${cat}
+    </button>
+  `).join('');
+}
+
+function filterPlaces(category) {
+  appState.currentFilter = category;
+  renderPlaces();
+}
+
+function openPlaceModal(index) {
+  const place = appState.places[index];
+  const modal = document.getElementById('place-modal');
+  const title = document.getElementById('modal-title');
+  const body = document.getElementById('modal-body');
+  
+  title.innerHTML = `${place.emoji} ${place.name}`;
+  
+  body.innerHTML = `
+    <img src="${place.image}" alt="${place.name}" class="modal-image">
+    
+    <div class="info-section">
+      <h4>📝 Описание</h4>
+      <p>${place.description}</p>
+    </div>
+    
+    <div class="info-section">
+      <h4>📜 История</h4>
+      <p>${place.history}</p>
+    </div>
+    
+    <div class="info-section">
+      <h4>✨ Интересные факты</h4>
+      <ul>
+        ${place.facts.map(fact => `<li>${fact}</li>`).join('')}
+      </ul>
+    </div>
+    
+    <div class="info-section">
+      <h4>ℹ️ Практическая информация</h4>
+      <p><strong>Часы работы:</strong> ${place.hours}</p>
+      <p><strong>Стоимость:</strong> ${place.price}</p>
+    </div>
+    
+    <div class="info-section">
+      <h4>💡 Рекомендации</h4>
+      <p>${place.tips}</p>
+    </div>
+    
+    <a href="${place.mapLink}" target="_blank" class="map-link">
+      📍 Показать на Google Maps
+    </a>
+  `;
+  
+  modal.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  const modal = document.getElementById('place-modal');
+  modal.classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+// Puzzle
+function renderPuzzle() {
+  const grid = document.getElementById('puzzle-grid');
+  grid.innerHTML = appState.puzzlePieces.map((unlocked, i) => `
+    <div class="puzzle-piece ${unlocked ? 'unlocked' : ''}">
+      ${unlocked ? '✨' : (i + 1)}
+    </div>
+  `).join('');
+  
+  const count = appState.puzzlePieces.filter(p => p).length;
+  document.getElementById('puzzle-count').textContent = count;
+  document.getElementById('puzzle-progress').style.width = `${(count / 15) * 100}%`;
+}
+
+// Family Tabs
+function renderFamilyTabs() {
+  const container = document.getElementById('family-tabs');
+  container.innerHTML = appState.familyMembers.map((member, i) => `
+    <div class="family-tab ${i === appState.currentFamily ? 'active' : ''}" onclick="selectFamily(${i})">
+      <span class="family-tab-emoji">${member.emoji}</span>
+      <span class="family-tab-name">${member.name}</span>
+    </div>
+  `).join('');
+}
+
+function selectFamily(index) {
+  appState.currentFamily = index;
+  renderFamilyTabs();
+  renderQuizContent();
+}
+
+// Quiz Content
+function renderQuizContent() {
+  const container = document.getElementById('quiz-content');
+  const currentDay = Math.min(getCurrentTripDay(), 15);
+  
+  if (currentDay <= 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">✈️</div>
+        <p>Квиз начнется с началом путешествия!</p>
+      </div>
+    `;
+    return;
+  }
+  
+  const question = appState.quizQuestions[currentDay - 1];
+  const member = appState.familyMembers[appState.currentFamily];
+  const userAnswer = question.answers[member.name];
+  
+  container.innerHTML = `
+    <div class="card">
+      <h3>Статус ${member.name}</h3>
+      ${getQuizStatus(question, member.name)}
+    </div>
+    
+    <div class="quiz-question">
+      <div class="question-day">День ${currentDay}</div>
+      <div class="question-text">${question.question}</div>
+      <input type="text" class="answer-input" id="answer-input" 
+        placeholder="Ваш ответ..." 
+        ${userAnswer ? 'disabled' : ''}
+        value="${userAnswer || ''}">
+      <button class="btn" onclick="submitAnswer()" ${userAnswer ? 'disabled' : ''}>
+        ${userAnswer ? '✅ Ответ отправлен' : 'Отправить ответ'}
+      </button>
+    </div>
+    
+    <div class="card">
+      <h3>Прогресс семьи</h3>
+      ${getFamilyProgress(question)}
+    </div>
+  `;
+}
+
+function getCurrentTripDay() {
+  const tripStart = new Date('2025-12-28');
+  const now = new Date();
+  const diff = Math.floor((now - tripStart) / (1000 * 60 * 60 * 24));
+  return diff + 1;
+}
+
+function getQuizStatus(question, memberName) {
+  const answer = question.answers[memberName];
+  if (!answer) {
+    return '<span class="status-badge pending">⏳ Не ответил</span>';
+  }
+  const isCorrect = answer.toLowerCase().trim() === question.answer.toLowerCase().trim();
+  return isCorrect 
+    ? '<span class="status-badge answered">✅ Правильно</span>'
+    : '<span class="status-badge wrong">❌ Неправильно</span>';
+}
+
+function getFamilyProgress(question) {
+  return appState.familyMembers.map(member => `
+    <div class="info-row">
+      <span class="info-label">${member.emoji} ${member.name}</span>
+      ${getQuizStatus(question, member.name)}
+    </div>
+  `).join('');
+}
+
+function submitAnswer() {
+  const input = document.getElementById('answer-input');
+  const answer = input.value.trim();
+  
+  if (!answer) {
+    alert('Пожалуйста, введите ответ!');
+    return;
+  }
+  
+  const currentDay = getCurrentTripDay();
+  const question = appState.quizQuestions[currentDay - 1];
+  const member = appState.familyMembers[appState.currentFamily];
+  
+  question.answers[member.name] = answer;
+  
+  // Check if all family members answered correctly
+  const allCorrect = appState.familyMembers.every(m => {
+    const ans = question.answers[m.name];
+    return ans && ans.toLowerCase().trim() === question.answer.toLowerCase().trim();
+  });
+  
+  if (allCorrect && !appState.puzzlePieces[currentDay - 1]) {
+    appState.puzzlePieces[currentDay - 1] = true;
+    setTimeout(() => {
+      alert('🎉 Отлично! Вся семья ответила правильно! Открыт новый кусочек пазла!');
+      renderPuzzle();
+    }, 500);
+  }
+  
+  renderQuizContent();
+  renderPuzzle();
+}
+
+// Diary
+function renderDiaryEntries() {
+  const container = document.getElementById('diary-entries');
+  
+  if (appState.diaryEntries.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">📝</div>
+        <p>Записей пока нет. Добавьте первую запись!</p>
+      </div>
+    `;
+    return;
+  }
+  
+  container.innerHTML = appState.diaryEntries.map((entry, i) => `
+    <div class="card">
+      <h3>${entry.place}</h3>
+      <div class="info-row">
+        <span class="info-label">Дата:</span>
+        <span class="info-value">${entry.date}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Автор:</span>
+        <span class="info-value">${entry.author}</span>
+      </div>
+      <div class="rating-stars">
+        ${Array(5).fill(0).map((_, j) => 
+          `<span class="star">${j < entry.rating ? '⭐' : '☆'}</span>`
+        ).join('')}
+      </div>
+      <p style="margin-top: 12px;">${entry.comment}</p>
+    </div>
+  `).join('');
+}
+
+function showAddEntry() {
+  const place = prompt('Название места:');
+  if (!place) return;
+  
+  const rating = parseInt(prompt('Оценка (1-5):'));
+  if (isNaN(rating) || rating < 1 || rating > 5) {
+    alert('Пожалуйста, введите оценку от 1 до 5');
+    return;
+  }
+  
+  const comment = prompt('Ваш комментарий:');
+  if (!comment) return;
+  
+  const author = appState.familyMembers[appState.currentFamily].name;
+  const date = new Date().toISOString().split('T')[0];
+  
+  appState.diaryEntries.push({ place, date, rating, comment, author });
+  renderDiaryEntries();
+}
+
+// Documents
+function unlockDocuments() {
+  const password = document.getElementById('doc-password').value;
+  if (password === '1234') {
+    appState.documentsUnlocked = true;
+    showDocuments();
+  } else {
+    alert('Неверный пароль! Попробуйте 1234');
+  }
+}
+
+function unlockWithFaceId() {
+  setTimeout(() => {
+    appState.documentsUnlocked = true;
+    showDocuments();
+  }, 1000);
+}
+
+function showDocuments() {
+  const container = document.getElementById('documents-content');
+  container.innerHTML = `
+    <div class="card">
+      <h3>✈️ Авиабилеты</h3>
+      <div class="info-row">
+        <span class="info-label">Туда:</span>
+        <span class="info-value">SU 507, 28.12.2025</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Обратно:</span>
+        <span class="info-value">SU 508, 11.01.2026</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Маршрут:</span>
+        <span class="info-value">SVO ↔ BKK</span>
+      </div>
+    </div>
+    
+    <div class="card">
+      <h3>🏨 Бронирование отеля</h3>
+      <div class="info-row">
+        <span class="info-label">Отель:</span>
+        <span class="info-value">Chatrium Riverside</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Адрес:</span>
+        <span class="info-value">Charoen Nakhon Rd, Bangkok</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Даты:</span>
+        <span class="info-value">29.12 - 11.01</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Бронь:</span>
+        <span class="info-value">5959523543</span>
+      </div>
+    </div>
+    
+    <div class="card">
+      <h3>📄 Документы</h3>
+      <p style="color: var(--color-text-secondary);">Здесь будут храниться копии паспортов, страховок и других документов.</p>
+      <button class="btn btn-secondary" style="margin-top: 12px;">📎 Добавить документ</button>
+    </div>
+    
+    <button class="btn btn-secondary" onclick="lockDocuments()">🔒 Заблокировать</button>
+  `;
+}
+
+function lockDocuments() {
+  appState.documentsUnlocked = false;
+  const container = document.getElementById('documents-content');
+  container.innerHTML = `
+    <div class="password-screen">
+      <div class="lock-icon">🔒</div>
+      <h3 style="margin-bottom: 20px;">Введите пароль</h3>
+      <input type="password" class="password-input" id="doc-password" maxlength="4" placeholder="****">
+      <button class="btn" onclick="unlockDocuments()">Разблокировать</button>
+      <button class="btn btn-secondary" onclick="unlockWithFaceId()" style="margin-top: 12px;">👤 Face ID</button>
+    </div>
+  `;
+}
+
+// Phrasebook
+function renderPhraseCategories() {
+  const container = document.getElementById('phrase-categories');
+  const categories = [
+    { id: 'greetings', name: '👋 Приветствия' },
+    { id: 'restaurant', name: '🍜 Ресторан' },
+    { id: 'market', name: '🛍️ Рынок' },
+    { id: 'hotel', name: '🏨 Отель' },
+    { id: 'transport', name: '🚕 Транспорт' }
+  ];
+  
+  container.innerHTML = categories.map(cat => `
+    <button class="category-btn ${cat.id === appState.currentPhraseCategory ? 'active' : ''}" 
+      onclick="selectPhraseCategory('${cat.id}')">
+      ${cat.name}
+    </button>
+  `).join('');
+}
+
+function selectPhraseCategory(category) {
+  appState.currentPhraseCategory = category;
+  renderPhraseCategories();
+  renderPhrases();
+}
+
+function renderPhrases() {
+  const container = document.getElementById('phrases-content');
+  const phrases = appState.phrases[appState.currentPhraseCategory] || [];
+  
+  container.innerHTML = phrases.map(phrase => `
+    <div class="phrase-card">
+      <div class="phrase-russian">${phrase.russian}</div>
+      <div class="phrase-thai">${phrase.thai}</div>
+      <div class="phrase-transcription">${phrase.transcription}</div>
+      <div class="phrase-actions">
+        <button class="icon-btn" onclick="playAudio()">🔊 Прослушать</button>
+        <button class="icon-btn" onclick="addToFavorites()">⭐ В избранное</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function playAudio() {
+  alert('🔊 Воспроизведение аудио...');
+}
+
+function addToFavorites() {
+  alert('⭐ Добавлено в избранное!');
+}
+
+// Voting
+function showVoting() {
+  const currentMember = appState.familyMembers[appState.currentFamily];
+  const hasVoted = appState.voting.options.some(opt => opt.votes.includes(currentMember.name));
+  
+  const html = `
+    <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 9999; display: flex; align-items: center; justify-content: center;" onclick="closeVoting()">
+      <div class="card" style="max-width: 90%; margin: 20px;" onclick="event.stopPropagation()">
+        <h3>🗳️ ${appState.voting.question}</h3>
+        <p style="color: var(--color-text-secondary); margin-bottom: 16px;">Голосует: ${currentMember.emoji} ${currentMember.name}</p>
+        <div class="vote-options">
+          ${appState.voting.options.map((opt, i) => `
+            <div class="vote-option ${opt.votes.includes(currentMember.name) ? 'selected' : ''}" 
+              onclick="vote(${i})">
+              <span>${opt.place}</span>
+              <span class="vote-count">${opt.votes.length}</span>
+            </div>
+          `).join('')}
+        </div>
+        <button class="btn btn-secondary" style="margin-top: 16px;" onclick="closeVoting()">Закрыть</button>
+      </div>
+    </div>
+  `;
+  
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function vote(optionIndex) {
+  const currentMember = appState.familyMembers[appState.currentFamily];
+  
+  // Remove previous vote
+  appState.voting.options.forEach(opt => {
+    opt.votes = opt.votes.filter(v => v !== currentMember.name);
+  });
+  
+  // Add new vote
+  appState.voting.options[optionIndex].votes.push(currentMember.name);
+  
+  closeVoting();
+  setTimeout(() => showVoting(), 100);
+}
+
+function closeVoting() {
+  const overlay = document.querySelector('[onclick="closeVoting()"]');
+  if (overlay) overlay.remove();
+}
+
+// Album
+function updateAlbumProgress() {
+  const count = appState.puzzlePieces.filter(p => p).length;
+  const progress = (count / 15) * 100;
+  
+  document.getElementById('album-progress').style.width = `${progress}%`;
+  document.getElementById('album-pieces').textContent = count;
+  
+  const container = document.getElementById('album-content');
+  
+  if (count === 15) {
+    container.innerHTML = `
+      <div class="card" style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: white; text-align: center;">
+        <h3>🎉 Поздравляем!</h3>
+        <p style="margin: 16px 0; font-size: 18px;">Вы собрали весь пазл!</p>
+        <button class="btn" style="background: white; color: #FFA500;" onclick="watchVideo()">🎬 Смотреть видеоальбом</button>
+      </div>
+      
+      <div class="card">
+        <h3>📚 Создать фотокнигу</h3>
+        <p style="color: var(--color-text-secondary); margin-bottom: 12px;">Создайте PDF-альбом с фотографиями вашего путешествия</p>
+        <button class="btn btn-secondary">📄 Создать PDF</button>
+      </div>
+    `;
+  } else {
+    container.innerHTML = `
+      <div class="card" style="text-align: center;">
+        <div style="font-size: 64px; margin: 20px 0;">🔒</div>
+        <h3>Альбом заблокирован</h3>
+        <p style="color: var(--color-text-secondary); margin-top: 12px;">
+          Соберите все ${15 - count} оставшихся кусочков пазла, правильно отвечая на вопросы квиза!
+        </p>
+      </div>
+    `;
+  }
+}
+
+function watchVideo() {
+  alert('🎬 Открывается ваш семейный видеоальбом "Тайны Таиланда"!\n\nЗдесь будут собраны все самые яркие моменты вашего путешествия! 🇹🇭✨');
+}
+
+// Birthday Check
+function checkBirthday() {
+  const today = new Date().toISOString().split('T')[0];
+  const varvara = appState.familyMembers.find(m => m.name === 'Варвара');
+  
+  if (varvara && varvara.birthday === today) {
+    setTimeout(() => {
+      document.getElementById('birthday-overlay').classList.add('show');
+      createConfetti();
+    }, 2000);
+  }
+}
+
+function closeBirthdayOverlay() {
+  document.getElementById('birthday-overlay').classList.remove('show');
+}
+
+function createConfetti() {
+  const colors = ['#FF1493', '#FFD700', '#00CED1', '#FF69B4', '#FFA500'];
+  for (let i = 0; i < 50; i++) {
+    const confetti = document.createElement('div');
+    confetti.className = 'confetti';
+    confetti.style.left = Math.random() * 100 + '%';
+    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+    confetti.style.animationDelay = Math.random() * 3 + 's';
+    document.body.appendChild(confetti);
+    
+    setTimeout(() => confetti.remove(), 3000);
+  }
+}
+
+// Initialize on load
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}
