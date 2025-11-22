@@ -886,7 +886,7 @@ function renderPhrases() {
 }
 
 function playAudio(text) {
-  const u = new SpeechSynthesisUtterance(text); u.lang = 'th-TH'; window.speechSynthesis.speak(u);
+  const u = new SpeechSynthesisUtterance(text); u.lang = 'th-TH'; window.speechSynthesis.cancel(); u.rate = 0.8; window.speechSynthesis.speak(u);
 }
 
 function addToFavorites() {
