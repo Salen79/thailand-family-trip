@@ -1,0 +1,35 @@
+name: Deploy to Firebase Hosting
+
+on:
+  push:
+    branches:
+      - main
+  # Позволяет запускать рабочий процесс вручную из интерфейса GitHub
+  workflow_dispatch: 
+
+jobs:
+  build_and_deploy:
+    # Указываем, что нужно использовать стандартный сервер Ubuntu
+    runs-on: ubuntu-latest
+
+    steps:
+      # Шаг 1: Получаем код из репозитория
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      
+      # Шаг 2: Устанавливаем Node.js (нужен для Firebase CLI)
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Шаг 3: Устанавливаем Firebase CLI (инструмент для деплоя)
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      # Шаг 4: Выполняем развертывание на Firebase
+      - name: Deploy to Firebase
+        run: firebase deploy --only hosting --project secret-bangkog
+        env:
+          # Здесь используется секретный токен, который мы сохранили на Вехе 2
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_DEPLOY_TOKEN }}
