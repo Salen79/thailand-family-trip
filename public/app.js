@@ -878,15 +878,15 @@ function renderPhrases() {
       <div class="phrase-thai">${phrase.thai}</div>
       <div class="phrase-transcription">${phrase.transcription}</div>
       <div class="phrase-actions">
-        <button class="icon-btn" onclick="playAudio()">🔊 Прослушать</button>
+        <button class="icon-btn" onclick="playAudio('${phrase.thai}')">🔊 Прослушать</button>
         <button class="icon-btn" onclick="addToFavorites()">⭐ В избранное</button>
       </div>
     </div>
   `).join('');
 }
 
-function playAudio() {
-  alert('🔊 Воспроизведение аудио...');
+function playAudio(text) {
+  const u = new SpeechSynthesisUtterance(text); u.lang = 'th-TH'; window.speechSynthesis.speak(u);
 }
 
 function addToFavorites() {
