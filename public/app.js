@@ -878,7 +878,7 @@ function renderPhrases() {
       <div class="phrase-thai">${phrase.thai}</div>
       <div class="phrase-transcription">${phrase.transcription}</div>
       <div class="phrase-actions">
-        <button class="icon-btn" onclick="playAudio('${phrase.thai}')">🔊 Прослушать</button>
+        <button class="icon-btn" onclick="speakThai('${phrase.thai}')">🔊 Прослушать</button>
         <button class="icon-btn" onclick="addToFavorites()">⭐ В избранное</button>
       </div>
     </div>
@@ -1017,4 +1017,35 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initApp);
 } else {
   initApp();
+}
+// --- Safari Fix: Robust Audio Function ---
+function speakThai(text) {
+  if (!window.speechSynthesis) return;
+  
+  // 1. Обязательно сбрасываем очередь (для iOS)
+  window.speechSynthesis.cancel();
+  
+  const speak = () => {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'th-TH';
+    u.rate = 0.8; // Чуть медленнее для четкости
+    
+    // 2. Явный поиск голоса (Safari требует этого)
+    const voices = window.speechSynthesis.getVoices();
+    const thVoice = voices.find(v => v.lang.includes('th'));
+    
+    if (thVoice) {
+      u.voice = thVoice;
+      console.log('Thai voice found:', thVoice.name);
+    }
+    
+    window.speechSynthesis.speak(u);
+  };
+
+  // 3. Ждем загрузку голосов, если они еще не готовы (особенность Chrome и Safari)
+  if (window.speechSynthesis.getVoices().length === 0) {
+    window.speechSynthesis.onvoiceschanged = speak;
+  } else {
+    speak();
+  }
 }
