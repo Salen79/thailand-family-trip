@@ -1,35 +1,49 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+// Импортируем наши данные
+import { appStateData } from './data/initialState';
+import './App.css';
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+// Начальное состояние приложения - берем старые данные
+interface AppState {
+  currentScreen: string;
+  currentFamily: number;
+  familyMembers: typeof appStateData.familyMembers;
+  places: typeof appStateData.places;
+  quizQuestions: typeof appStateData.quizQuestions;
+  // Добавьте другие необходимые поля из appStateData
 }
 
-export default App
+function App() {
+  // Хук useState для управления состоянием (вместо глобального appState)
+  const [appState, setAppState] = useState<AppState>({
+    currentScreen: 'home',
+    currentFamily: 0,
+    familyMembers: appStateData.familyMembers,
+    places: appStateData.places,
+    quizQuestions: appStateData.quizQuestions,
+  });
+
+  // --- ВРЕМЕННЫЙ UI ДЛЯ ПРОВЕРКИ ---
+  return (
+    <div className="App">
+      <h1>Модернизация SPA завершена!</h1>
+      <p>
+        Текущий экран: <strong>{appState.currentScreen}</strong>
+      </p>
+      <p>
+        Количество мест: <strong>{appState.places.length}</strong>
+      </p>
+      <p>
+        Текущий пользователь: <strong>{appState.familyMembers[appState.currentFamily].name}</strong>
+      </p>
+      
+      <button 
+        onClick={() => setAppState(prev => ({...prev, currentFamily: (prev.currentFamily + 1) % prev.familyMembers.length }))}
+      >
+        Переключить пользователя (Тест)
+      </button>
+    </div>
+  );
+}
+
+export default App;
