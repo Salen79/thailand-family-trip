@@ -10,8 +10,8 @@ jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
 
-    # 1. КОНФИГУРАЦИЯ СРЕДЫ
     steps:
+      # 1. КОНФИГУРАЦИЯ СРЕДЫ
       - name: Checkout Code
         uses: actions/checkout@v4
 
@@ -20,24 +20,21 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install NPM dependencies for build # <--- Установка зависимостей проекта
+      # 2. ШАГ СБОРКИ SPA
+      - name: Install SPA Dependencies (in spa-app)
         run: npm install
-
-    # 2. ШАГ СБОРКИ SPA
-      - name: Install dependencies (SPA)
-        run: npm install
-        working-directory: spa-app # <--- Установка зависимостей в папке SPA
+        working-directory: spa-app # <--- Явно указываем папку для npm install
 
       - name: Build SPA
         run: npm run build
-        working-directory: spa-app # <--- Сборка React-приложения
+        working-directory: spa-app # <--- Явно указываем папку для npm run build
 
-    # 3. ШАГ ДЕПЛОЯ
+      # 3. ШАГ ДЕПЛОЯ
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
 
       - name: Deploy to Firebase
-        # Теперь деплоить нужно папку dist, созданную React/Vite
-        run: firebase deploy --only hosting --public spa-app/dist --project secret-bangkog
+        # Указываем, что нужно деплоить папку dist из подпапки spa-app
+        run: firebase deploy --only hosting --project secret-bangkog --public spa-app/dist
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_DEPLOY_TOKEN }}
