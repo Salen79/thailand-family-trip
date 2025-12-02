@@ -1,4 +1,4 @@
-import React, { useState, createContext, useMemo, useContext } from 'react'; // <-- ИСПРАВЛЕНО: Добавлен React и useContext
+import { useState, createContext, useMemo, useContext } from 'react'; // <-- ИСПРАВЛЕНО: Добавлен React и useContext
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { appStateData } from './data/initialState.ts';
 import './App.css'; 
