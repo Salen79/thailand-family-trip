@@ -1,5 +1,3 @@
-import React from 'react';
-
 export const PhrasebookScreen = () => {
     return (
         <div style={{ padding: '20px', textAlign: 'center' }}>

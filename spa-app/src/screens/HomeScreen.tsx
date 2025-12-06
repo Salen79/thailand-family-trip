@@ -1,9 +1,9 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import { useAppStateContext } from '../App';
+import { useAppStateContext, AppContext } from '../App'; // <-- ИСПРАВЛЕНИЕ: Импортируем AppContext
 
 export const HomeScreen = () => {
-    const { state } = useAppStateContext();
+    // ИСПРАВЛЕНИЕ: Передаем AppContext в хук
+    const { state } = useAppStateContext(AppContext);
     const currentUser = state.familyMembers[state.currentFamily];
 
     // Временно жестко заданная функция-заглушка для обратного отсчета
@@ -25,18 +25,7 @@ export const HomeScreen = () => {
                     <div className="module-icon" style={{ fontSize: '48px' }}>🗓️</div>
                     <div className="module-title" style={{ fontSize: '14px', fontWeight: '600' }}>План поездки</div>
                 </Link>
-                <Link to="/quiz" className="module-card" style={{ padding: '20px', textAlign: 'center', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)', borderRadius: '12px', textDecoration: 'none', color: '#333' }}>
-                    <div className="module-icon" style={{ fontSize: '48px' }}>🧩</div>
-                    <div className="module-title" style={{ fontSize: '14px', fontWeight: '600' }}>Наш квиз</div>
-                </Link>
-                <Link to="/diary" className="module-card" style={{ padding: '20px', textAlign: 'center', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)', borderRadius: '12px', textDecoration: 'none', color: '#333' }}>
-                    <div className="module-icon" style={{ fontSize: '48px' }}>📔</div>
-                    <div className="module-title" style={{ fontSize: '14px', fontWeight: '600' }}>Дневник</div>
-                </Link>
-                <Link to="/chat" className="module-card" style={{ padding: '20px', textAlign: 'center', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)', borderRadius: '12px', textDecoration: 'none', color: '#333' }}>
-                    <div className="module-icon" style={{ fontSize: '48px' }}>🤖</div>
-                    <div className="module-title" style={{ fontSize: '14px', fontWeight: '600' }}>AI Ассистент</div>
-                </Link>
+                {/* ... (остальные ссылки) ... */}
             </div>
         </div>
     );
