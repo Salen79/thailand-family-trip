@@ -1,0 +1,10 @@
+import React from 'react';
+
+export const DiaryScreen = () => {
+    return (
+        <div style={{ padding: '20px', textAlign: 'center' }}>
+            <h2 style={{ fontSize: '24px', marginBottom: '16px' }}>📔 Дневник</h2>
+            <p>Здесь будут заметки и фотографии, доступные только для авторизованных пользователей.</p>
+        </div>
+    );
+};
