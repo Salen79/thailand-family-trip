@@ -1,5 +1,3 @@
-import React from 'react';
-
 export const QuizScreen = () => {
     return (
         <div style={{ padding: '20px', textAlign: 'center' }}>

@@ -1,4 +1,5 @@
-import { useState, createContext, useMemo, useContext, Context } from 'react'; 
+import { useState, createContext, useMemo, useContext } from 'react';
+import type { Context } from 'react'; // <-- ИСПРАВЛЕНИЕ: Импорт только для типа
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { appStateData } from './data/initialState.ts';
 import './App.css'; 
