@@ -1,13 +1,23 @@
-import { useState, createContext, useMemo, useContext } from 'react'; // <-- ИСПРАВЛЕНО: Добавлен React и useContext
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { useState, createContext, useMemo, useContext, Context } from 'react'; 
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { appStateData } from './data/initialState.ts';
 import './App.css'; 
+
+// Импорт новых компонентов и экранов
+// Обратите внимание: HomeScreen, PlanScreen и т.д. должны быть импортированы здесь!
+// Пока мы не слили их, они остаются закомментированными или заменены на заглушки.
+// import { HomeScreen } from './screens/HomeScreen';
+// import { PlanScreen } from './screens/PlanScreen';
+// import { QuizScreen } from './screens/QuizScreen';
+// import { DiaryScreen } from './screens/DiaryScreen';
+// import { PhrasebookScreen } from './screens/PhrasebookScreen';
+// import { BottomNav } from './components/BottomNav';
+
 
 // -----------------------------------------------------
 // 1. ОПРЕДЕЛЕНИЕ СТРУКТУРЫ ДАННЫХ (STATE)
 // -----------------------------------------------------
 
-// Используем упрощенный набор данных для компонента
 interface AppState {
   currentFamily: number;
   familyMembers: typeof appStateData.familyMembers;
@@ -17,7 +27,6 @@ interface AppState {
   currentScreen: string;
 }
 
-// Контекст для передачи состояния по всему приложению
 interface AppContextType {
     state: AppState;
     setAppState: React.Dispatch<React.SetStateAction<AppState>>;
@@ -38,12 +47,12 @@ const initialAppState: AppState = {
 export const AppContext = createContext<AppContextType | undefined>(undefined);
 
 // -----------------------------------------------------
-// 2. КОМПОНЕНТЫ ЗАГЛУШКИ
+// 2. ВСПОМОГАТЕЛЬНЫЙ КОМПОНЕНТ И ХУК
 // -----------------------------------------------------
 
-// Вспомогательный хук для использования контекста
-const useAppStateContext = (context: React.Context<AppContextType | undefined>) => { // <-- ИСПРАВЛЕНО: Переименовано
-    const ctx = useContext(context); // <-- Используем useContext напрямую
+// ХУК ДЛЯ ИСПОЛЬЗОВАНИЯ КОНТЕКСТА (ЭКСПОРТИРУЕМ ДЛЯ ИСПОЛЬЗОВАНИЯ В ДРУГИХ ФАЙЛАХ)
+export const useAppStateContext = (context: Context<AppContextType | undefined>) => { // <-- ИСПРАВЛЕН ТИП Context И ДОБАВЛЕН export
+    const ctx = useContext(context);
     if (ctx === undefined) {
         throw new Error('useAppStateContext must be used within a Provider');
     }
@@ -51,58 +60,43 @@ const useAppStateContext = (context: React.Context<AppContextType | undefined>) 
 };
 
 
-// Заглушка для Главного экрана (Home)
-const HomeScreen = () => {
-    const context = useAppStateContext(AppContext);
-    if (!context) return <div>Ошибка загрузки контекста</div>;
-    
-    const currentUser = context.state.familyMembers[context.state.currentFamily];
-
-    return (
-        <div className="home-hero" style={{ padding: '30px', background: '#FF6B35', color: 'white' }}>
-            <h1>Привет, {currentUser.name}! 👋</h1>
-            <p>Вы находитесь в ветке {currentUser.role}.</p>
-            <div style={{ marginTop: '20px' }}>
-                <Link to="/plan" style={{ color: 'white', marginRight: '15px' }}>План 🗓️</Link>
-                <Link to="/chat" style={{ color: 'white', marginRight: '15px' }}>Чат AI 🤖</Link>
-                <Link to="/quiz" style={{ color: 'white' }}>Квиз 🧩</Link>
-            </div>
-        </div>
-    );
-};
-
-// Заглушка для AI-Ассистента
-const AIChatScreen = () => {
-    return (
-        <div style={{ padding: '20px', textAlign: 'center' }}>
-            <h2>AI-Ассистент 🤖 (Заглушка)</h2>
-            <p>Здесь будет чат с Gemini (реализация API завтра).</p>
-            <Link to="/">← На главную</Link>
-        </div>
-    );
-};
-
 // -----------------------------------------------------
 // 3. ГЛАВНОЕ ПРИЛОЖЕНИЕ (РОУТЕР)
 // -----------------------------------------------------
 
+// Временно используем заглушку, пока не сольем фикс
+const PlaceholderScreen = ({ title }: { title: string }) => {
+    return (
+        <div style={{ padding: '20px', textAlign: 'center' }}>
+            <h2>{title}</h2>
+            <p>Вернитесь на главную страницу, чтобы проверить навигацию.</p>
+        </div>
+    );
+};
+
+
 function App() {
   const [appState, setAppState] = useState<AppState>(initialAppState);
   
-  // Оборачиваем контекст в useMemo для производительности
   const contextValue = useMemo(() => ({ state: appState, setAppState }), [appState]);
 
   return (
     <AppContext.Provider value={contextValue}>
         <Router>
             <div className="app-container">
-                <Routes>
-                    <Route path="/" element={<HomeScreen />} />
-                    <Route path="/chat" element={<AIChatScreen />} />
-                    <Route path="/plan" element={<div>План поездки (Скоро)</div>} />
-                    <Route path="/quiz" element={<div>Квиз (Скоро)</div>} />
-                    <Route path="*" element={<div>404 | Страница не найдена</div>} />
-                </Routes>
+                <div className="content-area">
+                    <Routes>
+                        <Route path="/" element={<PlaceholderScreen title="Главная страница (Синхронизация)" />} />
+                        <Route path="/plan" element={<PlaceholderScreen title="План поездки" />} />
+                        <Route path="/quiz" element={<PlaceholderScreen title="Квиз" />} />
+                        <Route path="/diary" element={<PlaceholderScreen title="Дневник" />} />
+                        <Route path="/phrases" element={<PlaceholderScreen title="Разговорник" />} />
+                        <Route path="/chat" element={<PlaceholderScreen title="AI Ассистент" />} />
+                        <Route path="*" element={<div>404 | Страница не найдена</div>} />
+                    </Routes>
+                </div>
+                {/* Компонент BottomNav будет работать после слияния ветки feature-rebuild-ui-content */}
+                {/* <BottomNav /> */}
             </div>
         </Router>
     </AppContext.Provider>
