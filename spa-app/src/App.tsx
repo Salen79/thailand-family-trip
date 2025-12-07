@@ -1,11 +1,13 @@
 import { useState, createContext, useMemo, useContext } from 'react';
-// Импортируем типы отдельно, как того требует строгий компилятор (TS1484)
 import type { Dispatch, SetStateAction, Context } from 'react'; 
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { appStateData } from './data/initialState.ts';
 import './App.css'; 
 
-// Активируем импорты всех компонентов, которые вы создали
+// 1. Импортируем типы из нового файла types.ts
+import type { AppState, QuizQuestion } from './types'; 
+
+// 2. Активируем импорты всех компонентов
 import { HomeScreen } from './screens/HomeScreen';
 import { PlanScreen } from './screens/PlanScreen';
 import { QuizScreen } from './screens/QuizScreen';
@@ -15,25 +17,17 @@ import { BottomNav } from './components/BottomNav';
 
 
 // -----------------------------------------------------
-// 1. ОПРЕДЕЛЕНИЕ СТРУКТУРЫ ДАННЫХ (STATE)
+// 1. ОПРЕДЕЛЕНИЕ КОНТЕКСТА (ИСПОЛЬЗУЕМ ИМПОРТИРОВАННЫЕ ТИПЫ)
 // -----------------------------------------------------
 
-interface AppState {
-  currentFamily: number;
-  familyMembers: typeof appStateData.familyMembers;
-  places: typeof appStateData.places;
-  quizQuestions: typeof appStateData.quizQuestions;
-  documentsUnlocked: boolean;
-  currentScreen: string;
-}
-
-// Обновленный контракт контекста (включая логику квиза)
+// Обновленный контракт контекста
 interface AppContextType {
     state: AppState;
     setAppState: Dispatch<SetStateAction<AppState>>;
-    handleQuizAnswer: (quizId: number, answerKey: string) => void; // Логика квиза
+    handleQuizAnswer: (quizId: number, answerKey: string) => void;
 }
 
+// Заменяем старую структуру initialAppState, чтобы она соответствовала новому типу QuizQuestion[]
 const initialAppState: AppState = {
     currentFamily: 0,
     documentsUnlocked: false,
@@ -41,37 +35,38 @@ const initialAppState: AppState = {
     familyMembers: appStateData.familyMembers,
     places: appStateData.places,
     quizQuestions: appStateData.quizQuestions.map(q => ({
-        ...q,
-        answers: q.answers || {}, 
-    })),
+        // Явно приводим типы из initialState.ts к новому QuizQuestion, чтобы избежать ошибок
+        id: q.id,
+        day: q.day,
+        question: q.question,
+        answer: q.answer,
+        answers: q.answers || {},
+        correctAnswer: q.correctAnswer,
+    })) as QuizQuestion[], // Приведение типа
 };
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);
 
-// -----------------------------------------------------
-// 2. ВСПОМОГАТЕЛЬНЫЙ ХУК (С ФИКСОМ TS2339)
-// -----------------------------------------------------
 
-// Хук с явным указанием возвращаемого типа AppContextType, чтобы устранить TS2339
+// ХУК ДЛЯ ИСПОЛЬЗОВАНИЯ КОНТЕКСТА
 export const useAppStateContext = (context: Context<AppContextType | undefined>): AppContextType => { 
     const ctx = useContext(context);
     if (ctx === undefined) {
         throw new Error('useAppStateContext must be used within a Provider');
     }
-    // Приведение типа гарантирует, что компилятор видит все свойства (state, handleQuizAnswer)
     return ctx as AppContextType; 
 };
 
 
 // -----------------------------------------------------
-// 3. ГЛАВНОЕ ПРИЛОЖЕНИЕ (РОУТЕР И ЛОГИКА)
+// 2. ГЛАВНОЕ ПРИЛОЖЕНИЕ (ЛОГИКА И РОУТЕР)
 // -----------------------------------------------------
 
 // Заглушка для AI-Ассистента
 const AIChatScreen = () => {
     return (
         <div style={{ padding: '20px', textAlign: 'center' }}>
-            <h2>AI-Ассистент 🤖 (Заглушка)</h2>
+            <h2>AI-Ассистент 🤖</h2>
             <Link to="/">← На главную</Link>
         </div>
     );
@@ -85,6 +80,7 @@ function App() {
   const handleQuizAnswer = (quizId: number, answerKey: string) => {
     setAppState(prevState => {
         const updatedQuizQuestions = prevState.quizQuestions.map(q => {
+            // TypeScript теперь знает, что q имеет id и correctAnswer
             if (q.id === quizId) {
                 const isCorrect = answerKey === q.correctAnswer;
                 
@@ -92,7 +88,7 @@ function App() {
                     ...q,
                     userAnswer: answerKey, 
                     isAnswered: true,      
-                    isCorrect: isCorrect,  
+                    isCorrect: isCorrect, 
                 };
             }
             return q;
@@ -112,7 +108,7 @@ function App() {
   const contextValue = useMemo(() => ({ 
       state: appState, 
       setAppState, 
-      handleQuizAnswer // Передача функции
+      handleQuizAnswer 
   }), [appState]);
 
   return (
@@ -121,7 +117,6 @@ function App() {
             <div className="app-container">
                 <div className="content-area" style={{ paddingBottom: '70px' }}>
                     <Routes>
-                        {/* АКТИВИРОВАННЫЕ ЭКРАНЫ */}
                         <Route path="/" element={<HomeScreen />} />
                         <Route path="/plan" element={<PlanScreen />} />
                         <Route path="/quiz" element={<QuizScreen />} />
