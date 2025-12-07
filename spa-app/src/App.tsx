@@ -1,18 +1,18 @@
-import { useState, createContext, useMemo, useContext } from 'react';
-import type { Context } from 'react'; // <-- ИСПРАВЛЕНИЕ: Импорт только для типа
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useState, createContext, useMemo, useContext } from 'react'; // Context УБРАН
+import type { Dispatch, SetStateAction, Context } from 'react'; // <-- Context ПЕРЕНЕСЕН СЮДА
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { appStateData } from './data/initialState.ts';
 import './App.css'; 
 
-// Импорт новых компонентов и экранов
-// Обратите внимание: HomeScreen, PlanScreen и т.д. должны быть импортированы здесь!
-// Пока мы не слили их, они остаются закомментированными или заменены на заглушки.
-// import { HomeScreen } from './screens/HomeScreen';
-// import { PlanScreen } from './screens/PlanScreen';
-// import { QuizScreen } from './screens/QuizScreen';
-// import { DiaryScreen } from './screens/DiaryScreen';
-// import { PhrasebookScreen } from './screens/PhrasebookScreen';
-// import { BottomNav } from './components/BottomNav';
+// ----------------------------------------------------------------------
+// АКТИВИРУЕМ ИМПОРТЫ КОМПОНЕНТОВ (Всё, что вы только что создали)
+// ----------------------------------------------------------------------
+import { HomeScreen } from './screens/HomeScreen';
+import { PlanScreen } from './screens/PlanScreen';
+import { QuizScreen } from './screens/QuizScreen';
+import { DiaryScreen } from './screens/DiaryScreen';
+import { PhrasebookScreen } from './screens/PhrasebookScreen';
+import { BottomNav } from './components/BottomNav';
 
 
 // -----------------------------------------------------
@@ -66,12 +66,9 @@ const initialAppState: AppState = {
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);
 
-// -----------------------------------------------------
-// 2. ВСПОМОГАТЕЛЬНЫЙ КОМПОНЕНТ И ХУК
-// -----------------------------------------------------
 
-// ХУК ДЛЯ ИСПОЛЬЗОВАНИЯ КОНТЕКСТА (ЭКСПОРТИРУЕМ ДЛЯ ИСПОЛЬЗОВАНИЯ В ДРУГИХ ФАЙЛАХ)
-export const useAppStateContext = (context: Context<AppContextType | undefined>) => { // <-- ИСПРАВЛЕН ТИП Context И ДОБАВЛЕН export
+// ХУК ДЛЯ ИСПОЛЬЗОВАНИЯ КОНТЕКСТА (Экспортируем для использования в других файлах)
+export const useAppStateContext = (context: Context<AppContextType | undefined>) => {
     const ctx = useContext(context);
     if (ctx === undefined) {
         throw new Error('useAppStateContext must be used within a Provider');
@@ -81,15 +78,15 @@ export const useAppStateContext = (context: Context<AppContextType | undefined>)
 
 
 // -----------------------------------------------------
-// 3. ГЛАВНОЕ ПРИЛОЖЕНИЕ (РОУТЕР)
+// 2. ГЛАВНОЕ ПРИЛОЖЕНИЕ (РОУТЕР)
 // -----------------------------------------------------
 
-// Временно используем заглушку, пока не сольем фикс
-const PlaceholderScreen = ({ title }: { title: string }) => {
+// Заглушка для AI-Ассистента (пока пустая)
+const AIChatScreen = () => {
     return (
         <div style={{ padding: '20px', textAlign: 'center' }}>
-            <h2>{title}</h2>
-            <p>Вернитесь на главную страницу, чтобы проверить навигацию.</p>
+            <h2>AI-Ассистент 🤖 (Заглушка)</h2>
+            <Link to="/">← На главную</Link>
         </div>
     );
 };
@@ -136,19 +133,18 @@ function App() {
     <AppContext.Provider value={contextValue}>
         <Router>
             <div className="app-container">
-                <div className="content-area">
+                <div className="content-area" style={{ paddingBottom: '70px' }}> {/* Добавляем отступ для навигации */}
                     <Routes>
-                        <Route path="/" element={<PlaceholderScreen title="Главная страница (Синхронизация)" />} />
-                        <Route path="/plan" element={<PlaceholderScreen title="План поездки" />} />
-                        <Route path="/quiz" element={<PlaceholderScreen title="Квиз" />} />
-                        <Route path="/diary" element={<PlaceholderScreen title="Дневник" />} />
-                        <Route path="/phrases" element={<PlaceholderScreen title="Разговорник" />} />
-                        <Route path="/chat" element={<PlaceholderScreen title="AI Ассистент" />} />
+                        <Route path="/" element={<HomeScreen />} />
+                        <Route path="/plan" element={<PlanScreen />} />
+                        <Route path="/quiz" element={<QuizScreen />} />
+                        <Route path="/diary" element={<DiaryScreen />} />
+                        <Route path="/phrases" element={<PhrasebookScreen />} />
+                        <Route path="/chat" element={<AIChatScreen />} />
                         <Route path="*" element={<div>404 | Страница не найдена</div>} />
                     </Routes>
                 </div>
-                {/* Компонент BottomNav будет работать после слияния ветки feature-rebuild-ui-content */}
-                {/* <BottomNav /> */}
+                <BottomNav /> {/* АКТИВИРУЕМ НАВИГАЦИЮ */}
             </div>
         </Router>
     </AppContext.Provider>
