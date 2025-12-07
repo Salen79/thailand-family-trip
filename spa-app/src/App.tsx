@@ -1,6 +1,5 @@
-import { useState, createContext, useMemo, useContext } from 'react'; // Context УБРАН
-import type { Dispatch, SetStateAction, Context } from 'react'; // <-- Context ПЕРЕНЕСЕН СЮДА
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { useState, createContext, useMemo, useContext } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { appStateData } from './data/initialState.ts';
 import './App.css'; 
 
