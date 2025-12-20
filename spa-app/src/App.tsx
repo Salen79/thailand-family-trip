@@ -27,22 +27,23 @@ interface AppContextType {
     handleQuizAnswer: (quizId: number, answerKey: string) => void;
 }
 
-// Заменяем старую структуру initialAppState, чтобы она соответствовала новому типу QuizQuestion[]
 const initialAppState: AppState = {
     currentFamily: 0,
     documentsUnlocked: false,
     currentScreen: 'home',
     familyMembers: appStateData.familyMembers,
     places: appStateData.places,
-    quizQuestions: appStateData.quizQuestions.map(q => ({
-        // Явно приводим типы из initialState.ts к новому QuizQuestion, чтобы избежать ошибок
+    
+    // МЫ ДОБАВЛЯЕМ (appStateData.quizQuestions as any[]), 
+    // чтобы TS не блокировал доступ к id и correctAnswer
+    quizQuestions: (appStateData.quizQuestions as any[]).map((q: any) => ({
         id: q.id,
         day: q.day,
         question: q.question,
         answer: q.answer,
         answers: q.answers || {},
         correctAnswer: q.correctAnswer,
-    })) as QuizQuestion[], // Приведение типа
+    })) as QuizQuestion[], 
 };
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);
