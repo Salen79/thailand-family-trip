@@ -1,121 +1,112 @@
 .quiz-container {
     padding: 20px;
+    padding-bottom: 120px;
     max-width: 600px;
     margin: 0 auto;
-    color: white;
+    color: #ffffff !important;
+    position: relative;
+    z-index: 5;
 }
 
 .quiz-header {
     text-align: center;
     margin-bottom: 30px;
-    position: sticky;
-    top: 0;
-    background: #1a1a1a;
+    background: #242424;
     padding: 10px 0;
-    z-index: 10;
 }
 
 .progress-info {
-    font-size: 0.9rem;
-    color: #aaa;
-    margin-bottom: 8px;
+    font-size: 14px;
+    color: #4caf50;
+    margin-bottom: 5px;
 }
 
 .progress-bar-container {
-    height: 8px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-    overflow: hidden;
-    margin-bottom: 20px;
+    height: 10px;
+    background: #333;
+    border-radius: 5px;
+    margin-bottom: 15px;
 }
 
 .progress-bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, #4caf50, #8bc34a);
-    transition: width 0.5s ease-out;
+    background: #4caf50;
+    transition: width 0.4s ease;
 }
 
 .quiz-card {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 16px;
+    background: #2a2a2a !important; /* Темный фон для контраста */
+    border-radius: 15px;
     padding: 20px;
     margin-bottom: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
+    border: 1px solid #444;
 }
 
-.quiz-card.correct { border-color: #4caf50; box-shadow: 0 0 15px rgba(76, 175, 80, 0.2); }
-.quiz-card.wrong { border-color: #f44336; box-shadow: 0 0 15px rgba(244, 67, 54, 0.2); }
+.question-text {
+    margin-bottom: 20px;
+    color: #fff !important;
+    font-size: 1.2rem;
+}
 
 .answers-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-top: 20px;
+    grid-template-columns: 1fr;
+    gap: 10px;
 }
 
 .answer-button {
-    position: relative;
-    z-index: 100; /* Поднимаем кнопки на самый верхний слой */
-    pointer-events: all;
-    padding: 14px;
-    border-radius: 12px;
+    background-color: #f0f0f0 !important; /* Светлые кнопки */
+    color: #1a1a1a !important; /* Темный текст */
+    padding: 15px;
+    border-radius: 10px;
     border: none;
-    background: white;
-    color: #333;
-    font-weight: 600;
+    font-weight: bold;
+    font-size: 16px;
     cursor: pointer;
-    transition: transform 0.1s;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
-.answer-button:active { transform: scale(0.95); }
-.answer-button:disabled { cursor: default; opacity: 0.7; }
+.answer-button:active {
+    background-color: #ccc !important;
+}
 
 .answer-button.selected {
-    background: #333;
-    color: white;
+    background-color: #ffd700 !important;
+    color: #000 !important;
 }
+
+.quiz-card.correct { border-color: #4caf50; }
+.quiz-card.wrong { border-color: #f44336; }
 
 .result-feedback {
     margin-top: 15px;
     text-align: center;
     font-weight: bold;
-    font-size: 1.1rem;
-}
-
-/* Золотая карточка */
-.golden-card-overlay {
-    margin-top: 40px;
-    padding-bottom: 40px;
-    animation: slideUp 0.5s ease-out;
 }
 
 .golden-card {
     background: linear-gradient(135deg, #ffd700, #ffb900);
+    padding: 3px;
     border-radius: 20px;
-    padding: 3px; /* Ободок */
+    margin-top: 20px;
 }
 
 .golden-content {
     background: #1a1a1a;
-    border-radius: 18px;
-    padding: 25px;
+    border-radius: 17px;
+    padding: 20px;
     text-align: center;
     color: #ffd700;
 }
 
 .gold-action-button {
-    margin-top: 15px;
-    padding: 12px 24px;
     background: #ffd700;
-    color: black;
+    color: #000;
     border: none;
-    border-radius: 30px;
+    padding: 12px 24px;
+    border-radius: 25px;
     font-weight: bold;
+    margin-top: 15px;
     cursor: pointer;
-}
-
-@keyframes slideUp {
-    from { transform: translateY(50px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
 }
