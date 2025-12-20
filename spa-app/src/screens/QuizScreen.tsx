@@ -1,11 +1,17 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { AppContext, useAppStateContext } from '../App';
 import { useNavigate } from 'react-router-dom';
 import './QuizScreen.css';
 
 export const QuizScreen: React.FC = () => {
-    const { state, handleQuizAnswer } = useAppStateContext(AppContext);
+    const context = useAppStateContext(AppContext);
+    const { state, handleQuizAnswer } = context;
     const navigate = useNavigate();
+
+    // Проверка связи в консоли при загрузке экрана
+    useEffect(() => {
+        console.log("QuizScreen загружен. Контекст получен:", !!handleQuizAnswer);
+    }, [handleQuizAnswer]);
 
     // Расчет прогресса для шкалы
     const answeredCount = useMemo(() => 
