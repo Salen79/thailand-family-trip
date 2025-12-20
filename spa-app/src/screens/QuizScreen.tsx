@@ -1,16 +1,12 @@
-import React, { useMemo, useEffect } from 'react';
-import { AppContext, useAppStateContext } from '../App';
+import React, { useMemo } from 'react';
+import { useAppStateContext } from '../App'; // Обратите внимание: импортируем только хук
 import { useNavigate } from 'react-router-dom';
 import './QuizScreen.css';
 
 export const QuizScreen: React.FC = () => {
-    const { state, handleQuizAnswer } = useAppStateContext(AppContext);
+    // Вызываем хук БЕЗ аргументов
+    const { state, handleQuizAnswer } = useAppStateContext();
     const navigate = useNavigate();
-
-    // Проверка загрузки данных в консоли браузера
-    useEffect(() => {
-        console.log("QuizScreen: Данные квиза загружены", state.quizQuestions);
-    }, [state.quizQuestions]);
 
     const answeredCount = useMemo(() => 
         state.quizQuestions.filter(q => q.isAnswered).length, 
@@ -19,11 +15,9 @@ export const QuizScreen: React.FC = () => {
     const progressWidth = (answeredCount / state.quizQuestions.length) * 100;
 
     return (
-        <div className="quiz-container" style={{ position: 'relative', zIndex: 10 }}>
+        <div className="quiz-container">
             <div className="quiz-header">
-                <div className="progress-info">
-                    Прогресс: {answeredCount} из {state.quizQuestions.length}
-                </div>
+                <div className="progress-info">Выполнено: {answeredCount} из {state.quizQuestions.length}</div>
                 <div className="progress-bar-container">
                     <div className="progress-bar-fill" style={{ width: `${progressWidth}%` }}></div>
                 </div>
@@ -32,35 +26,21 @@ export const QuizScreen: React.FC = () => {
 
             <div className="questions-list">
                 {state.quizQuestions.map((q) => (
-                    <div key={q.id} className={`quiz-card ${q.isAnswered ? (q.isCorrect ? 'correct' : 'wrong') : ''}`}>
+                    <div key={`q-${q.id}`} className={`quiz-card ${q.isAnswered ? (q.isCorrect ? 'correct' : 'wrong') : ''}`}>
                         <h3 className="question-text">{q.question}</h3>
                         
-                        <div className="answers-grid" style={{ pointerEvents: 'auto' }}>
+                        <div className="answers-grid">
                             {Object.entries(q.answers).map(([key, value]) => (
                                 <button
-                                    key={key}
+                                    key={`${q.id}-${key}`}
                                     className={`answer-button ${q.userAnswer === key ? 'selected' : ''}`}
-                                    // Используем onPointerDown для мгновенного отклика на iPhone
-                                    onPointerDown={() => {
-                                        if (!q.isAnswered) {
-                                            console.log("Касание (PointerDown):", value);
-                                            handleQuizAnswer(q.id, key);
-                                        }
-                                    }}
-                                    // Дублируем кликом для десктопа
+                                    // ПРАВИЛЬНЫЙ ОБРАБОТЧИК: обернут в анонимную функцию
                                     onClick={() => {
                                         if (!q.isAnswered) {
-                                            console.log("Клик (Click):", value);
                                             handleQuizAnswer(q.id, key);
                                         }
                                     }}
                                     disabled={q.isAnswered}
-                                    style={{ 
-                                        cursor: 'pointer', 
-                                        pointerEvents: 'auto', 
-                                        touchAction: 'manipulation',
-                                        zIndex: 20
-                                    }}
                                 >
                                     {value}
                                 </button>
@@ -69,7 +49,7 @@ export const QuizScreen: React.FC = () => {
 
                         {q.isAnswered && (
                             <div className="result-feedback">
-                                {q.isCorrect ? '✅ Супер!' : `❌ Ошибка. Правильно: ${q.answers[q.correctAnswer]}`}
+                                {q.isCorrect ? '✅ Правильно!' : `❌ Ошибка. Верно: ${q.answers[q.correctAnswer]}`}
                             </div>
                         )}
                     </div>
@@ -80,14 +60,10 @@ export const QuizScreen: React.FC = () => {
                 <div className="golden-card-overlay">
                     <div className="golden-card">
                         <div className="golden-content">
-                            <h2>🎉 ПУТЕШЕСТВИЕ НАЧИНАЕТСЯ!</h2>
-                            <p>Вы успешно прошли проверку. Все документы доступны в плане!</p>
-                            <button 
-                                className="gold-action-button" 
-                                onClick={() => navigate('/plan')}
-                                style={{ cursor: 'pointer', pointerEvents: 'auto' }}
-                            >
-                                Открыть План →
+                            <h2>🎉 ПОБЕДА!</h2>
+                            <p>Документы разблокированы!</p>
+                            <button className="gold-action-button" onClick={() => navigate('/plan')}>
+                                В План →
                             </button>
                         </div>
                     </div>
