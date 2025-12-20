@@ -4,10 +4,8 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { appStateData } from './data/initialState.ts';
 import './App.css'; 
 
-// 1. Импортируем типы из нового файла types.ts
+// Импорты типов и компонентов
 import type { AppState, QuizQuestion } from './types'; 
-
-// 2. Активируем импорты всех компонентов
 import { HomeScreen } from './screens/HomeScreen';
 import { PlanScreen } from './screens/PlanScreen';
 import { QuizScreen } from './screens/QuizScreen';
@@ -15,12 +13,7 @@ import { DiaryScreen } from './screens/DiaryScreen';
 import { PhrasebookScreen } from './screens/PhrasebookScreen';
 import { BottomNav } from './components/BottomNav';
 
-
-// -----------------------------------------------------
-// 1. ОПРЕДЕЛЕНИЕ КОНТЕКСТА (ИСПОЛЬЗУЕМ ИМПОРТИРОВАННЫЕ ТИПЫ)
-// -----------------------------------------------------
-
-// Обновленный контракт контекста
+// 1. ОПРЕДЕЛЕНИЕ КОНТЕКСТА
 interface AppContextType {
     state: AppState;
     setAppState: Dispatch<SetStateAction<AppState>>;
@@ -33,9 +26,6 @@ const initialAppState: AppState = {
     currentScreen: 'home',
     familyMembers: appStateData.familyMembers,
     places: appStateData.places,
-    
-    // МЫ ДОБАВЛЯЕМ (appStateData.quizQuestions as any[]), 
-    // чтобы TS не блокировал доступ к id и correctAnswer
     quizQuestions: (appStateData.quizQuestions as any[]).map((q: any) => ({
         id: q.id,
         day: q.day,
@@ -48,8 +38,6 @@ const initialAppState: AppState = {
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);
 
-
-// ХУК ДЛЯ ИСПОЛЬЗОВАНИЯ КОНТЕКСТА
 export const useAppStateContext = (context: Context<AppContextType | undefined>): AppContextType => { 
     const ctx = useContext(context);
     if (ctx === undefined) {
@@ -58,54 +46,34 @@ export const useAppStateContext = (context: Context<AppContextType | undefined>)
     return ctx as AppContextType; 
 };
 
-
-// -----------------------------------------------------
-// 2. ГЛАВНОЕ ПРИЛОЖЕНИЕ (ЛОГИКА И РОУТЕР)
-// -----------------------------------------------------
-
-// Заглушка для AI-Ассистента
-const AIChatScreen = () => {
-    return (
-        <div style={{ padding: '20px', textAlign: 'center' }}>
-            <h2>AI-Ассистент 🤖</h2>
-            <Link to="/">← На главную</Link>
-        </div>
-    );
-};
-
+// Заглушка чата
+const AIChatScreen = () => (
+    <div style={{ padding: '20px', textAlign: 'center' }}>
+        <h2>AI-Ассистент 🤖</h2>
+        <Link to="/">← На главную</Link>
+    </div>
+);
 
 function App() {
   const [appState, setAppState] = useState<AppState>(initialAppState);
   
-  // ФУНКЦИЯ ОБРАБОТКИ ОТВЕТОВ КВИЗА
   const handleQuizAnswer = (quizId: number, answerKey: string) => {
+    console.log(`App.tsx: Получен ответ для вопроса ${quizId}: ${answerKey}`);
     setAppState(prevState => {
         const updatedQuizQuestions = prevState.quizQuestions.map(q => {
-            // TypeScript теперь знает, что q имеет id и correctAnswer
             if (q.id === quizId) {
                 const isCorrect = answerKey === q.correctAnswer;
-                
-                return {
-                    ...q,
-                    userAnswer: answerKey, 
-                    isAnswered: true,      
-                    isCorrect: isCorrect, 
-                };
+                return { ...q, userAnswer: answerKey, isAnswered: true, isCorrect };
             }
             return q;
         });
-
         const allCorrect = updatedQuizQuestions.every(q => q.isCorrect);
-
-        return {
-            ...prevState,
-            quizQuestions: updatedQuizQuestions,
-            documentsUnlocked: allCorrect,
-        };
+        return { ...prevState, quizQuestions: updatedQuizQuestions, documentsUnlocked: allCorrect };
     });
   };
 
-const contextValue = { 
+  // Передаем объект напрямую без useMemo для исключения блокировок
+  const contextValue = { 
       state: appState, 
       setAppState, 
       handleQuizAnswer 
@@ -114,8 +82,25 @@ const contextValue = {
   return (
     <AppContext.Provider value={contextValue}>
         <Router>
-            <div className="app-container">
-                <div className="content-area" style={{ paddingBottom: '70px' }}>
+            {/* Используем Flex-контейнер на весь экран */}
+            <div className="app-wrapper" style={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                height: '100vh', 
+                width: '100vw',
+                overflow: 'hidden',
+                position: 'fixed',
+                top: 0,
+                left: 0
+            }}>
+                {/* Область контента занимает всё свободное место */}
+                <main className="content-area" style={{ 
+                    flex: 1, 
+                    overflowY: 'auto', 
+                    WebkitOverflowScrolling: 'touch',
+                    position: 'relative',
+                    zIndex: 1
+                }}>
                     <Routes>
                         <Route path="/" element={<HomeScreen />} />
                         <Route path="/plan" element={<PlanScreen />} />
@@ -123,10 +108,14 @@ const contextValue = {
                         <Route path="/diary" element={<DiaryScreen />} />
                         <Route path="/phrases" element={<PhrasebookScreen />} />
                         <Route path="/chat" element={<AIChatScreen />} />
-                        <Route path="*" element={<div>404 | Страница не найдена</div>} />
+                        <Route path="*" element={<div>404</div>} />
                     </Routes>
-                </div>
-                <BottomNav />
+                </main>
+
+                {/* Навигация жестко прижата к низу и не перекрывает контент */}
+                <footer style={{ flexShrink: 0, zIndex: 10 }}>
+                    <BottomNav />
+                </footer>
             </div>
         </Router>
     </AppContext.Provider>
