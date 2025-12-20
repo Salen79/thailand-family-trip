@@ -1,6 +1,6 @@
 import { useState, createContext, useContext, useMemo } from 'react';
 import type { Dispatch, SetStateAction } from 'react'; 
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import { appStateData } from './data/initialState.ts';
 import './App.css'; 
 
@@ -12,7 +12,6 @@ import { DiaryScreen } from './screens/DiaryScreen';
 import { PhrasebookScreen } from './screens/PhrasebookScreen';
 import { BottomNav } from './components/BottomNav';
 
-// --- КОНТЕКСТ ---
 interface AppContextType {
     state: AppState;
     setAppState: Dispatch<SetStateAction<AppState>>;
@@ -21,20 +20,12 @@ interface AppContextType {
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);
 
-// Упрощенный хук: теперь не нужно передавать AppContext как аргумент
+// Хук без аргументов
 export const useAppStateContext = () => { 
     const ctx = useContext(AppContext);
     if (!ctx) throw new Error('useAppStateContext must be used within a Provider');
     return ctx; 
 };
-
-// --- ГЛАВНОЕ ПРИЛОЖЕНИЕ ---
-const AIChatScreen = () => (
-    <div style={{ padding: '20px', textAlign: 'center' }}>
-        <h2>AI-Ассистент 🤖</h2>
-        <Link to="/">← На главную</Link>
-    </div>
-);
 
 function App() {
   const [appState, setAppState] = useState<AppState>(({
@@ -54,8 +45,7 @@ function App() {
   }));
   
   const handleQuizAnswer = (quizId: number, answerKey: string) => {
-    console.log(`[QUIZ] Обработка: вопрос ${quizId}, ответ ${answerKey}`);
-    
+    console.log("Клик дошел до App.tsx!", quizId, answerKey);
     setAppState(prevState => {
         const updatedQuestions = prevState.quizQuestions.map(q => {
             if (q.id === quizId) {
@@ -68,19 +58,11 @@ function App() {
             }
             return q;
         });
-
         const allCorrect = updatedQuestions.every(q => q.isCorrect === true);
-        
-        return {
-            ...prevState,
-            quizQuestions: updatedQuestions,
-            documentsUnlocked: allCorrect,
-        };
+        return { ...prevState, quizQuestions: updatedQuestions, documentsUnlocked: allCorrect };
     });
   };
 
-  // Используем useMemo правильно, чтобы не пересоздавать объект зря, 
-  // но следим за изменением appState
   const contextValue = useMemo(() => ({ 
       state: appState, 
       setAppState, 
@@ -98,7 +80,7 @@ function App() {
                         <Route path="/quiz" element={<QuizScreen />} />
                         <Route path="/diary" element={<DiaryScreen />} />
                         <Route path="/phrases" element={<PhrasebookScreen />} />
-                        <Route path="/chat" element={<AIChatScreen />} />
+                        <Route path="/chat" element={<div>Чат</div>} />
                         <Route path="*" element={<div>404</div>} />
                     </Routes>
                 </main>
