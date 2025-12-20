@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
-import { useAppStateContext, AppContext } from '../App'; // <-- ИСПРАВЛЕНИЕ: Импортируем AppContext
+import { useAppStateContext} from '../App'; // <-- ИСПРАВЛЕНИЕ: Импортируем AppContext
 
 export const HomeScreen = () => {
     // ИСПРАВЛЕНИЕ: Передаем AppContext в хук
-    const { state } = useAppStateContext(AppContext);
+    const { state } = useAppStateContext();
     const currentUser = state.familyMembers[state.currentFamily];
 
     // Временно жестко заданная функция-заглушка для обратного отсчета
