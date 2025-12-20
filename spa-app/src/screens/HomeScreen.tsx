@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useAppStateContext } from '../App';
+import { useAppStateContext } from '../context/AppContext';
 import './HomeScreen.css';
 
 export const HomeScreen = () => {
@@ -11,7 +11,7 @@ export const HomeScreen = () => {
     // Установлена дата: 2025 год, 11 (декабрь), 28 число, 18:00:00
     const targetDate = new Date(2025, 11, 28, 18, 0, 0).getTime();
     
-    const [timeLeft, setTimeLeft] = useState(targetDate - Date.now());
+    const [timeLeft, setTimeLeft] = useState(() => targetDate - Date.now());
 
     useEffect(() => {
         const timer = setInterval(() => {

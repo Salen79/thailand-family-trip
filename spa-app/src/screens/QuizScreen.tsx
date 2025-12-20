@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { useAppStateContext } from '../App'; // Обратите внимание: импортируем только хук
+import { useAppStateContext } from '../context/AppContext'; // Обратите внимание: импортируем только хук
 import { useNavigate } from 'react-router-dom';
 import './QuizScreen.css';
 
