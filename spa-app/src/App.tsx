@@ -1,4 +1,4 @@
-import { useState, createContext, useMemo, useContext } from 'react';
+import { useState, createContext, useContext } from 'react';
 import type { Dispatch, SetStateAction, Context } from 'react'; 
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { appStateData } from './data/initialState.ts';
@@ -105,12 +105,11 @@ function App() {
     });
   };
 
-  // Передаем логику квиза через контекст
-  const contextValue = useMemo(() => ({ 
+const contextValue = { 
       state: appState, 
       setAppState, 
       handleQuizAnswer 
-  }), [appState]);
+  };
 
   return (
     <AppContext.Provider value={contextValue}>
