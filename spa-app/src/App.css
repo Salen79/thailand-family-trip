@@ -40,3 +40,16 @@
 .read-the-docs {
   color: #888;
 }
+/* В конец файла spa-app/src/App.css */
+
+.content-area {
+    min-height: 100vh;
+    background-color: #242424; /* Принудительный фон приложения */
+    position: relative;
+    z-index: 1;
+}
+
+/* Убираем возможные перекрытия от навигации */
+nav, .bottom-nav {
+    z-index: 1000;
+}
