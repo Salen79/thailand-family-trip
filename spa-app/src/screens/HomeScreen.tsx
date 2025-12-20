@@ -1,31 +1,82 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useAppStateContext} from '../App'; // <-- ИСПРАВЛЕНИЕ: Импортируем AppContext
+import { useAppStateContext } from '../App';
+import './HomeScreen.css';
 
 export const HomeScreen = () => {
-    // ИСПРАВЛЕНИЕ: Передаем AppContext в хук
     const { state } = useAppStateContext();
     const currentUser = state.familyMembers[state.currentFamily];
 
-    // Временно жестко заданная функция-заглушка для обратного отсчета
-    const countdownTimer = '10д 15ч 30м 45с';
+    // --- ЛОГИКА ТАЙМЕРА ---
+    // Установлена дата: 2025 год, 11 (декабрь), 28 число, 18:00:00
+    const targetDate = new Date(2025, 11, 28, 18, 0, 0).getTime();
+    
+    const [timeLeft, setTimeLeft] = useState(targetDate - Date.now());
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            const difference = targetDate - Date.now();
+            setTimeLeft(difference);
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [targetDate]);
+
+    const formatTime = (time: number) => {
+        if (time <= 0) return "Путешествие началось! 🎉";
+
+        const days = Math.floor(time / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((time % (1000 * 60)) / 1000);
+
+        return `${days}д ${hours.toString().padStart(2, '0')}ч ${minutes.toString().padStart(2, '0')}м ${seconds.toString().padStart(2, '0')}с`;
+    };
+
+    // --- ЛОГИКА ТЕКУЩЕЙ ДАТЫ ---
+    const today = new Date();
+    const dateOptions: Intl.DateTimeFormatOptions = { weekday: 'long', day: 'numeric', month: 'long' };
+    const formattedDate = today.toLocaleDateString('ru-RU', dateOptions);
+    const capitalizedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
 
     return (
         <div className="home-screen">
-            <div className="home-hero" style={{ background: '#FF6B35', color: 'white', padding: '32px 16px', textAlign: 'center' }}>
+            <div className="home-hero">
+                <div className="today-date">Сегодня {capitalizedDate}</div>
                 <h1>Привет, {currentUser.name}! 👋</h1>
-                <p>Новый год 2026 в Тайланде</p>
-                <div className="countdown" style={{ background: 'rgba(255, 255, 255, 0.2)', padding: '20px', borderRadius: '16px', margin: '24px 0' }}>
-                    <div className="countdown-label" style={{ fontSize: '12px', textTransform: 'uppercase', marginBottom: '8px' }}>До начала путешествия</div>
-                    <div className="countdown-timer" style={{ fontSize: '24px', fontWeight: '700' }}>{countdownTimer}</div>
+                <p className="trip-target">Новый год 2026 в Тайланде</p>
+                
+                <div className="countdown-container">
+                    <div className="countdown-label">До начала путешествия</div>
+                    <div className="countdown-timer">
+                        {formatTime(timeLeft)}
+                    </div>
                 </div>
             </div>
 
-            <div className="modules-grid" style={{ padding: '24px 16px', display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
-                <Link to="/plan" className="module-card" style={{ padding: '20px', textAlign: 'center', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)', borderRadius: '12px', textDecoration: 'none', color: '#333' }}>
-                    <div className="module-icon" style={{ fontSize: '48px' }}>🗓️</div>
-                    <div className="module-title" style={{ fontSize: '14px', fontWeight: '600' }}>План поездки</div>
+            <div className="modules-grid">
+                <Link to="/plan" className="module-card">
+                    <div className="module-icon">🗓️</div>
+                    <div className="module-title">План поездки</div>
                 </Link>
-                {/* ... (остальные ссылки) ... */}
+
+                <Link to="/quiz" className="module-card">
+                    <div className="module-icon">🧩</div>
+                    <div className="module-title">Квиз</div>
+                    <div className="module-status">
+                        {state.documentsUnlocked ? '🔓 Открыто' : '🔒 Закрыто'}
+                    </div>
+                </Link>
+
+                <Link to="/diary" className="module-card">
+                    <div className="module-icon">📖</div>
+                    <div className="module-title">Дневник</div>
+                </Link>
+
+                <Link to="/phrases" className="module-card">
+                    <div className="module-icon">🗣️</div>
+                    <div className="module-title">Разговорник</div>
+                </Link>
             </div>
         </div>
     );
