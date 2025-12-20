@@ -1,66 +1,74 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { AppContext, useAppStateContext } from '../App';
+import { useNavigate } from 'react-router-dom';
+import './QuizScreen.css';
 
 export const QuizScreen: React.FC = () => {
-    // Достаем состояние и функцию обработки ответа из нашего контекста
     const { state, handleQuizAnswer } = useAppStateContext(AppContext);
+    const navigate = useNavigate();
+
+    // Расчет прогресса для шкалы
+    const answeredCount = useMemo(() => 
+        state.quizQuestions.filter(q => q.isAnswered).length, 
+    [state.quizQuestions]);
+    
+    const progressWidth = (answeredCount / state.quizQuestions.length) * 100;
 
     return (
-        <div className="quiz-screen" style={{ padding: '20px', color: '#fff' }}>
-            <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Семейный Квиз 🧩</h1>
-            
-            {state.quizQuestions.map((q) => (
-                <div key={q.id} className="quiz-card" style={{
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    borderRadius: '15px',
-                    padding: '15px',
-                    marginBottom: '20px',
-                    border: q.isAnswered ? (q.isCorrect ? '2px solid #4CAF50' : '2px solid #f44336') : '1px solid #ccc'
-                }}>
-                    <h3>Вопрос {q.id}: {q.question}</h3>
-                    
-                    <div className="answers-grid" style={{ display: 'grid', gap: '10px', marginTop: '15px' }}>
-                        {Object.entries(q.answers).map(([key, value]) => (
-                            <button
-                                key={key}
-                                onClick={() => !q.isAnswered && handleQuizAnswer(q.id, key)}
-                                disabled={q.isAnswered}
-                                style={{
-                                    padding: '10px',
-                                    borderRadius: '8px',
-                                    border: 'none',
-                                    cursor: q.isAnswered ? 'default' : 'pointer',
-                                    backgroundColor: q.userAnswer === key 
-                                        ? (q.isCorrect ? '#4CAF50' : '#f44336') 
-                                        : '#fff',
-                                    color: q.userAnswer === key ? '#fff' : '#333',
-                                    transition: 'all 0.3s ease'
-                                }}
-                            >
-                                {value}
-                            </button>
-                        ))}
-                    </div>
-
-                    {q.isAnswered && (
-                        <p style={{ marginTop: '10px', fontWeight: 'bold', textAlign: 'center' }}>
-                            {q.isCorrect ? '✅ Правильно!' : `❌ Ошибка. Правильный ответ: ${q.answers[q.correctAnswer]}`}
-                        </p>
-                    )}
+        <div className="quiz-container">
+            {/* Header с прогресс-баром */}
+            <div className="quiz-header">
+                <div className="progress-info">
+                    <span>Выполнено: {answeredCount} из {state.quizQuestions.length}</span>
                 </div>
-            ))}
+                <div className="progress-bar-container">
+                    <div className="progress-bar-fill" style={{ width: `${progressWidth}%` }}></div>
+                </div>
+                <h1 className="quiz-title">Семейный Квиз 🧩</h1>
+            </div>
 
+            <div className="questions-list">
+                {state.quizQuestions.map((q) => (
+                    <div key={q.id} className={`quiz-card ${q.isAnswered ? (q.isCorrect ? 'correct' : 'wrong') : ''}`}>
+                        <h3 className="question-text">Вопрос {q.id}: {q.question}</h3>
+                        
+                        <div className="answers-grid">
+                            {Object.entries(q.answers).map(([key, value]) => (
+                                <button
+                                    key={key}
+                                    className={`answer-button ${q.userAnswer === key ? 'selected' : ''}`}
+                                    onClick={() => {
+                                        console.log(`Клик по вопросу ${q.id}, ответ: ${key}`);
+                                        handleQuizAnswer(q.id, key);
+                                    }}
+                                    disabled={q.isAnswered}
+                                >
+                                    {value}
+                                </button>
+                            ))}
+                        </div>
+
+                        {q.isAnswered && (
+                            <div className="result-feedback">
+                                {q.isCorrect ? '✅ Правильно!' : `❌ Ошибка. Верно: ${q.answers[q.correctAnswer]}`}
+                            </div>
+                        )}
+                    </div>
+                ))}
+            </div>
+
+            {/* Золотая карточка награды */}
             {state.documentsUnlocked && (
-                <div style={{
-                    marginTop: '30px',
-                    padding: '20px',
-                    backgroundColor: '#FFD700',
-                    color: '#000',
-                    borderRadius: '10px',
-                    textAlign: 'center',
-                    fontWeight: 'bold'
-                }}>
-                    🎉 УРА! Все документы разблокированы! Теперь проверьте раздел "План".
+                <div className="golden-card-overlay">
+                    <div className="golden-card">
+                        <div className="golden-content">
+                            <h2>🎉 УРА!</h2>
+                            <p>Вы подготовились к поездке. Документы разблокированы!</p>
+                            <button className="gold-action-button" onClick={() => navigate('/plan')}>
+                                Перейти в План →
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

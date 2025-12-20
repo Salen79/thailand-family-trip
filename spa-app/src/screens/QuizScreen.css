@@ -1,0 +1,118 @@
+.quiz-container {
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+    color: white;
+}
+
+.quiz-header {
+    text-align: center;
+    margin-bottom: 30px;
+    position: sticky;
+    top: 0;
+    background: #1a1a1a;
+    padding: 10px 0;
+    z-index: 10;
+}
+
+.progress-info {
+    font-size: 0.9rem;
+    color: #aaa;
+    margin-bottom: 8px;
+}
+
+.progress-bar-container {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4caf50, #8bc34a);
+    transition: width 0.5s ease-out;
+}
+
+.quiz-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.quiz-card.correct { border-color: #4caf50; box-shadow: 0 0 15px rgba(76, 175, 80, 0.2); }
+.quiz-card.wrong { border-color: #f44336; box-shadow: 0 0 15px rgba(244, 67, 54, 0.2); }
+
+.answers-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.answer-button {
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    background: white;
+    color: #333;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.answer-button:active { transform: scale(0.95); }
+.answer-button:disabled { cursor: default; opacity: 0.7; }
+
+.answer-button.selected {
+    background: #333;
+    color: white;
+}
+
+.result-feedback {
+    margin-top: 15px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+/* Золотая карточка */
+.golden-card-overlay {
+    margin-top: 40px;
+    padding-bottom: 40px;
+    animation: slideUp 0.5s ease-out;
+}
+
+.golden-card {
+    background: linear-gradient(135deg, #ffd700, #ffb900);
+    border-radius: 20px;
+    padding: 3px; /* Ободок */
+}
+
+.golden-content {
+    background: #1a1a1a;
+    border-radius: 18px;
+    padding: 25px;
+    text-align: center;
+    color: #ffd700;
+}
+
+.gold-action-button {
+    margin-top: 15px;
+    padding: 12px 24px;
+    background: #ffd700;
+    color: black;
+    border: none;
+    border-radius: 30px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
