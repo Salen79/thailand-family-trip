@@ -7,9 +7,9 @@ export const QuizScreen: React.FC = () => {
     const { state, handleQuizAnswer } = useAppStateContext(AppContext);
     const navigate = useNavigate();
 
-    // Проверка загрузки данных
+    // Проверка загрузки данных в консоли браузера
     useEffect(() => {
-        console.log("QuizScreen: Данные квиза", state.quizQuestions);
+        console.log("QuizScreen: Данные квиза загружены", state.quizQuestions);
     }, [state.quizQuestions]);
 
     const answeredCount = useMemo(() => 
@@ -19,7 +19,7 @@ export const QuizScreen: React.FC = () => {
     const progressWidth = (answeredCount / state.quizQuestions.length) * 100;
 
     return (
-        <div className="quiz-container">
+        <div className="quiz-container" style={{ position: 'relative', zIndex: 10 }}>
             <div className="quiz-header">
                 <div className="progress-info">
                     Прогресс: {answeredCount} из {state.quizQuestions.length}
@@ -35,17 +35,32 @@ export const QuizScreen: React.FC = () => {
                     <div key={q.id} className={`quiz-card ${q.isAnswered ? (q.isCorrect ? 'correct' : 'wrong') : ''}`}>
                         <h3 className="question-text">{q.question}</h3>
                         
-                        <div className="answers-grid">
+                        <div className="answers-grid" style={{ pointerEvents: 'auto' }}>
                             {Object.entries(q.answers).map(([key, value]) => (
                                 <button
                                     key={key}
                                     className={`answer-button ${q.userAnswer === key ? 'selected' : ''}`}
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        console.log("Клик зафиксирован:", value);
-                                        handleQuizAnswer(q.id, key);
+                                    // Используем onPointerDown для мгновенного отклика на iPhone
+                                    onPointerDown={() => {
+                                        if (!q.isAnswered) {
+                                            console.log("Касание (PointerDown):", value);
+                                            handleQuizAnswer(q.id, key);
+                                        }
+                                    }}
+                                    // Дублируем кликом для десктопа
+                                    onClick={() => {
+                                        if (!q.isAnswered) {
+                                            console.log("Клик (Click):", value);
+                                            handleQuizAnswer(q.id, key);
+                                        }
                                     }}
                                     disabled={q.isAnswered}
+                                    style={{ 
+                                        cursor: 'pointer', 
+                                        pointerEvents: 'auto', 
+                                        touchAction: 'manipulation',
+                                        zIndex: 20
+                                    }}
                                 >
                                     {value}
                                 </button>
@@ -67,7 +82,11 @@ export const QuizScreen: React.FC = () => {
                         <div className="golden-content">
                             <h2>🎉 ПУТЕШЕСТВИЕ НАЧИНАЕТСЯ!</h2>
                             <p>Вы успешно прошли проверку. Все документы доступны в плане!</p>
-                            <button className="gold-action-button" onClick={() => navigate('/plan')}>
+                            <button 
+                                className="gold-action-button" 
+                                onClick={() => navigate('/plan')}
+                                style={{ cursor: 'pointer', pointerEvents: 'auto' }}
+                            >
                                 Открыть План →
                             </button>
                         </div>
