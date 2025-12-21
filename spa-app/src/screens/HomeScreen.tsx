@@ -32,12 +32,23 @@ export const HomeScreen = () => {
     // Проверка на приближающиеся дни рождения
     const getUpcomingBirthday = () => {
         const today = new Date();
+        const currentYear = today.getFullYear();
+        
         const upcomingBirthdays = state.familyMembers.filter(member => {
             if (!member.birthday) return false;
-            const birthday = new Date(member.birthday);
-            const daysUntil = Math.ceil((birthday.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+            
+            // Создаём дату дня рождения в текущем году
+            const originalBirthday = new Date(member.birthday);
+            const birthdayThisYear = new Date(
+                currentYear,
+                originalBirthday.getMonth(),
+                originalBirthday.getDate()
+            );
+            
+            const daysUntil = Math.ceil((birthdayThisYear.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
             return daysUntil >= 0 && daysUntil <= 10; // Показываем за 10 дней
         });
+        
         return upcomingBirthdays[0];
     };
 
@@ -140,7 +151,7 @@ export const HomeScreen = () => {
                     </div>
                     {!state.documentsUnlocked && (
                         <div className="quiz-progress">
-                            {state.quizQuestions.filter(q => q.isCorrect).length}/{state.quizQuestions.length} ответов
+                            {completedQuizCount}/{totalQuizCount} ответов
                         </div>
                     )}
                 </Link>
