@@ -249,6 +249,52 @@
     line-height: 1.5;
 }
 
+.progress-card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.progress-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: #2d3142;
+}
+
+.progress-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: #5c6470;
+}
+
+.progress-value {
+    color: #ff6b35;
+    font-weight: 800;
+}
+
+.progress-bar {
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ff6b35 0%, #ff8a50 100%);
+    transition: width 0.4s ease;
+    border-radius: 8px;
+}
+
 @media (min-width: 768px) {
     .daily-widget {
         grid-template-columns: 1.1fr 0.9fr;

@@ -50,6 +50,14 @@ export const HomeScreen = () => {
         }));
     };
 
+    // --- ЛОГИКА ПРОГРЕССА ---
+    const quizAnswered = state.quizQuestions.filter(q => q.isAnswered).length;
+    const quizProgress = Math.round((quizAnswered / state.quizQuestions.length) * 100);
+    const diaryEntries = 1; // Пока захардкодим, позже будет из состояния
+    const diaryProgress = Math.round((diaryEntries / 10) * 100);
+    const phrasesLearned = 5; // Пока захардкодим
+    const phrasesProgress = Math.round((phrasesLearned / 30) * 100);
+
     // --- ЛОГИКА ТАЙМЕРА ---
     // Установлена дата: 2025 год, 11 (декабрь), 28 число, 18:00:00
     const targetDate = new Date(2025, 11, 28, 18, 0, 0).getTime();
@@ -142,8 +150,20 @@ export const HomeScreen = () => {
                             </a>
                         </div>
                     ) : (
-                        <div className="widget-card info-card">
-                            <div className="info-text">Каждый день новое фото, цитата и погода — вдохновение перед приключением.</div>
+                        <div className="widget-card progress-card">
+                            <div className="progress-title">Прогресс подготовки 🚀</div>
+                            <div className="progress-item">
+                                <div className="progress-label"><span>🧩 Квиз</span><span className="progress-value">{quizAnswered}/{state.quizQuestions.length}</span></div>
+                                <div className="progress-bar"><div className="progress-fill" style={{ width: `${quizProgress}%` }}></div></div>
+                            </div>
+                            <div className="progress-item">
+                                <div className="progress-label"><span>📔 Дневник</span><span className="progress-value">{diaryEntries}/10</span></div>
+                                <div className="progress-bar"><div className="progress-fill" style={{ width: `${diaryProgress}%` }}></div></div>
+                            </div>
+                            <div className="progress-item">
+                                <div className="progress-label"><span>🗣️ Фразы</span><span className="progress-value">{phrasesLearned}/30</span></div>
+                                <div className="progress-bar"><div className="progress-fill" style={{ width: `${phrasesProgress}%` }}></div></div>
+                            </div>
                         </div>
                     )}
                 </div>
