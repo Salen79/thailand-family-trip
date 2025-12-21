@@ -82,6 +82,197 @@
     gap: 16px;
 }
 
+.daily-widget {
+    padding: 24px 16px 32px;
+    display: grid;
+    gap: 16px;
+}
+
+.widget-photo {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    min-height: 200px;
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+.widget-photo-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.65) 100%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 20px;
+    gap: 6px;
+}
+
+.photo-label {
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    opacity: 0.9;
+}
+
+.photo-title {
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.photo-location {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.widget-content {
+    display: grid;
+    gap: 12px;
+}
+
+.widget-card {
+    background: white;
+    border-radius: 20px;
+    padding: 16px 18px;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.weather-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.weather-label {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #5c6470;
+    font-weight: 700;
+}
+
+.weather-temp {
+    font-size: 28px;
+    font-weight: 800;
+    color: #2d3142;
+}
+
+.weather-sub {
+    font-size: 14px;
+    color: #555;
+}
+
+.weather-meta {
+    text-align: right;
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.5;
+}
+
+.wisdom-label {
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #5c6470;
+    font-weight: 700;
+}
+
+.wisdom-text {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f2937;
+    line-height: 1.4;
+}
+
+.birthday-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #ff8fb1 0%, #ff6b6b 100%);
+    color: white;
+    box-shadow: 0 12px 28px rgba(255, 107, 107, 0.25);
+}
+
+.birthday-left {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.birthday-emoji {
+    font-size: 32px;
+}
+
+.birthday-title {
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.birthday-sub {
+    font-size: 13px;
+    opacity: 0.92;
+}
+
+.birthday-button {
+    background: white;
+    color: #ff4d6d;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.birthday-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.16);
+}
+
+.info-card {
+    color: #374151;
+}
+
+.info-text {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+@media (min-width: 768px) {
+    .daily-widget {
+        grid-template-columns: 1.1fr 0.9fr;
+        align-items: stretch;
+    }
+
+    .widget-content {
+        grid-template-rows: auto auto 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .weather-top {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .birthday-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .birthday-button {
+        width: 100%;
+        text-align: center;
+    }
+}
+
 .module-card {
     background: white;
     padding: 24px 16px;
