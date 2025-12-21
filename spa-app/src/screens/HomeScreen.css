@@ -92,10 +92,14 @@
     position: relative;
     border-radius: 24px;
     overflow: hidden;
-    min-height: 200px;
+    min-height: 280px;
     background-size: cover;
     background-position: center;
+    background-repeat: no-repeat;
+    background-color: #667eea;
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+    width: 100%;
+    display: block;
 }
 
 .widget-photo-overlay {
