@@ -1,11 +1,41 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { useAppStateContext } from '../context/AppContext';
 import './HomeScreen.css';
 
 export const HomeScreen = () => {
     const { state, setAppState } = useAppStateContext();
     const currentUser = state.familyMembers[state.currentFamily];
+
+    // Данные для ежедневного виджета
+    const photoPool = [
+        { url: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=1200', title: 'Закат над Чао Прайя', location: 'Бангкок' },
+        { url: 'https://images.unsplash.com/photo-1563492065213-f0e6c7d29e52?w=1200', title: 'Изумрудный Будда', location: 'Большой Королевский дворец' },
+        { url: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1200', title: 'Субботний шум', location: 'Рынок Чатучак' },
+        { url: 'https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=1200', title: 'Тайский шелк и сады', location: 'Дом Джима Томпсона' },
+        { url: 'https://images.unsplash.com/photo-1578986175247-7d60c6df07e7?w=1200', title: 'Неон и уличная еда', location: 'Khao San Road' }
+    ];
+
+    const weatherPool = [
+        { temp: 33, feels: 37, condition: 'Солнечно', icon: '☀️', uv: 10, humidity: 58 },
+        { temp: 31, feels: 35, condition: 'Переменная облачность', icon: '🌤️', uv: 8, humidity: 64 },
+        { temp: 30, feels: 33, condition: 'Лёгкий дождь', icon: '🌦️', uv: 7, humidity: 72 },
+        { temp: 32, feels: 36, condition: 'Жарко и влажно', icon: '🌡️', uv: 11, humidity: 70 }
+    ];
+
+    const wisdomPool = [
+        'Хорошие дела возвращаются к тому, кто их совершает.',
+        'Терпение — ключ к счастью.',
+        'Тот, кто знает, когда остановиться, избежит беды.',
+        'Счастье растёт там, где его делят.'
+    ];
+
+    const today = new Date();
+    const dayIndex = today.getDate();
+    const selectedPhoto = photoPool[dayIndex % photoPool.length];
+    const selectedWeather = weatherPool[dayIndex % weatherPool.length];
+    const selectedWisdom = wisdomPool[dayIndex % wisdomPool.length];
+    const isVarvaraBirthday = today.getMonth() === 11 && today.getDate() === 29; // 29 декабря
+    const birthdayVideoUrl = 'https://example.com/varvara-birthday-video'; // заменить на готовое видео
 
     const handleLogout = () => {
         // Удаляем данные из localStorage
@@ -47,7 +77,6 @@ export const HomeScreen = () => {
     };
 
     // --- ЛОГИКА ТЕКУЩЕЙ ДАТЫ ---
-    const today = new Date();
     const dateOptions: Intl.DateTimeFormatOptions = { weekday: 'long', day: 'numeric', month: 'long' };
     const formattedDate = today.toLocaleDateString('ru-RU', dateOptions);
     const capitalizedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
@@ -70,29 +99,54 @@ export const HomeScreen = () => {
                 </div>
             </div>
 
-            <div className="modules-grid">
-                <Link to="/plan" className="module-card">
-                    <div className="module-icon">🗓️</div>
-                    <div className="module-title">План поездки</div>
-                </Link>
-
-                <Link to="/quiz" className="module-card">
-                    <div className="module-icon">🧩</div>
-                    <div className="module-title">Квиз</div>
-                    <div className="module-status">
-                        {state.documentsUnlocked ? '🔓 Открыто' : '🔒 Закрыто'}
+            <div className="daily-widget">
+                <div className="widget-photo" style={{ backgroundImage: `url(${selectedPhoto.url})` }}>
+                    <div className="widget-photo-overlay">
+                        <div className="photo-label">Сегодня в Таиланде</div>
+                        <div className="photo-title">{selectedPhoto.title}</div>
+                        <div className="photo-location">{selectedPhoto.location}</div>
                     </div>
-                </Link>
+                </div>
 
-                <Link to="/diary" className="module-card">
-                    <div className="module-icon">📖</div>
-                    <div className="module-title">Дневник</div>
-                </Link>
+                <div className="widget-content">
+                    <div className="widget-card weather-card">
+                        <div className="weather-top">
+                            <div>
+                                <div className="weather-label">Погода сегодня · Бангкок</div>
+                                <div className="weather-temp">{selectedWeather.icon} {selectedWeather.temp}°C</div>
+                                <div className="weather-sub">Ощущается как {selectedWeather.feels}°C — {selectedWeather.condition}</div>
+                            </div>
+                            <div className="weather-meta">
+                                <div>UV {selectedWeather.uv}</div>
+                                <div>Влажность {selectedWeather.humidity}%</div>
+                            </div>
+                        </div>
+                    </div>
 
-                <Link to="/phrases" className="module-card">
-                    <div className="module-icon">🗣️</div>
-                    <div className="module-title">Разговорник</div>
-                </Link>
+                    <div className="widget-card wisdom-card">
+                        <div className="wisdom-label">Тайская мудрость дня</div>
+                        <div className="wisdom-text">“{selectedWisdom}”</div>
+                    </div>
+
+                    {isVarvaraBirthday ? (
+                        <div className="widget-card birthday-card">
+                            <div className="birthday-left">
+                                <div className="birthday-emoji">🎂</div>
+                                <div>
+                                    <div className="birthday-title">29 декабря — День Варвары!</div>
+                                    <div className="birthday-sub">Мы приготовили поздравление 💌</div>
+                                </div>
+                            </div>
+                            <a className="birthday-button" href={birthdayVideoUrl} target="_blank" rel="noreferrer">
+                                Смотреть видео
+                            </a>
+                        </div>
+                    ) : (
+                        <div className="widget-card info-card">
+                            <div className="info-text">Каждый день новое фото, цитата и погода — вдохновение перед приключением.</div>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );
