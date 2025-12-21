@@ -50,6 +50,40 @@ export const HomeScreen = () => {
         }));
     };
 
+    // Функция для получения приветствия в зависимости от времени суток
+    const getTimeBasedGreeting = () => {
+        const hour = new Date().getHours();
+        if (hour >= 5 && hour < 12) return 'Доброе утро';
+        if (hour >= 12 && hour < 17) return 'Добрый день';
+        if (hour >= 17 && hour < 23) return 'Добрый вечер';
+        return 'Доброй ночи';
+    };
+
+    // Проверка на приближающиеся дни рождения
+    const getUpcomingBirthday = () => {
+        const today = new Date();
+        const currentYear = today.getFullYear();
+        
+        const upcomingBirthdays = state.familyMembers.filter(member => {
+            if (!member.birthday) return false;
+            
+            // Создаём дату дня рождения в текущем году
+            const originalBirthday = new Date(member.birthday);
+            const birthdayThisYear = new Date(
+                currentYear,
+                originalBirthday.getMonth(),
+                originalBirthday.getDate()
+            );
+            
+            const daysUntil = Math.ceil((birthdayThisYear.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+            return daysUntil >= 0 && daysUntil <= 10; // Показываем за 10 дней
+        });
+        
+        return upcomingBirthdays[0];
+    };
+
+    const upcomingBirthday = getUpcomingBirthday();
+
     // --- ЛОГИКА ТАЙМЕРА ---
     // Установлена дата: 2025 год, 11 (декабрь), 28 число, 18:00:00
     const targetDate = new Date(2025, 11, 28, 18, 0, 0).getTime();
@@ -81,6 +115,11 @@ export const HomeScreen = () => {
     const formattedDate = today.toLocaleDateString('ru-RU', dateOptions);
     const capitalizedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
 
+    // Подсчёт статистики
+    const completedQuizCount = state.quizQuestions.filter(q => q.isCorrect).length;
+    const totalQuizCount = state.quizQuestions.length;
+    const quizProgress = totalQuizCount > 0 ? Math.round((completedQuizCount / totalQuizCount) * 100) : 0;
+
     return (
         <div className="home-screen">
             <div className="home-hero">
@@ -88,9 +127,15 @@ export const HomeScreen = () => {
                     Выйти
                 </button>
                 <div className="today-date">Сегодня {capitalizedDate}</div>
-                <h1>Привет, {currentUser.name}! 👋</h1>
+                <h1>{getTimeBasedGreeting()}, {currentUser.name}! 👋</h1>
                 <p className="trip-target">Новый год 2026 в Тайланде</p>
                 
+                {upcomingBirthday && (
+                    <div className="birthday-reminder">
+                        🎂 Скоро день рождения у {upcomingBirthday.name}!
+                    </div>
+                )}
+
                 <div className="countdown-container">
                     <div className="countdown-label">До начала путешествия</div>
                     <div className="countdown-timer">
@@ -99,6 +144,46 @@ export const HomeScreen = () => {
                 </div>
             </div>
 
+            <div className="stats-section">
+                <div className="stat-item">
+                    <div className="stat-icon">📍</div>
+                    <div className="stat-value">{state.places.length}</div>
+                    <div className="stat-label">Мест для посещения</div>
+                </div>
+                <div className="stat-item">
+                    <div className="stat-icon">🎯</div>
+                    <div className="stat-value">{quizProgress}%</div>
+                    <div className="stat-label">Прогресс квиза</div>
+                </div>
+                <div className="stat-item">
+                    <div className="stat-icon">👨‍👩‍👧‍👦</div>
+                    <div className="stat-value">{state.familyMembers.length}</div>
+                    <div className="stat-label">Участников</div>
+                </div>
+            </div>
+
+            <div className="section-header">
+                <h2>Разделы приложения</h2>
+            </div>
+
+            <div className="modules-grid">
+                <Link to="/plan" className="module-card">
+                    <div className="module-icon">🗓️</div>
+                    <div className="module-title">План поездки</div>
+                </Link>
+
+                <Link to="/quiz" className="module-card">
+                    <div className="module-icon">🧩</div>
+                    <div className="module-title">Квиз</div>
+                    <div className="module-status">
+                        {state.documentsUnlocked ? '🔓 Открыто' : '🔒 Закрыто'}
+                    </div>
+                    {!state.documentsUnlocked && (
+                        <div className="quiz-progress">
+                            {completedQuizCount}/{totalQuizCount} ответов
+                        </div>
+                    )}
+                </Link>
             <div className="daily-widget">
                 <div className="widget-photo" style={{ backgroundImage: `url(${selectedPhoto.url})` }}>
                     <div className="widget-photo-overlay">
