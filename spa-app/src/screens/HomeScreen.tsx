@@ -8,11 +8,11 @@ export const HomeScreen = () => {
 
     // Данные для ежедневного виджета
     const photoPool = [
-        { url: 'https://images.pexels.com/photos/3243/thailand-architecture-building.jpg?w=1200', title: 'Закат над Чао Прайя', location: 'Бангкок' },
-        { url: 'https://images.pexels.com/photos/3944688/pexels-photo-3944688.jpeg?w=1200', title: 'Изумрудный Будда', location: 'Большой Королевский дворец' },
-        { url: 'https://images.pexels.com/photos/4006374/pexels-photo-4006374.jpeg?w=1200', title: 'Субботний шум', location: 'Рынок Чатучак' },
-        { url: 'https://images.pexels.com/photos/1266810/pexels-photo-1266810.jpeg?w=1200', title: 'Тайский шелк и сады', location: 'Дом Джима Томпсона' },
-        { url: 'https://images.pexels.com/photos/3944687/pexels-photo-3944687.jpeg?w=1200', title: 'Неон и уличная еда', location: 'Khao San Road' }
+        { url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Chao_Phraya_River_Bangkok_sunset.jpg/1280px-Chao_Phraya_River_Bangkok_sunset.jpg', title: 'Закат над Чао Прайя', location: 'Бангкок' },
+        { url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Grand_Palace_Bangkok.jpg/1280px-Grand_Palace_Bangkok.jpg', title: 'Изумрудный Будда', location: 'Большой Королевский дворец' },
+        { url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Chatuchak_Weekend_Market_Bangkok.jpg/1280px-Chatuchak_Weekend_Market_Bangkok.jpg', title: 'Субботний шум', location: 'Рынок Чатучак' },
+        { url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Jim_Thompson_House_Bangkok.jpg/1280px-Jim_Thompson_House_Bangkok.jpg', title: 'Тайский шелк и сады', location: 'Дом Джима Томпсона' },
+        { url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Khao_San_Road_Bangkok_night.jpg/1280px-Khao_San_Road_Bangkok_night.jpg', title: 'Неон и уличная еда', location: 'Khao San Road' }
     ];
 
     const weatherPool = [
