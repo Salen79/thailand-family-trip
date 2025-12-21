@@ -58,4 +58,6 @@ export interface AppState {
     quizQuestions: QuizQuestion[];
     documentsUnlocked: boolean;
     currentScreen: string;
+    isAuthenticated: boolean;
+    userPin?: string;
 }
