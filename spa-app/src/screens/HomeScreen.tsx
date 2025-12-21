@@ -4,8 +4,21 @@ import { useAppStateContext } from '../context/AppContext';
 import './HomeScreen.css';
 
 export const HomeScreen = () => {
-    const { state } = useAppStateContext();
+    const { state, setAppState } = useAppStateContext();
     const currentUser = state.familyMembers[state.currentFamily];
+
+    const handleLogout = () => {
+        // Удаляем данные из localStorage
+        localStorage.removeItem('thailand-trip-auth');
+        
+        // Сбрасываем состояние
+        setAppState(prev => ({
+            ...prev,
+            currentFamily: -1,
+            isAuthenticated: false,
+            userPin: undefined
+        }));
+    };
 
     // --- ЛОГИКА ТАЙМЕРА ---
     // Установлена дата: 2025 год, 11 (декабрь), 28 число, 18:00:00
@@ -42,6 +55,9 @@ export const HomeScreen = () => {
     return (
         <div className="home-screen">
             <div className="home-hero">
+                <button className="logout-button" onClick={handleLogout}>
+                    Выйти
+                </button>
                 <div className="today-date">Сегодня {capitalizedDate}</div>
                 <h1>Привет, {currentUser.name}! 👋</h1>
                 <p className="trip-target">Новый год 2026 в Тайланде</p>

@@ -1,8 +1,9 @@
 export const appStateData = {
   currentScreen: 'home',
-  currentFamily: 0,
+  currentFamily: -1,
   currentPhraseCategory: 'greetings',
   documentsUnlocked: false,
+  isAuthenticated: false,
   familyMembers: [
     { name: 'Сергей', role: 'Папа', emoji: '👨', birthday: null },
     { name: 'Алена', role: 'Мама', emoji: '👩', birthday: null },

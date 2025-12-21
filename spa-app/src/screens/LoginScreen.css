@@ -1,0 +1,190 @@
+.login-screen {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+}
+
+.login-header {
+    text-align: center;
+    color: white;
+    margin-bottom: 40px;
+}
+
+.login-header h1 {
+    font-size: 36px;
+    margin: 0 0 12px 0;
+}
+
+.login-header p {
+    font-size: 18px;
+    opacity: 0.9;
+    margin: 0;
+}
+
+.family-members-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.family-member-card {
+    background: white;
+    border: none;
+    border-radius: 24px;
+    padding: 32px 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.family-member-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.family-member-card:active {
+    transform: scale(0.98);
+}
+
+.member-emoji {
+    font-size: 64px;
+    margin-bottom: 8px;
+}
+
+.member-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+}
+
+.member-role {
+    font-size: 13px;
+    color: #666;
+}
+
+/* PIN Screen */
+.back-button {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 30px;
+    transition: all 0.2s;
+}
+
+.back-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.pin-header {
+    text-align: center;
+    color: white;
+    margin-bottom: 40px;
+}
+
+.selected-member-emoji {
+    font-size: 80px;
+    margin-bottom: 16px;
+}
+
+.pin-header h2 {
+    font-size: 28px;
+    margin: 0 0 8px 0;
+}
+
+.pin-header p {
+    font-size: 16px;
+    opacity: 0.9;
+    margin: 0;
+}
+
+.pin-input-container {
+    margin-bottom: 24px;
+}
+
+.pin-input {
+    width: 100%;
+    padding: 20px;
+    font-size: 32px;
+    text-align: center;
+    border: none;
+    border-radius: 16px;
+    letter-spacing: 12px;
+    font-weight: 700;
+    outline: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.pin-input::placeholder {
+    letter-spacing: 8px;
+}
+
+.pin-error {
+    color: #ff6b6b;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 12px;
+    border-radius: 12px;
+    margin-top: 12px;
+    font-size: 14px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.login-button {
+    width: 100%;
+    padding: 18px;
+    background: white;
+    border: none;
+    border-radius: 16px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #667eea;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.login-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.login-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pin-hint {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 13px;
+    margin-top: 16px;
+    line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .family-members-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .member-emoji {
+        font-size: 56px;
+    }
+}
