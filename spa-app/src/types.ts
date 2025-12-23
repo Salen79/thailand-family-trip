@@ -23,9 +23,9 @@ export interface QuizQuestion {
     correctAnswer: string;
 
     // Свойства, добавляемые нашей логикой в App.tsx:
-    userAnswer?: string;
-    isAnswered?: boolean;
-    isCorrect?: boolean;
+    // Храним ответы каждого члена семьи по индексу
+    answersByUser: Record<number, string>; // familyIndex -> answerKey
+    isCorrectByUser: Record<number, boolean>; // familyIndex -> isCorrect
 }
 
 export interface FamilyMember {

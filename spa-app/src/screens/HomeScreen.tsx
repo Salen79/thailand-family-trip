@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAppStateContext } from '../context/AppContext';
 import './HomeScreen.css';
 
@@ -184,6 +185,8 @@ export const HomeScreen = () => {
                         </div>
                     )}
                 </Link>
+            </div>
+
             <div className="daily-widget">
                 <div className="widget-photo" style={{ backgroundImage: `url(${selectedPhoto.url})` }}>
                     <div className="widget-photo-overlay">
