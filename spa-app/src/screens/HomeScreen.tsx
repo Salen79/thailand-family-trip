@@ -117,7 +117,7 @@ export const HomeScreen = () => {
     const capitalizedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
 
     // Подсчёт статистики
-    const completedQuizCount = state.quizQuestions.filter(q => q.isCorrect).length;
+    const completedQuizCount = state.quizQuestions.filter(q => q.isCorrectByUser[state.currentFamily]).length;
     const totalQuizCount = state.quizQuestions.length;
     const quizProgress = totalQuizCount > 0 ? Math.round((completedQuizCount / totalQuizCount) * 100) : 0;
 
