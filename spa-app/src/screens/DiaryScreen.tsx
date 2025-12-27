@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAppStateContext } from '../context/AppContext';
 import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, Timestamp } from 'firebase/firestore';
-import { db } from '../firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { db, storage } from '../firebase';
 import type { DiaryPost } from '../types';
 import './DiaryScreen.css';
 
@@ -26,6 +27,54 @@ export const DiaryScreen = () => {
 
     const currentUser = state.familyMembers[state.currentFamily];
     const emojis = ['😊', '😍', '🤣', '😎', '🤔', '😴', '🤩', '🥳', '🤯', '🏖️', '🍜', '🐘'];
+
+    // Функция сжатия изображения
+    const compressImage = (file: File): Promise<Blob> => {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    
+                    // Максимальное разрешение: 1200px
+                    const maxWidth = 1200;
+                    const maxHeight = 1200;
+                    
+                    if (width > height) {
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+                    } else {
+                        if (height > maxHeight) {
+                            width = Math.round((width * maxHeight) / height);
+                            height = maxHeight;
+                        }
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    if (ctx) {
+                        ctx.drawImage(img, 0, 0, width, height);
+                    }
+                    
+                    canvas.toBlob(
+                        (blob) => {
+                            resolve(blob || file);
+                        },
+                        file.type || 'image/jpeg',
+                        0.8 // качество 80%
+                    );
+                };
+                img.src = event.target?.result as string;
+            };
+            reader.readAsDataURL(file);
+        });
+    };
 
     // Real-time subscription
     useEffect(() => {
@@ -67,26 +116,30 @@ export const DiaryScreen = () => {
         setIsSubmitting(true);
         
         try {
-            let mediaBase64: string | null = null;
-            let mediaMimeType: string = 'image/jpeg';
+            let mediaUrl: string | null = null;
             
-            // Convert image to base64 (no Firebase Storage upload - avoids CORS issues)
+            // Upload image to Firebase Storage
             if (mediaFile) {
-                mediaMimeType = mediaFile.type || 'image/jpeg';
+                setUploadProgress(10);
                 
-                await new Promise<void>((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => {
-                        mediaBase64 = reader.result as string;
-                        setUploadProgress(100);
-                        resolve();
-                    };
-                    reader.onerror = reject;
-                    reader.readAsDataURL(mediaFile);
-                });
+                // Сжимаем изображение
+                const compressedBlob = await compressImage(mediaFile);
+                setUploadProgress(50);
+                
+                // Загружаем в Storage
+                const timestamp = Date.now();
+                const fileName = `${state.currentFamily}_${timestamp}_${mediaFile.name}`;
+                const storageRef = ref(storage, `diary/${state.currentFamily}/${fileName}`);
+                
+                await uploadBytes(storageRef, compressedBlob);
+                setUploadProgress(80);
+                
+                // Получаем URL для скачивания
+                mediaUrl = await getDownloadURL(storageRef);
+                setUploadProgress(100);
             }
 
-            // Save to Firestore with base64 image data
+            // Save to Firestore with Storage URL
             await addDoc(collection(db, 'diary_posts'), {
                 author: {
                     id: String(state.currentFamily),
@@ -95,7 +148,7 @@ export const DiaryScreen = () => {
                 },
                 content,
                 emoji: selectedEmoji,
-                media: mediaBase64 ? { url: mediaBase64, type: 'image', mimeType: mediaMimeType } : null,
+                media: mediaUrl ? { url: mediaUrl, type: 'image' } : null,
                 timestamp: serverTimestamp()
             });
 
