@@ -6,7 +6,7 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
-    "public": "public",
+    "public": "spa-app/dist",
     "ignore": [
       "firebase.json",
       "**/.*",
