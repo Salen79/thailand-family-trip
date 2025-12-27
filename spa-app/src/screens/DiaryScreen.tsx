@@ -28,20 +28,45 @@ export const DiaryScreen = () => {
     const currentUser = state.familyMembers[state.currentFamily];
     const emojis = ['😊', '😍', '🤣', '😎', '🤔', '😴', '🤩', '🥳', '🤯', '🏖️', '🍜', '🐘'];
 
+    // Функция логирования
+    const addLog = (message: string) => {
+        const timestamp = new Date().toLocaleTimeString();
+        const logMessage = `[${timestamp}] ${message}`;
+        console.log(logMessage);
+    };
+
     // Функция сжатия изображения с динамическим качеством
     const compressImage = (file: File): Promise<Blob> => {
         return new Promise((resolve, reject) => {
+            addLog(`🖼️ Начало сжатия. Размер: ${(file.size / 1024 / 1024).toFixed(2)} MB`);
+            
+            // Если файл менее 2MB, отправляем как есть (для избежания зависания)
+            if (file.size < 2 * 1024 * 1024) {
+                addLog('✅ Файл < 2MB, используем оригинал');
+                resolve(new Blob([file], { type: file.type || 'image/jpeg' }));
+                return;
+            }
+
             const reader = new FileReader();
+            let readerTimeout: ReturnType<typeof setTimeout> | null = null;
+
             reader.onload = (event) => {
+                if (readerTimeout) clearTimeout(readerTimeout);
+                addLog('✅ FileReader завершен');
+                
                 const img = new Image();
+                let imageLoadTimeout: ReturnType<typeof setTimeout> | null = null;
+
                 img.onload = () => {
+                    if (imageLoadTimeout) clearTimeout(imageLoadTimeout);
+                    addLog(`📏 Исходное разрешение: ${img.width}x${img.height}`);
+                    
                     const canvas = document.createElement('canvas');
                     let width = img.width;
                     let height = img.height;
                     
-                    // Максимальное разрешение: 1200px
-                    const maxWidth = 1200;
-                    const maxHeight = 1200;
+                    const maxWidth = 1024;
+                    const maxHeight = 1024;
                     
                     if (width > height) {
                         if (width > maxWidth) {
@@ -55,45 +80,105 @@ export const DiaryScreen = () => {
                         }
                     }
                     
+                    addLog(`📐 Новое разрешение: ${width}x${height}`);
                     canvas.width = width;
                     canvas.height = height;
+                    
                     const ctx = canvas.getContext('2d');
-                    if (ctx) {
+                    if (!ctx) {
+                        addLog('❌ Не удалось получить canvas context');
+                        reject(new Error('Canvas context error'));
+                        return;
+                    }
+
+                    try {
                         ctx.drawImage(img, 0, 0, width, height);
+                    } catch (error) {
+                        addLog(`❌ Ошибка drawImage: ${error}`);
+                        reject(error);
+                        return;
                     }
                     
-                    // Динамическое качество в зависимости от размера файла
-                    let quality = 0.85; // Default качество
                     const fileSizeMB = file.size / (1024 * 1024);
+                    let quality = 0.7;
                     
                     if (fileSizeMB > 5) {
-                        quality = 0.60; // Большие файлы (>5MB) - качество 60%
+                        quality = 0.5;
                     } else if (fileSizeMB > 3) {
-                        quality = 0.75; // Средние файлы (3-5MB) - качество 75%
+                        quality = 0.6;
                     } else {
-                        quality = 0.90; // Маленькие файлы (<3MB) - качество 90%
+                        quality = 0.75;
                     }
                     
-                    canvas.toBlob(
-                        (blob) => {
-                            if (blob) {
-                                resolve(blob);
-                            } else {
-                                reject(new Error('Canvas blob conversion failed'));
-                            }
-                        },
-                        file.type || 'image/jpeg',
-                        quality
-                    );
+                    addLog(`🎯 Качество: ${(quality * 100).toFixed(0)}% для ${fileSizeMB.toFixed(2)} MB`);
+                    addLog('⏳ Начало toBlob()...');
+                    
+                    let blobTimeout: ReturnType<typeof setTimeout> | null = null;
+                    const blobPromise = new Promise<Blob>((blobResolve, blobReject) => {
+                        // Таймаут для toBlob (15 секунд)
+                        blobTimeout = setTimeout(() => {
+                            addLog('❌ toBlob() истёк таймаут (15s), используем fallback');
+                            // Fallback: используем canvas как есть с более низким качеством
+                            canvas.toBlob(
+                                (blob) => {
+                                    if (blob) {
+                                        blobResolve(blob);
+                                    } else {
+                                        blobReject(new Error('Canvas blob conversion failed'));
+                                    }
+                                },
+                                file.type || 'image/jpeg',
+                                0.4
+                            );
+                        }, 15000);
+
+                        canvas.toBlob(
+                            (blob) => {
+                                if (blobTimeout) clearTimeout(blobTimeout);
+                                
+                                if (blob) {
+                                    addLog(`✨ toBlob завершен! Новый размер: ${(blob.size / 1024 / 1024).toFixed(2)} MB`);
+                                    blobResolve(blob);
+                                } else {
+                                    addLog('❌ Canvas blob conversion failed');
+                                    blobReject(new Error('Canvas blob conversion failed'));
+                                }
+                            },
+                            file.type || 'image/jpeg',
+                            quality
+                        );
+                    });
+
+                    blobPromise.then(resolve).catch(reject);
                 };
+
                 img.onerror = () => {
+                    if (imageLoadTimeout) clearTimeout(imageLoadTimeout);
+                    addLog('❌ Image loading failed');
                     reject(new Error('Image loading failed'));
                 };
+
+                // Таймаут для загрузки изображения (10 секунд)
+                imageLoadTimeout = setTimeout(() => {
+                    addLog('❌ Image load истёк таймаут (10s)');
+                    reject(new Error('Image load timeout'));
+                }, 10000);
+
                 img.src = event.target?.result as string;
             };
+
             reader.onerror = () => {
+                if (readerTimeout) clearTimeout(readerTimeout);
+                addLog('❌ FileReader error');
                 reject(new Error('FileReader error'));
             };
+
+            // Таймаут для FileReader (5 секунд)
+            readerTimeout = setTimeout(() => {
+                addLog('❌ FileReader истёк таймаут (5s)');
+                reject(new Error('FileReader timeout'));
+            }, 5000);
+
             reader.readAsDataURL(file);
         });
     };
@@ -144,21 +229,31 @@ export const DiaryScreen = () => {
             if (mediaFile) {
                 setUploadProgress(10);
                 
-                // Сжимаем изображение
-                const compressedBlob = await compressImage(mediaFile);
-                setUploadProgress(50);
-                
-                // Загружаем в Storage
-                const timestamp = Date.now();
-                const fileName = `${state.currentFamily}_${timestamp}_${mediaFile.name}`;
-                const storageRef = ref(storage, `diary/${state.currentFamily}/${fileName}`);
-                
-                await uploadBytes(storageRef, compressedBlob);
-                setUploadProgress(80);
-                
-                // Получаем URL для скачивания
-                mediaUrl = await getDownloadURL(storageRef);
-                setUploadProgress(100);
+                try {
+                    // Сжимаем изображение с общим таймаутом
+                    const compressPromise = compressImage(mediaFile);
+                    const timeoutPromise = new Promise<Blob>((_, reject) =>
+                        setTimeout(() => reject(new Error('Сжатие изображения заняло слишком много времени. Попробуйте меньшее изображение.')), 30000)
+                    );
+                    
+                    const compressedBlob = await Promise.race([compressPromise, timeoutPromise]);
+                    setUploadProgress(50);
+                    
+                    // Загружаем в Storage
+                    const timestamp = Date.now();
+                    const fileName = `${state.currentFamily}_${timestamp}_${mediaFile.name}`;
+                    const storageRef = ref(storage, `diary/${state.currentFamily}/${fileName}`);
+                    
+                    await uploadBytes(storageRef, compressedBlob);
+                    setUploadProgress(80);
+                    
+                    // Получаем URL для скачивания
+                    mediaUrl = await getDownloadURL(storageRef);
+                    setUploadProgress(100);
+                } catch (compressionError) {
+                    addLog(`❌ Ошибка при обработке фото: ${compressionError instanceof Error ? compressionError.message : String(compressionError)}`);
+                    throw compressionError;
+                }
             }
 
             // Save to Firestore with Storage URL
@@ -229,7 +324,7 @@ export const DiaryScreen = () => {
                                     <div className="author-name">{post.author.name}</div>
                                     <div className="post-date">
                                         {post.timestamp && 'toDate' in post.timestamp 
-                                            ? formatTime(post.timestamp as any)
+                                            ? formatTime(post.timestamp as Timestamp)
                                             : 'Только что'}
                                     </div>
                                 </div>
