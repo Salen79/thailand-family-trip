@@ -50,11 +50,25 @@ export interface Place {
     emoji?: string;
 }
 
+export interface ItineraryEvent {
+    time: string;
+    title: string;
+    description?: string;
+    icon?: string;
+}
+
+export interface ItineraryDay {
+    date: string;
+    title: string;
+    events: ItineraryEvent[];
+}
+
 // Интерфейс для всей структуры данных приложения
 export interface AppState {
     currentFamily: number;
     familyMembers: FamilyMember[];
     places: Place[];
+    itinerary: ItineraryDay[];
     quizQuestions: QuizQuestion[];
     documentsUnlocked: boolean;
     currentScreen: string;
