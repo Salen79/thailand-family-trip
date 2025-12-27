@@ -2,14 +2,15 @@ import { initializeApp } from 'firebase/app';
 import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
-// TODO: Replace with your actual Firebase project configuration
+// Firebase project configuration
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
+  apiKey: "AIzaSyDJxXgS4184yrnExs7UF6sZm84o7wZpZYs",
   authDomain: "secret-bangkog.firebaseapp.com",
   projectId: "secret-bangkog",
-  storageBucket: "secret-bangkog.firebasestorage.app",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  storageBucket: "secret-bangkok.firebasestorage.app",
+  messagingSenderId: "895000271372",
+  appId: "1:895000271372:web:a0bbac71412a820a5eac29",
+  measurementId: "G-NLEQ5MN75P"
 };
 
 const app = initializeApp(firebaseConfig);

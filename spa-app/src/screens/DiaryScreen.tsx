@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAppStateContext } from '../context/AppContext';
 import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, Timestamp } from 'firebase/firestore';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '../firebase';
+import { db } from '../firebase';
 import type { DiaryPost } from '../types';
 import './DiaryScreen.css';
 
@@ -19,6 +18,9 @@ export const DiaryScreen = () => {
     const [mediaPreview, setMediaPreview] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
+    
+    // Full image viewer state
+    const [fullImageUrl, setFullImageUrl] = useState<string | null>(null);
     
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -65,30 +67,26 @@ export const DiaryScreen = () => {
         setIsSubmitting(true);
         
         try {
-            let mediaUrl = null;
+            let mediaBase64: string | null = null;
+            let mediaMimeType: string = 'image/jpeg';
             
-            // Upload image if exists
+            // Convert image to base64 (no Firebase Storage upload - avoids CORS issues)
             if (mediaFile) {
-                const fileName = `${Date.now()}_${mediaFile.name}`;
-                const storageRef = ref(storage, `diary/${state.currentFamily}/${fileName}`);
-                const uploadTask = uploadBytesResumable(storageRef, mediaFile);
+                mediaMimeType = mediaFile.type || 'image/jpeg';
                 
                 await new Promise<void>((resolve, reject) => {
-                    uploadTask.on('state_changed',
-                        (snapshot) => {
-                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                            setUploadProgress(progress);
-                        },
-                        (error) => reject(error),
-                        async () => {
-                            mediaUrl = await getDownloadURL(uploadTask.snapshot.ref);
-                            resolve();
-                        }
-                    );
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        mediaBase64 = reader.result as string;
+                        setUploadProgress(100);
+                        resolve();
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(mediaFile);
                 });
             }
 
-            // Save to Firestore
+            // Save to Firestore with base64 image data
             await addDoc(collection(db, 'diary_posts'), {
                 author: {
                     id: String(state.currentFamily),
@@ -97,8 +95,8 @@ export const DiaryScreen = () => {
                 },
                 content,
                 emoji: selectedEmoji,
-                media: mediaUrl ? { url: mediaUrl, type: 'image' } : null,
-                timestamp: serverTimestamp() // Use server timestamp
+                media: mediaBase64 ? { url: mediaBase64, type: 'image', mimeType: mediaMimeType } : null,
+                timestamp: serverTimestamp()
             });
 
             // Reset form
@@ -110,7 +108,8 @@ export const DiaryScreen = () => {
             
         } catch (error) {
             console.error("Error creating post:", error);
-            alert("Не удалось создать запись. Попробуйте еще раз.");
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            alert(`Ошибка: ${errorMessage}`);
         } finally {
             setIsSubmitting(false);
         }
@@ -159,16 +158,25 @@ export const DiaryScreen = () => {
                                             : 'Только что'}
                                     </div>
                                 </div>
-                                <div className="post-emoji">{post.emoji}</div>
                             </div>
                             
                             {post.content && <div className="post-content">{post.content}</div>}
                             
                             {post.media && (
                                 <div className="post-image">
-                                    <img src={post.media.url} alt="Moment" loading="lazy" />
+                                    <img 
+                                        src={post.media.url} 
+                                        alt="Moment" 
+                                        loading="lazy"
+                                        onClick={() => post.media && setFullImageUrl(post.media.url)}
+                                        className="post-thumbnail"
+                                    />
                                 </div>
                             )}
+                            
+                            <div className="post-emoji-horizontal">
+                                {post.emoji}
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -238,6 +246,16 @@ export const DiaryScreen = () => {
                                 {isSubmitting ? 'Публикация...' : 'Опубликовать'}
                             </button>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Full Image Viewer Modal */}
+            {fullImageUrl && (
+                <div className="image-viewer-overlay" onClick={() => setFullImageUrl(null)}>
+                    <div className="image-viewer-container">
+                        <button className="close-viewer-btn" onClick={() => setFullImageUrl(null)}>✕</button>
+                        <img src={fullImageUrl} alt="Full view" className="full-image" />
                     </div>
                 </div>
             )}
