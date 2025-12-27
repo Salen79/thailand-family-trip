@@ -7,7 +7,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyDJxXgS4184yrnExs7UF6sZm84o7wZpZYs",
   authDomain: "secret-bangkog.firebaseapp.com",
   projectId: "secret-bangkog",
-  storageBucket: "secret-bangkok.firebasestorage.app",
+  storageBucket: "secret-bangkog.firebasestorage.app",
   messagingSenderId: "895000271372",
   appId: "1:895000271372:web:a0bbac71412a820a5eac29",
   measurementId: "G-NLEQ5MN75P"
