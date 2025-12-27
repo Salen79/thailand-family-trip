@@ -28,9 +28,9 @@ export const DiaryScreen = () => {
     const currentUser = state.familyMembers[state.currentFamily];
     const emojis = ['😊', '😍', '🤣', '😎', '🤔', '😴', '🤩', '🥳', '🤯', '🏖️', '🍜', '🐘'];
 
-    // Функция сжатия изображения
+    // Функция сжатия изображения с динамическим качеством
     const compressImage = (file: File): Promise<Blob> => {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = (event) => {
                 const img = new Image();
@@ -62,15 +62,37 @@ export const DiaryScreen = () => {
                         ctx.drawImage(img, 0, 0, width, height);
                     }
                     
+                    // Динамическое качество в зависимости от размера файла
+                    let quality = 0.85; // Default качество
+                    const fileSizeMB = file.size / (1024 * 1024);
+                    
+                    if (fileSizeMB > 5) {
+                        quality = 0.60; // Большие файлы (>5MB) - качество 60%
+                    } else if (fileSizeMB > 3) {
+                        quality = 0.75; // Средние файлы (3-5MB) - качество 75%
+                    } else {
+                        quality = 0.90; // Маленькие файлы (<3MB) - качество 90%
+                    }
+                    
                     canvas.toBlob(
                         (blob) => {
-                            resolve(blob || file);
+                            if (blob) {
+                                resolve(blob);
+                            } else {
+                                reject(new Error('Canvas blob conversion failed'));
+                            }
                         },
                         file.type || 'image/jpeg',
-                        0.8 // качество 80%
+                        quality
                     );
                 };
+                img.onerror = () => {
+                    reject(new Error('Image loading failed'));
+                };
                 img.src = event.target?.result as string;
+            };
+            reader.onerror = () => {
+                reject(new Error('FileReader error'));
             };
             reader.readAsDataURL(file);
         });
