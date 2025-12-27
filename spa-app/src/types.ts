@@ -28,6 +28,23 @@ export interface QuizQuestion {
     isCorrectByUser: Record<number, boolean>; // familyIndex -> isCorrect
 }
 
+export interface DiaryPost {
+    id: string;
+    author: {
+        id: string;
+        name: string;
+        avatar: string;
+    };
+    content: string;
+    emoji: string;
+    media: {
+        url: string;
+        type: 'image';
+    } | null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    timestamp: any;
+}
+
 export interface FamilyMember {
     name: string;
     role: string;
@@ -50,11 +67,25 @@ export interface Place {
     emoji?: string;
 }
 
+export interface ItineraryEvent {
+    time: string;
+    title: string;
+    description?: string;
+    icon?: string;
+}
+
+export interface ItineraryDay {
+    date: string;
+    title: string;
+    events: ItineraryEvent[];
+}
+
 // Интерфейс для всей структуры данных приложения
 export interface AppState {
     currentFamily: number;
     familyMembers: FamilyMember[];
     places: Place[];
+    itinerary: ItineraryDay[];
     quizQuestions: QuizQuestion[];
     documentsUnlocked: boolean;
     currentScreen: string;
