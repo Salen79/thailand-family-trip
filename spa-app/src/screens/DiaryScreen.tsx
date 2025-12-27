@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAppStateContext } from '../context/AppContext';
 import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, Timestamp } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../firebase';
 import type { DiaryPost } from '../types';
 import './DiaryScreen.css';
@@ -238,25 +238,52 @@ export const DiaryScreen = () => {
                     
                     const compressedBlob = await Promise.race([compressPromise, timeoutPromise]);
                     setUploadProgress(50);
+                    addLog('⏳ Начало загрузки на Firebase Storage...');
                     
                     // Загружаем в Storage
                     const timestamp = Date.now();
                     const fileName = `${state.currentFamily}_${timestamp}_${mediaFile.name}`;
                     const storageRef = ref(storage, `diary/${state.currentFamily}/${fileName}`);
                     
-                    await uploadBytes(storageRef, compressedBlob);
-                    setUploadProgress(80);
+                    const metadata = {
+                        contentType: mediaFile.type || 'image/jpeg'
+                    };
                     
-                    // Получаем URL для скачивания
-                    mediaUrl = await getDownloadURL(storageRef);
-                    setUploadProgress(100);
+                    // Используем Promise для асинхронной загрузки
+                    mediaUrl = await new Promise<string>((resolve, reject) => {
+                        const uploadTask = uploadBytesResumable(storageRef, compressedBlob, metadata);
+                        
+                        uploadTask.on('state_changed', 
+                            (snapshot) => {
+                                const progress = 50 + (snapshot.bytesTransferred / snapshot.totalBytes) * 50;
+                                setUploadProgress(progress);
+                                addLog(`📤 Загружено: ${Math.round(progress)}%`);
+                            }, 
+                            (error) => {
+                                addLog(`❌ Ошибка при загрузке: ${error instanceof Error ? error.message : String(error)}`);
+                                reject(error);
+                            }, 
+                            async () => {
+                                try {
+                                    const url = await getDownloadURL(uploadTask.snapshot.ref);
+                                    addLog(`✅ Фото успешно загружено! URL: ${url.substring(0, 50)}...`);
+                                    setUploadProgress(100);
+                                    resolve(url);
+                                } catch (urlError) {
+                                    addLog(`❌ Ошибка при получении URL: ${urlError instanceof Error ? urlError.message : String(urlError)}`);
+                                    reject(urlError);
+                                }
+                            }
+                        );
+                    });
                 } catch (compressionError) {
-                    addLog(`❌ Ошибка при обработке фото: ${compressionError instanceof Error ? compressionError.message : String(compressionError)}`);
+                    addLog(`❌ Ошибка при обработке/загрузке фото: ${compressionError instanceof Error ? compressionError.message : String(compressionError)}`);
                     throw compressionError;
                 }
             }
 
             // Save to Firestore with Storage URL
+            addLog('💾 Сохранение записи в Firestore...');
             await addDoc(collection(db, 'diary_posts'), {
                 author: {
                     id: String(state.currentFamily),
@@ -268,6 +295,8 @@ export const DiaryScreen = () => {
                 media: mediaUrl ? { url: mediaUrl, type: 'image' } : null,
                 timestamp: serverTimestamp()
             });
+            
+            addLog('✨ Запись успешно опубликована!');
 
             // Reset form
             setContent('');
