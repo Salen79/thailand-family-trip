@@ -28,6 +28,23 @@ export interface QuizQuestion {
     isCorrectByUser: Record<number, boolean>; // familyIndex -> isCorrect
 }
 
+export interface DiaryPost {
+    id: string;
+    author: {
+        id: string;
+        name: string;
+        avatar: string;
+    };
+    content: string;
+    emoji: string;
+    media: {
+        url: string;
+        type: 'image';
+    } | null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    timestamp: any;
+}
+
 export interface FamilyMember {
     name: string;
     role: string;

@@ -14,5 +14,9 @@ service cloud.firestore {
       // update your rules.
       allow read, write: if request.time < timestamp.date(2025, 12, 22);
     }
+    
+    match /diary_posts/{postId} {
+      allow read, write: if true; // TODO: Add proper auth rules later
+    }
   }
 }

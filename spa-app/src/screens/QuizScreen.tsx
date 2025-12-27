@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { useAppStateContext } from '../context/AppContext';
 import { useNavigate } from 'react-router-dom';
 import './QuizScreen.css';
@@ -12,17 +12,17 @@ export const QuizScreen: React.FC = () => {
     // Логика пазла
     const puzzleImage = "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=800"; 
     
-    // Проверяем, решен ли вопрос ВСЕМИ членами семьи
-    const isQuestionFullySolved = (q: QuizQuestion) => {
+    // Helper for render - обернут в useCallback
+    const isQuestionFullySolved = useCallback((q: QuizQuestion) => {
         const totalMembers = state.familyMembers.length;
         const answersCount = Object.keys(q.isCorrectByUser || {}).length;
         const allCorrect = Object.values(q.isCorrectByUser || {}).every(v => v === true);
         return answersCount === totalMembers && allCorrect;
-    };
+    }, [state.familyMembers.length]);
 
     const puzzlePieces = useMemo(() => {
         return state.quizQuestions.map(q => isQuestionFullySolved(q));
-    }, [state.quizQuestions, state.familyMembers]);
+    }, [state.quizQuestions, isQuestionFullySolved]);
 
     const isPuzzleComplete = puzzlePieces.every(p => p === true);
     const solvedCount = puzzlePieces.filter(p => p).length;
