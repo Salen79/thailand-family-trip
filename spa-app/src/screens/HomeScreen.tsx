@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { useAppStateContext } from '../context/AppContext';
 import './HomeScreen.css';
 
@@ -116,11 +115,6 @@ export const HomeScreen = () => {
     const formattedDate = today.toLocaleDateString('ru-RU', dateOptions);
     const capitalizedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
 
-    // Подсчёт статистики
-    const completedQuizCount = state.quizQuestions.filter(q => q.isCorrectByUser[state.currentFamily]).length;
-    const totalQuizCount = state.quizQuestions.length;
-    const quizProgress = totalQuizCount > 0 ? Math.round((completedQuizCount / totalQuizCount) * 100) : 0;
-
     return (
         <div className="home-screen">
             <div className="home-hero">
@@ -143,48 +137,6 @@ export const HomeScreen = () => {
                         {formatTime(timeLeft)}
                     </div>
                 </div>
-            </div>
-
-            <div className="stats-section">
-                <div className="stat-item">
-                    <div className="stat-icon">📍</div>
-                    <div className="stat-value">{state.places.length}</div>
-                    <div className="stat-label">Мест для посещения</div>
-                </div>
-                <div className="stat-item">
-                    <div className="stat-icon">🎯</div>
-                    <div className="stat-value">{quizProgress}%</div>
-                    <div className="stat-label">Прогресс квиза</div>
-                </div>
-                <div className="stat-item">
-                    <div className="stat-icon">👨‍👩‍👧‍👦</div>
-                    <div className="stat-value">{state.familyMembers.length}</div>
-                    <div className="stat-label">Участников</div>
-                </div>
-            </div>
-
-            <div className="section-header">
-                <h2>Разделы приложения</h2>
-            </div>
-
-            <div className="modules-grid">
-                <Link to="/plan" className="module-card">
-                    <div className="module-icon">🗓️</div>
-                    <div className="module-title">План поездки</div>
-                </Link>
-
-                <Link to="/quiz" className="module-card">
-                    <div className="module-icon">🧩</div>
-                    <div className="module-title">Квиз</div>
-                    <div className="module-status">
-                        {state.documentsUnlocked ? '🔓 Открыто' : '🔒 Закрыто'}
-                    </div>
-                    {!state.documentsUnlocked && (
-                        <div className="quiz-progress">
-                            {completedQuizCount}/{totalQuizCount} ответов
-                        </div>
-                    )}
-                </Link>
             </div>
 
             <div className="daily-widget">
@@ -229,11 +181,7 @@ export const HomeScreen = () => {
                                 Смотреть видео
                             </a>
                         </div>
-                    ) : (
-                        <div className="widget-card info-card">
-                            <div className="info-text">Каждый день новое фото, цитата и погода — вдохновение перед приключением.</div>
-                        </div>
-                    )}
+                    ) : null}
                 </div>
             </div>
         </div>

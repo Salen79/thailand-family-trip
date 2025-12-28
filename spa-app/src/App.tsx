@@ -11,6 +11,7 @@ import { PlanScreen } from './screens/PlanScreen';
 import { QuizScreen } from './screens/QuizScreen';
 import { DiaryScreen } from './screens/DiaryScreen';
 import { PhrasebookScreen } from './screens/PhrasebookScreen';
+import { DictionaryScreen } from './screens/DictionaryScreen.tsx';
 import { BottomNav } from './components/BottomNav';
 
 // Контекст и хук вынесены в `src/context/AppContext.tsx`
@@ -114,7 +115,7 @@ function App() {
                         <Route path="/quiz" element={<QuizScreen />} />
                         <Route path="/diary" element={<DiaryScreen />} />
                         <Route path="/phrases" element={<PhrasebookScreen />} />
-                        <Route path="/chat" element={<div>Чат</div>} />
+                        <Route path="/dictionary" element={<DictionaryScreen />} />
                         <Route path="*" element={<div>404</div>} />
                     </Routes>
                 </main>

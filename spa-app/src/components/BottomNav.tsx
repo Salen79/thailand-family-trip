@@ -11,7 +11,7 @@ export const BottomNav = () => {
             <Link to="/plan" style={{ color: isActive('/plan') ? '#FF6B35' : '#888', fontWeight: isActive('/plan') ? '600' : 'normal', textAlign: 'center', textDecoration: 'none' }}>🗓️<br/>План</Link>
             <Link to="/quiz" style={{ color: isActive('/quiz') ? '#FF6B35' : '#888', fontWeight: isActive('/quiz') ? '600' : 'normal', textAlign: 'center', textDecoration: 'none' }}>🧩<br/>Квиз</Link>
             <Link to="/diary" style={{ color: isActive('/diary') ? '#FF6B35' : '#888', fontWeight: isActive('/diary') ? '600' : 'normal', textAlign: 'center', textDecoration: 'none' }}>📔<br/>Дневник</Link>
-            <Link to="/chat" style={{ color: isActive('/chat') ? '#FF6B35' : '#888', fontWeight: isActive('/chat') ? '600' : 'normal', textAlign: 'center', textDecoration: 'none' }}>🤖<br/>Чат AI</Link>
+            <Link to="/dictionary" style={{ color: isActive('/dictionary') ? '#FF6B35' : '#888', fontWeight: isActive('/dictionary') ? '600' : 'normal', textAlign: 'center', textDecoration: 'none' }}>📚<br/>Словарь</Link>
         </div>
     );
 };
