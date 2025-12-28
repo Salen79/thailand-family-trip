@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import './DictionaryScreen.css';
 
 interface DictionaryEntry {
@@ -86,6 +86,7 @@ export const DictionaryScreen = () => {
     const [selectedCategory, setSelectedCategory] = useState<keyof typeof CATEGORY_LABELS | 'all'>('all');
     const [searchQuery, setSearchQuery] = useState('');
     const [playingId, setPlayingId] = useState<number | null>(null);
+    const audioRef = useRef<HTMLAudioElement | null>(null);
 
     const filteredData = DICTIONARY_DATA.filter(entry => {
         const matchesCategory = selectedCategory === 'all' || entry.category === selectedCategory;
@@ -97,19 +98,78 @@ export const DictionaryScreen = () => {
     });
 
     const handlePlayAudio = (id: number, audioUrl?: string) => {
-        if (!audioUrl) return;
+        if (!audioUrl) {
+            // Fallback на Web Speech API если нет URL
+            useSpeechSynthesis(id);
+            return;
+        }
         
         setPlayingId(id);
-        const audio = new Audio(audioUrl);
-        audio.play().catch(() => {
-            // Если URL недоступен, можно использовать Web Speech API как альтернатива
-            const utterance = new SpeechSynthesisUtterance();
-            utterance.text = DICTIONARY_DATA.find(e => e.id === id)?.thai || '';
-            utterance.lang = 'th-TH';
-            window.speechSynthesis.speak(utterance);
-        });
         
-        audio.onended = () => setPlayingId(null);
+        // Удаляем старый audio элемент если существует
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.src = '';
+        }
+
+        // Создаём новый audio элемент
+        const audio = new Audio();
+        audio.crossOrigin = 'anonymous';
+        
+        // Для iOS нужно загрузить аудио перед воспроизведением
+        audio.preload = 'metadata';
+        
+        audio.onloadedmetadata = () => {
+            audio.play().catch(error => {
+                console.warn('Ошибка воспроизведения audio:', error);
+                // Fallback на Web Speech API если audio не работает
+                useSpeechSynthesis(id);
+                setPlayingId(null);
+            });
+        };
+
+        audio.onerror = () => {
+            console.warn('Ошибка загрузки аудиофайла:', audioUrl);
+            // Fallback на Web Speech API если ошибка загрузки
+            useSpeechSynthesis(id);
+            setPlayingId(null);
+        };
+
+        audio.onended = () => {
+            setPlayingId(null);
+            audioRef.current = null;
+        };
+
+        audio.src = audioUrl;
+        audioRef.current = audio;
+    };
+
+    const useSpeechSynthesis = (id: number) => {
+        const entry = DICTIONARY_DATA.find(e => e.id === id);
+        if (!entry) return;
+
+        // Останавливаем предыдущее озвучивание
+        window.speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(entry.thai);
+        utterance.lang = 'th-TH';
+        utterance.rate = 0.9;
+        utterance.pitch = 1;
+        
+        utterance.onstart = () => {
+            setPlayingId(id);
+        };
+
+        utterance.onend = () => {
+            setPlayingId(null);
+        };
+
+        utterance.onerror = (error) => {
+            console.warn('Ошибка синтеза речи:', error);
+            setPlayingId(null);
+        };
+
+        window.speechSynthesis.speak(utterance);
     };
 
     return (
