@@ -124,35 +124,27 @@ export const PlaceCard = ({ place, onClose }: PlaceCardProps) => {
                     {/* Отзывы туристов */}
                     {activeTab === 'reviews' && (
                         <div className="place-card-reviews">
-                            <div className="place-review">
-                                <div className="review-header">
-                                    <span className="review-author">👨 Турист</span>
-                                    <span className="review-rating">⭐⭐⭐⭐⭐ 4.8/5</span>
+                            {place.reviews && place.reviews.length > 0 ? (
+                                place.reviews.map((review, idx) => (
+                                    <div key={idx} className="place-review">
+                                        <div className="review-header">
+                                            <span className="review-author">{review.author}</span>
+                                            <span className="review-rating">
+                                                {'⭐'.repeat(review.rating)}{' '}
+                                                {review.rating}/5
+                                            </span>
+                                        </div>
+                                        <p className="review-text">{review.text}</p>
+                                        {review.date && (
+                                            <p className="review-date">📅 {review.date}</p>
+                                        )}
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="place-review">
+                                    <p className="review-text">Отзывы пока не добавлены</p>
                                 </div>
-                                <p className="review-text">
-                                    Потрясающее место! Архитектура просто невероятная. Приходите рано утром, чтобы избежать толп.
-                                </p>
-                            </div>
-
-                            <div className="place-review">
-                                <div className="review-header">
-                                    <span className="review-author">👩 Туристка</span>
-                                    <span className="review-rating">⭐⭐⭐⭐ 4.5/5</span>
-                                </div>
-                                <p className="review-text">
-                                    Красивое место для фото. Не забудьте закрытую одежду для храмов. Рекомендую!
-                                </p>
-                            </div>
-
-                            <div className="place-review">
-                                <div className="review-header">
-                                    <span className="review-author">👦 Путешественник</span>
-                                    <span className="review-rating">⭐⭐⭐⭐⭐ 5/5</span>
-                                </div>
-                                <p className="review-text">
-                                    Отличное место для посещения с семьей. Дети были в восторге от деталей и культуры.
-                                </p>
-                            </div>
+                            )}
                         </div>
                     )}
                 </div>

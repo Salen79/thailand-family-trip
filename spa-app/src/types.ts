@@ -67,6 +67,14 @@ export interface Place {
     mapLink?: string;
     image?: string;
     emoji?: string;
+    reviews?: Review[];
+}
+
+export interface Review {
+    author: string;
+    rating: number; // 1-5
+    text: string;
+    date?: string;
 }
 
 export interface ItineraryEvent {
@@ -74,6 +82,7 @@ export interface ItineraryEvent {
     title: string;
     description?: string;
     icon?: string;
+    placeName?: string; // Для интерактивных ссылок на места
 }
 
 export interface ItineraryDay {

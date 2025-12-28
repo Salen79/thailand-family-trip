@@ -9,8 +9,14 @@ export const PlanScreen = () => {
     const { itinerary, places } = state;
     const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
 
-    // Улучшенная функция для поиска места по названию события
-    const findPlaceByName = (eventTitle: string): Place | undefined => {
+    // Улучшенная функция для поиска места по названию события или placeName
+    const findPlaceByEvent = (eventTitle: string, placeName?: string): Place | undefined => {
+        // Сначала проверяем точное совпадение по placeName
+        if (placeName) {
+            const found = places.find(p => p.name === placeName);
+            if (found) return found;
+        }
+
         // Нормализуем текст для поиска (в нижний регистр, без лишних пробелов)
         const normalizedTitle = eventTitle.toLowerCase().trim();
         
@@ -40,7 +46,11 @@ export const PlanScreen = () => {
             if (name.includes('mahanakhon') && normalizedTitle.includes('mahanakhon')) return true;
             if (name.includes('asiatique') && normalizedTitle.includes('asiatique')) return true;
             if (name.includes('chatrium') && normalizedTitle.includes('chatrium')) return true;
+            if (name.includes('chatrium') && normalizedTitle.includes('заселение')) return true;
+            if (name.includes('chatrium') && normalizedTitle.includes('обед')) return true;
             if (name.includes('iconsiam') && normalizedTitle.includes('iconsiam')) return true;
+            if (name.includes('iconsiam') && normalizedTitle.includes('праздничный ужин')) return true;
+            if (name.includes('iconsiam') && normalizedTitle.includes('ужин')) return true;
             
             return false;
         });
@@ -48,7 +58,7 @@ export const PlanScreen = () => {
 
     // Обработчик клика на текст события
     const handleEventClick = (eventTitle: string) => {
-        const place = findPlaceByName(eventTitle);
+        const place = findPlaceByEvent(eventTitle);
         if (place) {
             setSelectedPlace(place);
         }
@@ -68,7 +78,7 @@ export const PlanScreen = () => {
                         
                         <div className="events-list">
                             {day.events.map((event, evtIndex) => {
-                                const relatedPlace = findPlaceByName(event.title);
+                                const relatedPlace = findPlaceByEvent(event.title);
                                 const isClickable = !!relatedPlace;
                                 
                                 return (

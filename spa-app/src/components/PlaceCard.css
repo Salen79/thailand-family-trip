@@ -256,6 +256,13 @@
     line-height: 1.5;
 }
 
+.review-date {
+    margin: 8px 0 0 0;
+    font-size: 0.8rem;
+    color: #999;
+    font-style: italic;
+}
+
 /* Google Maps Button */
 .place-card-maps-button {
     margin: 0 16px 20px 16px;
