@@ -22,15 +22,6 @@ export const appStateData = {
   searchQuery: '',
   quizQuestions,
   puzzlePieces: Array(15).fill(false),
-  diaryEntries: [
-    {
-      place: 'Большой Королевский Дворец',
-      date: '2025-12-30',
-      rating: 5,
-      comment: 'Невероятная архитектура! Дети в восторге от золотых статуй.',
-      author: 'Алена'
-    }
-  ],
   phrases,
   voting: {
     question: 'Куда пойдем завтра?',

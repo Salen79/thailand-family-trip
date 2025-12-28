@@ -85,29 +85,35 @@ export const HomeScreen = () => {
     const upcomingBirthday = getUpcomingBirthday();
 
     // --- ЛОГИКА ТАЙМЕРА ---
-    // Установлена дата: 2025 год, 11 (декабрь), 28 число, 18:00:00
-    const targetDate = new Date(2025, 11, 28, 18, 0, 0).getTime();
+    // Установлена дата: 2025 год, 11 (декабрь), 28 число, 18:45:00
+    const targetDate = new Date(2025, 11, 28, 18, 45, 0).getTime();
     
-    const [timeLeft, setTimeLeft] = useState(() => targetDate - Date.now());
+    const [currentTime, setCurrentTime] = useState(Date.now());
 
     useEffect(() => {
         const timer = setInterval(() => {
-            const difference = targetDate - Date.now();
-            setTimeLeft(difference);
+            setCurrentTime(Date.now());
         }, 1000);
 
         return () => clearInterval(timer);
-    }, [targetDate]);
+    }, []);
+
+    const isTripStarted = currentTime >= targetDate;
+    const timeDiff = Math.abs(targetDate - currentTime);
 
     const formatTime = (time: number) => {
-        if (time <= 0) return "Путешествие началось! 🎉";
-
         const days = Math.floor(time / (1000 * 60 * 60 * 24));
         const hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((time % (1000 * 60)) / 1000);
 
-        return `${days}д ${hours.toString().padStart(2, '0')}ч ${minutes.toString().padStart(2, '0')}м ${seconds.toString().padStart(2, '0')}с`;
+        const parts = [];
+        if (days > 0) parts.push(`${days}д`);
+        parts.push(`${hours.toString().padStart(2, '0')}ч`);
+        parts.push(`${minutes.toString().padStart(2, '0')}м`);
+        parts.push(`${seconds.toString().padStart(2, '0')}с`);
+
+        return parts.join(' ');
     };
 
     // --- ЛОГИКА ТЕКУЩЕЙ ДАТЫ ---
@@ -132,9 +138,11 @@ export const HomeScreen = () => {
                 )}
 
                 <div className="countdown-container">
-                    <div className="countdown-label">До начала путешествия</div>
+                    <div className="countdown-label">
+                        {isTripStarted ? "Наше путешествие началось! 🌴" : "До начала путешествия"}
+                    </div>
                     <div className="countdown-timer">
-                        {formatTime(timeLeft)}
+                        {isTripStarted ? `Мы в пути ${formatTime(timeDiff)}` : formatTime(timeDiff)}
                     </div>
                 </div>
             </div>

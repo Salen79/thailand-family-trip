@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAppStateContext } from '../context/AppContext';
-import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, Timestamp } from 'firebase/firestore';
+import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, Timestamp, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../firebase';
 import type { DiaryPost } from '../types';
@@ -27,6 +27,30 @@ export const DiaryScreen = () => {
 
     const currentUser = state.familyMembers[state.currentFamily];
     const emojis = ['😊', '😍', '🤣', '😎', '🤔', '😴', '🤩', '🥳', '🤯', '🏖️', '🍜', '🐘'];
+
+    const clearAllPosts = async () => {
+        if (!window.confirm('Вы уверены, что хотите удалить ВСЕ записи из дневника? Это действие необратимо.')) {
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const q = query(collection(db, 'diary_posts'));
+            const querySnapshot = await getDocs(q);
+            
+            const deletePromises = querySnapshot.docs.map(document => 
+                deleteDoc(doc(db, 'diary_posts', document.id))
+            );
+            
+            await Promise.all(deletePromises);
+            addLog('🗑️ Дневник полностью очищен');
+        } catch (error) {
+            console.error("Error clearing diary:", error);
+            alert('Ошибка при очистке дневника');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // Функция логирования
     const addLog = (message: string) => {
@@ -308,7 +332,14 @@ export const DiaryScreen = () => {
     return (
         <div className="diary-screen">
             <div className="diary-header">
-                <h2>📔 Семейный Дневник</h2>
+                <div className="header-top">
+                    <h2>📔 Семейный Дневник</h2>
+                    {state.currentFamily === 0 && (
+                        <button className="clear-all-btn" onClick={clearAllPosts} title="Очистить всё (только для папы)">
+                            🗑️
+                        </button>
+                    )}
+                </div>
                 <p>Сохраняем лучшие моменты путешествия</p>
             </div>
 
