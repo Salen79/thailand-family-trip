@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import './DictionaryScreen.css';
 
 interface DictionaryEntry {
@@ -7,61 +7,60 @@ interface DictionaryEntry {
     transcription: string;
     russian: string;
     category: 'greeting' | 'food' | 'navigation' | 'shopping' | 'emergency' | 'polite';
-    audioUrl?: string;
 }
 
 const DICTIONARY_DATA: DictionaryEntry[] = [
     // Приветствия
-    { id: 1, thai: 'สวัสดี', transcription: 'sawátdee', russian: 'Здравствуйте / Привет', category: 'greeting', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/sawatdee.mp3' },
-    { id: 2, thai: 'ขอบคุณ', transcription: 'khob-khun', russian: 'Спасибо', category: 'greeting', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/khobkhun.mp3' },
-    { id: 3, thai: 'ขอโทษ', transcription: 'khob-tôht', russian: 'Извините', category: 'greeting', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/khobtohd.mp3' },
-    { id: 4, thai: 'ใช่', transcription: 'chai', russian: 'Да', category: 'greeting', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/chai.mp3' },
-    { id: 5, thai: 'ไม่', transcription: 'mai', russian: 'Нет', category: 'greeting', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/mai.mp3' },
-    { id: 6, thai: 'ยินดีที่ได้รู้จัก', transcription: 'yin-dii thi dai ruu-chak', russian: 'Рад познакомиться', category: 'greeting', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/yindee.mp3' },
+    { id: 1, thai: 'สวัสดี', transcription: 'sawátdee', russian: 'Здравствуйте / Привет', category: 'greeting' },
+    { id: 2, thai: 'ขอบคุณ', transcription: 'khob-khun', russian: 'Спасибо', category: 'greeting' },
+    { id: 3, thai: 'ขอโทษ', transcription: 'khob-tôht', russian: 'Извините', category: 'greeting' },
+    { id: 4, thai: 'ใช่', transcription: 'chai', russian: 'Да', category: 'greeting' },
+    { id: 5, thai: 'ไม่', transcription: 'mai', russian: 'Нет', category: 'greeting' },
+    { id: 6, thai: 'ยินดีที่ได้รู้จัก', transcription: 'yin-dii thi dai ruu-chak', russian: 'Рад познакомиться', category: 'greeting' },
 
     // Еда и напитки
-    { id: 7, thai: 'อาหาร', transcription: 'aa-haan', russian: 'Еда', category: 'food', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/aahan.mp3' },
-    { id: 8, thai: 'น้ำ', transcription: 'nam', russian: 'Вода', category: 'food', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/nam.mp3' },
-    { id: 9, thai: 'กาแฟ', transcription: 'gaa-fae', russian: 'Кофе', category: 'food', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/gaafae.mp3' },
-    { id: 10, thai: 'ชา', transcription: 'chaa', russian: 'Чай', category: 'food', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/chaa.mp3' },
-    { id: 11, thai: 'เบียร์', transcription: 'bian', russian: 'Пиво', category: 'food', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/bian.mp3' },
-    { id: 12, thai: 'ข้าว', transcription: 'khao', russian: 'Рис', category: 'food', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/khao.mp3' },
-    { id: 13, thai: 'ปลา', transcription: 'plaa', russian: 'Рыба', category: 'food', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/plaa.mp3' },
-    { id: 14, thai: 'เนื้อ', transcription: 'neuua', russian: 'Мясо', category: 'food', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/neuua.mp3' },
-    { id: 15, thai: 'ผัก', transcription: 'phak', russian: 'Овощи', category: 'food', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/phak.mp3' },
-    { id: 16, thai: 'ผลไม้', transcription: 'phon-lam-ai', russian: 'Фрукты', category: 'food', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/phonlamai.mp3' },
-    { id: 17, thai: 'หวาน', transcription: 'waan', russian: 'Сладко / Сладкое', category: 'food', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/waan.mp3' },
-    { id: 18, thai: 'เผ็ด', transcription: 'phet', russian: 'Острое / Острая', category: 'food', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/phet.mp3' },
+    { id: 7, thai: 'อาหาร', transcription: 'aa-haan', russian: 'Еда', category: 'food' },
+    { id: 8, thai: 'น้ำ', transcription: 'nam', russian: 'Вода', category: 'food' },
+    { id: 9, thai: 'กาแฟ', transcription: 'gaa-fae', russian: 'Кофе', category: 'food' },
+    { id: 10, thai: 'ชา', transcription: 'chaa', russian: 'Чай', category: 'food' },
+    { id: 11, thai: 'เบียร์', transcription: 'bian', russian: 'Пиво', category: 'food' },
+    { id: 12, thai: 'ข้าว', transcription: 'khao', russian: 'Рис', category: 'food' },
+    { id: 13, thai: 'ปลา', transcription: 'plaa', russian: 'Рыба', category: 'food' },
+    { id: 14, thai: 'เนื้อ', transcription: 'neuua', russian: 'Мясо', category: 'food' },
+    { id: 15, thai: 'ผัก', transcription: 'phak', russian: 'Овощи', category: 'food' },
+    { id: 16, thai: 'ผลไม้', transcription: 'phon-lam-ai', russian: 'Фрукты', category: 'food' },
+    { id: 17, thai: 'หวาน', transcription: 'waan', russian: 'Сладко / Сладкое', category: 'food' },
+    { id: 18, thai: 'เผ็ด', transcription: 'phet', russian: 'Острое / Острая', category: 'food' },
 
     // Навигация и транспорт
-    { id: 19, thai: 'ที่ห้องน้ำ?', transcription: 'thi hong nam?', russian: 'Где туалет?', category: 'navigation', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/thihongnam.mp3' },
-    { id: 20, thai: 'สถานีอนุรักษ์', transcription: 'sathaanii anu-rak', russian: 'Станция', category: 'navigation', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/sathaanii.mp3' },
-    { id: 21, thai: 'ถนน', transcription: 'thanon', russian: 'Улица', category: 'navigation', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/thanon.mp3' },
-    { id: 22, thai: 'แท็กซี่', transcription: 'thae-ksi', russian: 'Такси', category: 'navigation', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/thaeksi.mp3' },
-    { id: 23, thai: 'รถบัส', transcription: 'rot-bus', russian: 'Автобус', category: 'navigation', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/rotbus.mp3' },
-    { id: 24, thai: 'เรือ', transcription: 'ruua', russian: 'Лодка', category: 'navigation', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/ruua.mp3' },
-    { id: 25, thai: 'นี่ไหน?', transcription: 'nii nai?', russian: 'Это где?', category: 'navigation', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/niinai.mp3' },
+    { id: 19, thai: 'ที่ห้องน้ำ?', transcription: 'thi hong nam?', russian: 'Где туалет?', category: 'navigation' },
+    { id: 20, thai: 'สถานีอนุรักษ์', transcription: 'sathaanii anu-rak', russian: 'Станция', category: 'navigation' },
+    { id: 21, thai: 'ถนน', transcription: 'thanon', russian: 'Улица', category: 'navigation' },
+    { id: 22, thai: 'แท็กซี่', transcription: 'thae-ksi', russian: 'Такси', category: 'navigation' },
+    { id: 23, thai: 'รถบัส', transcription: 'rot-bus', russian: 'Автобус', category: 'navigation' },
+    { id: 24, thai: 'เรือ', transcription: 'ruua', russian: 'Лодка', category: 'navigation' },
+    { id: 25, thai: 'นี่ไหน?', transcription: 'nii nai?', russian: 'Это где?', category: 'navigation' },
 
     // Покупки и цены
-    { id: 26, thai: 'เท่าไร?', transcription: 'thao-rai?', russian: 'Сколько стоит?', category: 'shopping', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/thaorai.mp3' },
-    { id: 27, thai: 'แพง', transcription: 'phaeng', russian: 'Дорого', category: 'shopping', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/phaeng.mp3' },
-    { id: 28, thai: 'ถูก', transcription: 'thuuk', russian: 'Дешево', category: 'shopping', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/thuuk.mp3' },
-    { id: 29, thai: 'ลด ราคา', transcription: 'lod raa-khaa', russian: 'Скидка', category: 'shopping', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/lodraakhaa.mp3' },
-    { id: 30, thai: 'เงิน', transcription: 'ngen', russian: 'Деньги', category: 'shopping', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/ngen.mp3' },
-    { id: 31, thai: 'ร้านค้า', transcription: 'raan-khaa', russian: 'Магазин', category: 'shopping', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/raankhaa.mp3' },
-    { id: 32, thai: 'บัตร เครดิต', transcription: 'bat-khredit', russian: 'Кредитная карта', category: 'shopping', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/batkredit.mp3' },
+    { id: 26, thai: 'เท่าไร?', transcription: 'thao-rai?', russian: 'Сколько стоит?', category: 'shopping' },
+    { id: 27, thai: 'แพง', transcription: 'phaeng', russian: 'Дорого', category: 'shopping' },
+    { id: 28, thai: 'ถูก', transcription: 'thuuk', russian: 'Дешево', category: 'shopping' },
+    { id: 29, thai: 'ลด ราคา', transcription: 'lod raa-khaa', russian: 'Скидка', category: 'shopping' },
+    { id: 30, thai: 'เงิน', transcription: 'ngen', russian: 'Деньги', category: 'shopping' },
+    { id: 31, thai: 'ร้านค้า', transcription: 'raan-khaa', russian: 'Магазин', category: 'shopping' },
+    { id: 32, thai: 'บัตร เครดิต', transcription: 'bat-khredit', russian: 'Кредитная карта', category: 'shopping' },
 
     // Чрезвычайные ситуации
-    { id: 33, thai: 'ช่วย!', transcription: 'chuuay!', russian: 'Помощь!', category: 'emergency', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/chuuay.mp3' },
-    { id: 34, thai: 'โรงพยาบาล', transcription: 'rohng-phaya-baan', russian: 'Больница', category: 'emergency', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/rohngphaya.mp3' },
-    { id: 35, thai: 'ตำรวจ', transcription: 'tamruat', russian: 'Полиция', category: 'emergency', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/tamruat.mp3' },
-    { id: 36, thai: 'ฉันไม่สบาย', transcription: 'chan mai sa-bai', russian: 'Мне плохо', category: 'emergency', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/chanmaisabai.mp3' },
-    { id: 37, thai: 'ถ้ำน้ำ', transcription: 'tham-nam', russian: 'Перевод...', category: 'emergency', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/thamnam.mp3' },
+    { id: 33, thai: 'ช่วย!', transcription: 'chuuay!', russian: 'Помощь!', category: 'emergency' },
+    { id: 34, thai: 'โรงพยาบาล', transcription: 'rohng-phaya-baan', russian: 'Больница', category: 'emergency' },
+    { id: 35, thai: 'ตำรวจ', transcription: 'tamruat', russian: 'Полиция', category: 'emergency' },
+    { id: 36, thai: 'ฉันไม่สบาย', transcription: 'chan mai sa-bai', russian: 'Мне плохо', category: 'emergency' },
+    { id: 37, thai: 'ถ้ำน้ำ', transcription: 'tham-nam', russian: 'Пещера', category: 'emergency' },
 
     // Вежливые фразы
-    { id: 38, thai: 'เพิ่มเติม', transcription: 'phoem-thoem', russian: 'Ещё', category: 'polite', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/phoemthoem.mp3' },
-    { id: 39, thai: 'ไม่เป็นไร', transcription: 'mai pen rai', russian: 'Ничего страшного', category: 'polite', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/maipenrai.mp3' },
-    { id: 40, thai: 'สวยมาก', transcription: 'suay mak', russian: 'Очень красиво', category: 'polite', audioUrl: 'https://d1kqdc0u1y4y7y.cloudfront.net/thai/suaymak.mp3' },
+    { id: 38, thai: 'เพิ่มเติม', transcription: 'phoem-thoem', russian: 'Ещё', category: 'polite' },
+    { id: 39, thai: 'ไม่เป็นไร', transcription: 'mai pen rai', russian: 'Ничего страшного', category: 'polite' },
+    { id: 40, thai: 'สวยมาก', transcription: 'suay mak', russian: 'Очень красиво', category: 'polite' },
 ];
 
 const CATEGORY_LABELS = {
@@ -86,7 +85,6 @@ export const DictionaryScreen = () => {
     const [selectedCategory, setSelectedCategory] = useState<keyof typeof CATEGORY_LABELS | 'all'>('all');
     const [searchQuery, setSearchQuery] = useState('');
     const [playingId, setPlayingId] = useState<number | null>(null);
-    const audioRef = useRef<HTMLAudioElement | null>(null);
 
     const filteredData = DICTIONARY_DATA.filter(entry => {
         const matchesCategory = selectedCategory === 'all' || entry.category === selectedCategory;
@@ -97,54 +95,7 @@ export const DictionaryScreen = () => {
         return matchesCategory && matchesSearch;
     });
 
-    const handlePlayAudio = (id: number, audioUrl?: string) => {
-        if (!audioUrl) {
-            // Fallback на Web Speech API если нет URL
-            useSpeechSynthesis(id);
-            return;
-        }
-        
-        setPlayingId(id);
-        
-        // Удаляем старый audio элемент если существует
-        if (audioRef.current) {
-            audioRef.current.pause();
-            audioRef.current.src = '';
-        }
-
-        // Создаём новый audio элемент
-        const audio = new Audio();
-        audio.crossOrigin = 'anonymous';
-        
-        // Для iOS нужно загрузить аудио перед воспроизведением
-        audio.preload = 'metadata';
-        
-        audio.onloadedmetadata = () => {
-            audio.play().catch(error => {
-                console.warn('Ошибка воспроизведения audio:', error);
-                // Fallback на Web Speech API если audio не работает
-                useSpeechSynthesis(id);
-                setPlayingId(null);
-            });
-        };
-
-        audio.onerror = () => {
-            console.warn('Ошибка загрузки аудиофайла:', audioUrl);
-            // Fallback на Web Speech API если ошибка загрузки
-            useSpeechSynthesis(id);
-            setPlayingId(null);
-        };
-
-        audio.onended = () => {
-            setPlayingId(null);
-            audioRef.current = null;
-        };
-
-        audio.src = audioUrl;
-        audioRef.current = audio;
-    };
-
-    const useSpeechSynthesis = (id: number) => {
+    const handlePlayAudio = (id: number) => {
         const entry = DICTIONARY_DATA.find(e => e.id === id);
         if (!entry) return;
 
@@ -154,7 +105,8 @@ export const DictionaryScreen = () => {
         const utterance = new SpeechSynthesisUtterance(entry.thai);
         utterance.lang = 'th-TH';
         utterance.rate = 0.9;
-        utterance.pitch = 1;
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
         
         utterance.onstart = () => {
             setPlayingId(id);
@@ -164,8 +116,8 @@ export const DictionaryScreen = () => {
             setPlayingId(null);
         };
 
-        utterance.onerror = (error) => {
-            console.warn('Ошибка синтеза речи:', error);
+        utterance.onerror = (event) => {
+            console.warn('Ошибка синтеза речи:', event.error);
             setPlayingId(null);
         };
 
@@ -225,7 +177,7 @@ export const DictionaryScreen = () => {
                             </div>
                             <button
                                 className={`play-button ${playingId === entry.id ? 'playing' : ''}`}
-                                onClick={() => handlePlayAudio(entry.id, entry.audioUrl)}
+                                onClick={() => handlePlayAudio(entry.id)}
                                 title="Озвучить"
                             >
                                 🔊
