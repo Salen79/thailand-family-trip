@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { useAppStateContext } from '../context/AppContext';
 import { useNavigate } from 'react-router-dom';
 import './QuizScreen.css';
@@ -8,22 +8,7 @@ export const QuizScreen: React.FC = () => {
     const { state, handleQuizAnswer, updateAppState } = useAppStateContext();
     const navigate = useNavigate();
     const currentUserIndex = state.currentFamily;
-    const [pieceOrder] = useState<number[]>(() => {
-        const totalPieces = state.quizQuestions.length;
-        if (totalPieces === 0) return [];
-        
-        const indices = Array.from({ length: totalPieces }, (_, i) => i);
-        // Перетасовываем (Fisher-Yates shuffle)
-        for (let i = indices.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [indices[i], indices[j]] = [indices[j], indices[i]];
-        }
-        return indices;
-    });
 
-    // Логика пазла
-    const puzzleImage = "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=800";
-    
     // Параметры сетки паззла
     const GRID_COLS = 5;
     const GRID_ROWS = 3;
@@ -54,6 +39,10 @@ export const QuizScreen: React.FC = () => {
 
     const isPuzzleComplete = puzzlePieces.every(p => p === true);
     const solvedCount = puzzlePieces.filter(p => p).length;
+
+    // Используем статичный порядок из глобального состояния
+    const pieceOrder = state.puzzlePieceOrder;
+    const puzzleImageUrl = state.puzzleImageUrl;
 
     // Маппим индексы на случайный порядок для визуального отображения
     const visualPieceOrder = pieceOrder.length > 0 
@@ -101,7 +90,7 @@ export const QuizScreen: React.FC = () => {
                                 className={`puzzle-piece ${isSolved ? 'solved' : 'locked'}`}
                                 data-index={originalIndex}
                                 style={isSolved ? { 
-                                    backgroundImage: `url(${puzzleImage})`,
+                                    backgroundImage: `url(${puzzleImageUrl})`,
                                     backgroundPosition: bgPosition,
                                     backgroundSize: `${GRID_COLS * 100}% ${GRID_ROWS * 100}%`
                                 } : {}}

@@ -55,6 +55,8 @@ function App() {
             familyMembers: appStateData.familyMembers,
             places: appStateData.places,
             itinerary: appStateData.itinerary,
+            puzzlePieceOrder: appStateData.puzzlePieceOrder,
+            puzzleImageUrl: appStateData.puzzleImageUrl,
             quizQuestions: (appStateData.quizQuestions as RawQuizQuestion[]).map((q, i) => ({
                 id: q.id ?? i + 1,
                 day: q.day,

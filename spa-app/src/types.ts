@@ -112,4 +112,6 @@ export interface AppState {
     currentScreen: string;
     isAuthenticated: boolean;
     userPin?: string;
+    puzzlePieceOrder: number[]; // Статичный порядок кусочков паззла для всех игроков
+    puzzleImageUrl: string; // URL изображения паззла
 }
