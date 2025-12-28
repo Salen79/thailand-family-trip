@@ -41,6 +41,7 @@ function App() {
 
         return {
             currentFamily,
+            currentQuizIndex: 0,
             documentsUnlocked: false,
             currentScreen: 'home',
             isAuthenticated,
@@ -55,47 +56,48 @@ function App() {
                 answer: q.answer,
                 answers: q.answers || {},
                 correctAnswer: q.correctAnswer ?? Object.keys(q.answers || {})[0] ?? '',
+                placeName: q.placeName,
                 answersByUser: {},
                 isCorrectByUser: {}
             })) as QuizQuestion[], 
         };
     })());
   
-  const handleQuizAnswer = (quizId: number, answerKey: string) => {
-    setAppState(prevState => {
-        const currentFamilyIndex = prevState.currentFamily;
-        if (currentFamilyIndex === -1) return prevState;
+    const handleQuizAnswer = (quizId: number, answerKey: string) => {
+        setAppState(prevState => {
+            const currentFamilyIndex = prevState.currentFamily;
+            if (currentFamilyIndex === -1) return prevState;
 
-        const updatedQuestions = prevState.quizQuestions.map(q => {
-            if (q.id === quizId) {
-                const isCorrect = answerKey === q.correctAnswer;
-                return {
-                    ...q,
-                    answersByUser: {
-                        ...q.answersByUser,
-                        [currentFamilyIndex]: answerKey
-                    },
-                    isCorrectByUser: {
-                        ...q.isCorrectByUser,
-                        [currentFamilyIndex]: isCorrect
-                    }
-                };
-            }
-            return q;
+            const updatedQuestions = prevState.quizQuestions.map(q => {
+                if (q.id === quizId) {
+                    const isCorrect = answerKey === q.correctAnswer;
+                    return {
+                        ...q,
+                        answersByUser: {
+                            ...q.answersByUser,
+                            [currentFamilyIndex]: answerKey
+                        },
+                        isCorrectByUser: {
+                            ...q.isCorrectByUser,
+                            [currentFamilyIndex]: isCorrect
+                        }
+                    };
+                }
+                return q;
+            });
+            
+            return { ...prevState, quizQuestions: updatedQuestions };
         });
-        
-        // Проверяем, открыт ли пазл полностью
-        // Пазл открывается кусочками. Кусочек открыт, если ВСЕ члены семьи ответили правильно на вопрос этого дня.
-        // Но пока для простоты считаем "документы открыты" если все вопросы решены всеми (или просто прогресс).
-        // Логику "документы открыты" переосмыслим в QuizScreen как "Пазл собран".
-        
-        return { ...prevState, quizQuestions: updatedQuestions };
-    });
-  };
+    };
+
+    const updateAppState = (updates: Partial<AppState>) => {
+        setAppState(prevState => ({ ...prevState, ...updates }));
+    };
 
     const contextValue = useMemo(() => ({ 
             state: appState, 
             setAppState, 
+            updateAppState,
             handleQuizAnswer 
     }), [appState]);
 

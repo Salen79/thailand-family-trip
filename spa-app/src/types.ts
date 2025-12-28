@@ -11,6 +11,7 @@ export interface RawQuizQuestion {
     answer: string;
     answers?: AnswerMap;
     correctAnswer?: string;
+    placeName?: string; // Привязка вопроса к месту
 }
 
 // Полный интерфейс для вопроса квиза (включая свойства, добавляемые логикой)
@@ -21,6 +22,7 @@ export interface QuizQuestion {
     answer: string;
     answers: AnswerMap;
     correctAnswer: string;
+    placeName?: string; // Привязка вопроса к месту для контекста
 
     // Свойства, добавляемые нашей логикой в App.tsx:
     // Храним ответы каждого члена семьи по индексу
@@ -87,6 +89,7 @@ export interface AppState {
     places: Place[];
     itinerary: ItineraryDay[];
     quizQuestions: QuizQuestion[];
+    currentQuizIndex: number; // Индекс текущего вопроса (показываем по одному)
     documentsUnlocked: boolean;
     currentScreen: string;
     isAuthenticated: boolean;

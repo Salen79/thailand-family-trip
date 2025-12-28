@@ -46,32 +46,83 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
     border: 3px solid rgba(255, 255, 255, 0.2);
     position: relative;
+    gap: 2px;
+    padding: 2px;
+    background-clip: padding-box;
+    background-image: none !important; /* Убираем фоновое изображение с контейнера */
+    background-color: rgba(20, 20, 20, 0.95); /* Темный фон вместо фотографии */
 }
 
+/* Ровные прямоугольники паззла */
 .puzzle-piece {
     background-color: rgba(30, 30, 30, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.3);
+    /* Скрываем фоновое изображение по умолчанию */
+    background-image: none;
+    background-color: rgba(30, 30, 30, 0.95);
+    background-size: cover;
+    background-position: center;
 }
 
+/* Когда паззл открыт - показываем изображение */
 .puzzle-piece.solved {
     background-color: transparent;
     border-color: transparent;
+    box-shadow: none;
+    /* Фон уже установлен через inline-style в компоненте */
 }
 
 .piece-number {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
-    color: rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.4);
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    animation: fadeInPiece 0.3s ease-out;
+}
+
+@keyframes fadeInPiece {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.puzzle-piece.solved {
+    animation: revealPiece 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes revealPiece {
+    0% {
+        transform: scale(1) rotate(0deg);
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1.05) rotate(-2deg);
+        opacity: 1;
+    }
 }
 
 .puzzle-stats {
     font-size: 13px;
     color: rgba(255, 255, 255, 0.7);
     text-align: center;
+    font-weight: 500;
+    letter-spacing: 0.3px;
 }
 
 /* Victory Banner */
@@ -141,9 +192,37 @@
     box-shadow: 0 4px 16px rgba(255, 215, 0, 0.15);
 }
 
+/* Progress Bar */
+.quiz-progress {
+    margin-bottom: 16px;
+}
+
+.progress-text {
+    display: block;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4caf50, #81c784);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
 .card-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     margin-bottom: 12px;
     gap: 8px;
@@ -158,6 +237,17 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
     font-weight: 700;
+}
+
+.place-badge {
+    background: rgba(100, 200, 255, 0.2);
+    border: 1px solid rgba(100, 200, 255, 0.4);
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #64c8ff;
+    letter-spacing: 0.3px;
 }
 
 .solved-badge {
@@ -297,6 +387,40 @@
     color: rgba(255, 255, 255, 0.9);
     text-align: center;
     line-height: 1.4;
+    margin-bottom: 12px;
+}
+
+/* Next Question Button */
+.next-question-btn {
+    background: linear-gradient(135deg, #4caf50, #66bb6a);
+    color: white;
+    border: none;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 15px;
+    width: 100%;
+    cursor: pointer;
+    min-height: 48px;
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+    margin-bottom: 12px;
+}
+
+.next-question-btn:active {
+    transform: scale(0.98);
+}
+
+/* Quiz Complete Message */
+.quiz-complete-msg {
+    background: rgba(76, 175, 80, 0.15);
+    border: 1px solid rgba(76, 175, 80, 0.3);
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 14px;
+    color: #81c784;
+    text-align: center;
+    font-weight: 600;
 }
 
 /* Tablet & Desktop */
@@ -326,6 +450,11 @@
     }
     
     .answer-button {
+        padding: 16px 20px;
+        font-size: 16px;
+    }
+    
+    .next-question-btn {
         padding: 16px 20px;
         font-size: 16px;
     }

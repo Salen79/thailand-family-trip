@@ -5,6 +5,7 @@ import type { AppState } from '../types';
 export interface AppContextType {
   state: AppState;
   setAppState: Dispatch<SetStateAction<AppState>>;
+  updateAppState: (updates: Partial<AppState>) => void;
   handleQuizAnswer: (quizId: number, answerKey: string) => void;
 }
 
