@@ -40,16 +40,87 @@
 .read-the-docs {
   color: #888;
 }
-/* В конец файла spa-app/src/App.css */
 
-.content-area {
-    min-height: 100vh;
-    background-color: #242424; /* Принудительный фон приложения */
-    position: relative;
-    z-index: 1;
+/* Mobile-First App Layout */
+.app-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  width: 100%;
+  overflow: hidden;
 }
 
-/* Убираем возможные перекрытия от навигации */
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+  background-color: #242424;
+  padding-top: var(--sat, 0);
+  padding-bottom: calc(70px + var(--sab, 0)); /* Место для навигации + safe area */
+}
+
+/* Bottom Navigation должна быть поверх всего */
 nav, .bottom-nav {
-    z-index: 1000;
+  z-index: 1000;
+}
+
+/* Общие стили для карточек */
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 1rem;
+}
+
+/* Утилиты для отступов с safe area */
+.safe-top {
+  padding-top: var(--sat, 0);
+}
+
+.safe-bottom {
+  padding-bottom: var(--sab, 0);
+}
+
+.safe-left {
+  padding-left: var(--sal, 0);
+}
+
+.safe-right {
+  padding-right: var(--sar, 0);
+}
+
+/* Desktop styles */
+@media (min-width: 768px) {
+  .app-wrapper {
+    max-width: 768px;
+    margin: 0 auto;
+  }
+  
+  .content-area {
+    padding-bottom: 80px;
+  }
+  
+  .card {
+    padding: 2em;
+  }
+}
+
+/* Tablet landscape */
+@media (min-width: 1024px) {
+  .app-wrapper {
+    max-width: 1024px;
+  }
+}
+
+/* Скрываем скроллбар, но сохраняем функциональность */
+.content-area::-webkit-scrollbar {
+  display: none;
+}
+
+.content-area {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

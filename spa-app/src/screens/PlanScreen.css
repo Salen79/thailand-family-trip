@@ -1,0 +1,159 @@
+/* Mobile-First PlanScreen */
+.plan-screen {
+    min-height: 100%;
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    padding: 16px;
+    padding-bottom: 20px;
+}
+
+.plan-title {
+    font-size: 1.5rem;
+    margin: 0 0 20px 0;
+    text-align: center;
+    color: #1565c0;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.itinerary-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.day-card {
+    background: white;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.day-header {
+    margin: 0 0 16px 0;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.day-date {
+    color: #FF6B6B;
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+    line-height: 1.3;
+}
+
+.day-title {
+    font-size: 15px;
+    color: #666;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.events-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.event-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.event-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.event-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.event-time {
+    font-weight: 700;
+    color: #333;
+    font-size: 14px;
+    margin-bottom: 2px;
+    line-height: 1.3;
+}
+
+.event-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+    font-size: 15px;
+    color: #222;
+    line-height: 1.4;
+}
+
+.event-description {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.5;
+}
+
+.tips-card {
+    margin-top: 24px;
+    background: linear-gradient(135deg, #e3f2fd 0%, #f0f8ff 100%);
+    padding: 16px;
+    border-radius: 16px;
+    border: 2px solid #bbdefb;
+}
+
+.tips-title {
+    margin: 0 0 12px 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1565c0;
+    line-height: 1.3;
+}
+
+.tips-list {
+    padding-left: 20px;
+    margin: 0;
+    font-size: 14px;
+    color: #444;
+    line-height: 1.6;
+}
+
+.tips-list li {
+    margin-bottom: 8px;
+}
+
+.tips-list li:last-child {
+    margin-bottom: 0;
+}
+
+/* Tablet & Desktop */
+@media (min-width: 640px) {
+    .plan-screen {
+        padding: 20px;
+        max-width: 720px;
+        margin: 0 auto;
+    }
+    
+    .plan-title {
+        font-size: 1.75rem;
+        margin-bottom: 24px;
+    }
+    
+    .itinerary-list {
+        gap: 20px;
+    }
+    
+    .day-card {
+        padding: 20px;
+    }
+    
+    .event-icon {
+        font-size: 28px;
+        width: 36px;
+        height: 36px;
+    }
+}

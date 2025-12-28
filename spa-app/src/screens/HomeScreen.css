@@ -1,72 +1,37 @@
+/* Mobile-First HomeScreen */
 .home-screen {
+    min-height: 100%;
     background-color: #f8f9fa;
-    min-height: 100vh;
+    padding-bottom: 20px;
 }
 
 .home-hero {
     background: linear-gradient(135deg, #FF6B35 0%, #FF8C61 100%);
     color: white;
-    padding: 40px 20px;
+    padding: max(20px, env(safe-area-inset-top)) 20px 32px;
     text-align: center;
-    border-radius: 0 0 32px 32px;
+    border-radius: 0 0 24px 24px;
     box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
     position: relative;
 }
 
-.today-date {
-    font-size: 14px;
-    opacity: 0.9;
-    margin-bottom: 12px;
-    text-transform: capitalize;
-}
-
-.home-hero h1 {
-    font-size: 28px;
-    margin: 0;
-}
-
-.trip-target {
-    font-size: 16px;
-    position: relative;
-    margin-bottom: 16px;
-}
-
-.birthday-reminder {
-    background: rgba(255, 255, 255, 0.25);
-    padding: 12px 20px;
-    border-radius: 16px;
-    font-size: 14px;
-    font-weight: 600;
-    margin: 16px 0;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.02);
-    }
-}
-
 .logout-button {
     position: absolute;
-    top: 16px;
+    top: max(12px, calc(env(safe-area-inset-top) + 8px));
     right: 16px;
     background: rgba(255, 255, 255, 0.2);
     border: none;
     color: white;
-    padding: 8px 16px;
+    padding: 8px 14px;
     border-radius: 20px;
-    font-size: 13px;
+    font-size: 12px;
     cursor: pointer;
     font-weight: 600;
     transition: all 0.2s;
     backdrop-filter: blur(10px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    min-height: 36px;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .logout-button:hover {
@@ -77,232 +42,230 @@
 
 .logout-button:active {
     transform: scale(0.95);
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.today-date {
+    font-size: 13px;
     opacity: 0.9;
+    margin-bottom: 8px;
+    text-transform: capitalize;
+}
+
+.home-hero h1 {
+    font-size: 1.5rem;
+    margin: 0 0 8px 0;
+    line-height: 1.3;
+}
+
+.trip-target {
+    font-size: 15px;
+    margin-bottom: 12px;
+}
+
+.birthday-reminder {
+    background: rgba(255, 255, 255, 0.25);
+    padding: 10px 16px;
+    border-radius: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    margin: 12px 0;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
 }
 
 .countdown-container {
     background: rgba(255, 255, 255, 0.2);
-    padding: 20px;
-    border-radius: 20px;
+    padding: 16px;
+    border-radius: 16px;
     backdrop-filter: blur(5px);
 }
 
 .countdown-label {
-    font-size: 12px;
+    font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
     font-weight: 600;
 }
 
 .countdown-timer {
-    font-size: 26px;
+    font-size: 1.375rem;
     font-weight: 800;
+    line-height: 1.2;
 }
 
-.stats-section {
-    display: flex;
-    justify-content: space-around;
-    padding: 20px 16px;
-    gap: 12px;
-    background: white;
-    margin: -20px 16px 16px;
-    border-radius: 20px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    position: relative;
-    z-index: 1;
-}
-
-.stat-item {
-    flex: 1;
-    text-align: center;
-    padding: 8px;
-}
-
-.stat-icon {
-    font-size: 28px;
-    margin-bottom: 4px;
-}
-
-.stat-value {
-    font-size: 22px;
-    font-weight: 800;
-    color: #FF6B35;
-    margin-bottom: 2px;
-}
-
-.stat-label {
-    font-size: 11px;
-    color: #666;
-    font-weight: 500;
-    line-height: 1.3;
-}
-
-.section-header {
-    padding: 0 16px 12px;
-}
-
-.section-header h2 {
-    font-size: 18px;
-    font-weight: 700;
-    color: #333;
-    margin: 0;
-}
-
-.modules-grid {
-    padding: 24px 16px;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-}
-
+/* Daily Widget Section */
 .daily-widget {
-    padding: 24px 16px 32px;
-    display: grid;
-    gap: 16px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .widget-photo {
     position: relative;
-    border-radius: 24px;
+    border-radius: 20px;
     overflow: hidden;
-    min-height: 200px;
+    min-height: 180px;
     background-size: cover;
     background-position: center;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    aspect-ratio: 16/10;
 }
 
 .widget-photo-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.65) 100%);
+    background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.7) 100%);
     color: white;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    padding: 20px;
-    gap: 6px;
+    padding: 16px;
+    gap: 4px;
 }
 
 .photo-label {
-    font-size: 12px;
-    letter-spacing: 1px;
+    font-size: 11px;
+    letter-spacing: 0.8px;
     text-transform: uppercase;
     opacity: 0.9;
 }
 
 .photo-title {
-    font-size: 22px;
+    font-size: 1.25rem;
     font-weight: 800;
+    line-height: 1.2;
 }
 
 .photo-location {
-    font-size: 14px;
+    font-size: 13px;
     opacity: 0.9;
 }
 
 .widget-content {
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: 12px;
 }
 
 .widget-card {
     background: white;
-    border-radius: 20px;
-    padding: 16px 18px;
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
+/* Weather Card */
 .weather-top {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     gap: 12px;
 }
 
 .weather-label {
-    font-size: 13px;
+    font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.8px;
     color: #5c6470;
     font-weight: 700;
+    margin-bottom: 6px;
 }
 
 .weather-temp {
-    font-size: 28px;
+    font-size: 1.75rem;
     font-weight: 800;
     color: #2d3142;
+    margin: 4px 0;
 }
 
 .weather-sub {
-    font-size: 14px;
+    font-size: 13px;
     color: #555;
+    line-height: 1.4;
 }
 
 .weather-meta {
     text-align: right;
-    font-size: 13px;
+    font-size: 12px;
     color: #6b7280;
-    line-height: 1.5;
+    line-height: 1.6;
+    flex-shrink: 0;
 }
 
+/* Wisdom Card */
 .wisdom-label {
-    font-size: 13px;
-    letter-spacing: 1px;
+    font-size: 11px;
+    letter-spacing: 0.8px;
     text-transform: uppercase;
     color: #5c6470;
     font-weight: 700;
+    margin-bottom: 8px;
 }
 
 .wisdom-text {
-    font-size: 18px;
-    font-weight: 700;
+    font-size: 1rem;
+    font-weight: 600;
     color: #1f2937;
-    line-height: 1.4;
+    line-height: 1.5;
 }
 
+/* Birthday Card */
 .birthday-card {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
     gap: 12px;
     background: linear-gradient(135deg, #ff8fb1 0%, #ff6b6b 100%);
     color: white;
-    box-shadow: 0 12px 28px rgba(255, 107, 107, 0.25);
+    box-shadow: 0 8px 20px rgba(255, 107, 107, 0.25);
 }
 
 .birthday-left {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     align-items: center;
 }
 
 .birthday-emoji {
-    font-size: 32px;
+    font-size: 2rem;
+    flex-shrink: 0;
 }
 
 .birthday-title {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 800;
+    line-height: 1.3;
 }
 
 .birthday-sub {
     font-size: 13px;
     opacity: 0.92;
+    margin-top: 2px;
 }
 
 .birthday-button {
     background: white;
     color: #ff4d6d;
-    padding: 12px 16px;
+    padding: 12px 20px;
     border-radius: 12px;
     font-weight: 800;
     text-decoration: none;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    transition: transform 0.2s ease;
+    text-align: center;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .birthday-button:hover {
@@ -310,109 +273,54 @@
     box-shadow: 0 10px 22px rgba(0, 0, 0, 0.16);
 }
 
-.info-card {
-    color: #374151;
+.birthday-button:active {
+    transform: scale(0.98);
 }
 
-.info-text {
-    font-size: 14px;
-    line-height: 1.5;
+/* Tablet & Desktop */
+@media (min-width: 640px) {
+    .home-hero h1 {
+        font-size: 1.75rem;
+    }
+    
+    .countdown-timer {
+        font-size: 1.625rem;
+    }
+    
+    .daily-widget {
+        padding: 20px;
+    }
+    
+    .widget-photo {
+        min-height: 220px;
+    }
 }
 
 @media (min-width: 768px) {
     .daily-widget {
-        grid-template-columns: 1.1fr 0.9fr;
-        align-items: stretch;
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 16px;
+        align-items: start;
     }
-
-    .widget-content {
-        grid-template-rows: auto auto 1fr;
+    
+    .widget-photo {
+        min-height: 300px;
     }
-}
-
-@media (max-width: 480px) {
-    .weather-top {
-        flex-direction: column;
-        align-items: flex-start;
+    
+    .home-hero {
+        padding: max(32px, calc(env(safe-area-inset-top) + 20px)) 32px 40px;
+        border-radius: 0 0 32px 32px;
     }
-
+    
     .birthday-card {
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
     }
-
+    
     .birthday-button {
-        width: 100%;
-        text-align: center;
+        width: auto;
+        min-width: 140px;
     }
-}
-
-.module-card {
-    background: white;
-    padding: 24px 16px;
-    text-align: center;
-    border-radius: 20px;
-    text-decoration: none;
-    color: #333;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    position: relative;
-    overflow: hidden;
-}
-
-.module-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #FF6B35, #FF8C61);
-    transform: scaleX(0);
-    transition: transform 0.3s ease;
-}
-
-.module-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 30px rgba(255, 107, 53, 0.2);
-}
-
-.module-card:hover::before {
-    transform: scaleX(1);
-}
-
-.module-card:active {
-    transform: translateY(-2px) scale(0.98);
-}
-
-.module-icon {
-    font-size: 40px;
-    margin-bottom: 4px;
-    transition: transform 0.3s ease;
-}
-
-.module-card:hover .module-icon {
-    transform: scale(1.1);
-}
-
-.module-title {
-    font-size: 14px;
-    font-weight: 700;
-}
-
-.module-status {
-    font-size: 11px;
-    color: #FF6B35;
-    font-weight: 600;
-}
-
-.quiz-progress {
-    font-size: 10px;
-    color: #888;
-    margin-top: 4px;
-    font-weight: 500;
 }

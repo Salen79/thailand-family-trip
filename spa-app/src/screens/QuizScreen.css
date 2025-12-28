@@ -1,244 +1,203 @@
+/* Mobile-First QuizScreen */
 .quiz-container {
-    padding: 20px;
-    padding-bottom: 120px;
-    max-width: 600px;
-    margin: 0 auto;
-    color: #ffffff !important;
-}
-
-.quiz-card {
-    background: rgba(255, 255, 255, 0.08) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 20px;
-    padding: 24px;
-    margin-bottom: 25px;
-}
-
-.answer-button {
-    /* Теперь делаем кнопки яркими и контрастными */
-    background-color: #ffffff !important;
-    color: #1a1a1a !important;
-    
     padding: 16px;
-    border-radius: 12px;
-    border: none;
-    font-weight: 800;
-    font-size: 16px;
-    margin-bottom: 10px;
-    width: 100%;
-    cursor: pointer !important;
-    transition: all 0.2s ease;
-}
-
-/* Эффект при наведении на компьютере */
-.answer-button:hover:not(:disabled) {
-    background-color: #ffd700 !important; /* Желтый при наведении */
-    transform: translateY(-2px);
-}
-
-/* Цвет выбранной кнопки (правильно/неправильно) */
-.quiz-card.correct { border-color: #4caf50; background: rgba(76, 175, 80, 0.15) !important; }
-.quiz-card.wrong { border-color: #f44336; background: rgba(244, 67, 54, 0.15) !important; }
-
-.answer-button.selected {
-    background-color: #333 !important;
-    color: #fff !important;
+    padding-bottom: 20px;
+    min-height: 100%;
+    color: #ffffff;
 }
 
 .quiz-header {
-    margin-bottom: 30px;
+    margin-bottom: 24px;
     text-align: center;
-}
-
-.progress-info {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 8px;
-}
-
-.progress-bar-container {
-    width: 100%;
-    height: 8px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-    overflow: hidden;
-    margin-bottom: 16px;
-}
-
-.progress-bar-fill {
-    height: 100%;
-    background-color: #4caf50;
-    transition: width 0.3s ease;
 }
 
 .quiz-title {
-    font-size: 24px;
-    margin: 0;
-}
-
-.question-text {
-    margin-top: 0;
-    margin-bottom: 20px;
-    font-size: 18px;
-    line-height: 1.4;
-}
-
-.answers-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.result-feedback {
-    margin-top: 15px;
-    padding: 10px;
-    border-radius: 8px;
-    background: rgba(0, 0, 0, 0.2);
-    text-align: center;
-    font-weight: bold;
-}
-
-/* Golden Card Overlay */
-.golden-card-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.85);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    animation: fadeIn 0.5s ease;
-}
-
-.golden-card {
-    background: linear-gradient(135deg, #FFD700, #FFA500);
-    padding: 3px;
-    border-radius: 20px;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
-    animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.golden-content {
-    background: #1a1a1a;
-    border-radius: 18px;
-    padding: 30px;
-    text-align: center;
-    color: white;
-}
-
-.golden-content h2 {
-    color: #FFD700;
-    font-size: 32px;
-    margin-bottom: 10px;
-}
-
-.gold-action-button {
-    background: linear-gradient(to right, #FFD700, #FFA500);
-    border: none;
-    padding: 15px 30px;
-    border-radius: 30px;
-    color: #1a1a1a;
-    font-weight: bold;
-    font-size: 18px;
-    margin-top: 20px;
-    cursor: pointer;
-    width: 100%;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes scaleIn {
-    from { transform: scale(0.8); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
+    font-size: 1.5rem;
+    margin: 0 0 8px 0;
+    line-height: 1.3;
 }
 
 .quiz-subtitle {
-    text-align: center;
     color: rgba(255, 255, 255, 0.8);
-    margin-top: -20px;
-    margin-bottom: 30px;
+    margin: 0;
     font-size: 14px;
+    line-height: 1.5;
 }
 
-/* Puzzle Styles */
+/* Puzzle Section */
 .puzzle-wrapper {
-    margin-bottom: 40px;
+    margin-bottom: 32px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 12px;
 }
 
 .puzzle-board {
     width: 100%;
-    aspect-ratio: 4/3; /* Соотношение сторон фото */
+    aspect-ratio: 4/3;
     background-size: cover;
     background-position: center;
     border-radius: 16px;
     overflow: hidden;
     display: grid;
-    grid-template-columns: repeat(5, 1fr); /* 5 колонок */
-    grid-template-rows: repeat(3, 1fr);    /* 3 ряда = 15 ячеек */
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    border: 4px solid #fff;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    border: 3px solid rgba(255, 255, 255, 0.2);
     position: relative;
 }
 
 .puzzle-piece {
-    background-color: rgba(30, 30, 30, 0.95); /* Закрытая часть */
+    background-color: rgba(30, 30, 30, 0.95);
     border: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.5s ease-in-out;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .puzzle-piece.solved {
-    background-color: transparent; /* Открываем фото */
+    background-color: transparent;
     border-color: transparent;
 }
 
 .piece-number {
-    font-size: 24px;
-    font-weight: bold;
+    font-size: 20px;
+    font-weight: 700;
     color: rgba(255, 255, 255, 0.3);
 }
 
 .puzzle-stats {
-    margin-top: 10px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+}
+
+/* Victory Banner */
+.victory-banner {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    padding: 20px;
+    border-radius: 16px;
+    text-align: center;
+    margin-bottom: 24px;
+    color: #1a1a1a;
+    box-shadow: 0 8px 24px rgba(255, 215, 0, 0.4);
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.victory-banner h2 {
+    margin: 0 0 8px 0;
+    font-size: 1.5rem;
+    color: #1a1a1a;
+}
+
+.victory-banner p {
+    margin: 0 0 12px 0;
     font-size: 14px;
-    color: #aaa;
+}
+
+.watch-video-btn {
+    background: #1a1a1a;
+    color: #FFD700;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 24px;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    min-height: 44px;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.watch-video-btn:active {
+    transform: scale(0.98);
+}
+
+/* Questions List */
+.questions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.quiz-card {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    padding: 16px;
+    transition: all 0.3s ease;
+}
+
+.quiz-card.fully-solved {
+    border-color: rgba(255, 215, 0, 0.6);
+    background: rgba(255, 215, 0, 0.1);
+    box-shadow: 0 4px 16px rgba(255, 215, 0, 0.15);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.day-badge {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+}
+
+.solved-badge {
+    color: #ffd700;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+.question-text {
+    margin: 0 0 16px 0;
+    font-size: 1rem;
+    line-height: 1.5;
+    font-weight: 500;
 }
 
 /* Family Status Row */
 .family-status-row {
     display: flex;
-    gap: 12px;
-    margin-bottom: 20px;
-    padding: 10px;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding: 12px;
     background: rgba(0, 0, 0, 0.2);
     border-radius: 12px;
     justify-content: center;
+    flex-wrap: wrap;
 }
 
 .member-status {
     position: relative;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    font-size: 22px;
     border: 2px solid transparent;
+    transition: all 0.2s;
+    flex-shrink: 0;
 }
 
 .member-status.correct {
@@ -252,87 +211,137 @@
     opacity: 0.7;
 }
 
+.member-emoji {
+    line-height: 1;
+}
+
 .status-icon {
     position: absolute;
-    bottom: -5px;
-    right: -5px;
-    font-size: 12px;
+    bottom: -4px;
+    right: -4px;
+    font-size: 14px;
     background: #fff;
     border-radius: 50%;
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Card Styles Update */
-.card-header {
+/* Answers Grid */
+.answers-grid {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 15px;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 12px;
 }
 
-.day-badge {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+.answer-button {
+    background-color: #ffffff;
+    color: #1a1a1a;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 2px solid transparent;
+    font-weight: 700;
+    font-size: 15px;
+    width: 100%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 48px;
+    text-align: left;
+    line-height: 1.4;
+    -webkit-tap-highlight-color: transparent;
 }
 
-.solved-badge {
-    color: #ffd700;
-    font-weight: bold;
-    font-size: 12px;
+.answer-button:active:not(:disabled) {
+    transform: scale(0.98);
 }
 
-.quiz-card.fully-solved {
-    border-color: #ffd700;
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.1);
+.answer-button:disabled {
+    cursor: default;
 }
 
-/* Button States */
+.answer-button.selected {
+    background-color: #333;
+    color: #fff;
+    border-color: #555;
+}
+
 .answer-button.correct-choice {
-    background-color: #4caf50 !important;
-    color: white !important;
+    background-color: #4caf50;
+    color: white;
+    border-color: #45a049;
 }
 
 .answer-button.wrong-choice {
-    background-color: #f44336 !important;
-    color: white !important;
+    background-color: #f44336;
+    color: white;
+    border-color: #da190b;
 }
 
 .answer-button.missed-correct {
     border: 2px dashed #4caf50;
-    background-color: transparent !important;
-    color: #4caf50 !important;
+    background-color: rgba(76, 175, 80, 0.1);
+    color: #4caf50;
+    font-weight: 800;
 }
 
-.victory-banner {
-    background: linear-gradient(135deg, #FFD700, #FFA500);
-    padding: 20px;
-    border-radius: 16px;
+.feedback-msg {
+    background: rgba(244, 67, 54, 0.15);
+    border: 1px solid rgba(244, 67, 54, 0.3);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.9);
     text-align: center;
-    margin-bottom: 30px;
-    color: #1a1a1a;
-    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    line-height: 1.4;
 }
 
-.watch-video-btn {
-    background: #1a1a1a;
-    color: #FFD700;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 24px;
-    font-weight: bold;
-    font-size: 16px;
-    margin-top: 10px;
-    cursor: pointer;
+/* Tablet & Desktop */
+@media (min-width: 640px) {
+    .quiz-container {
+        padding: 20px;
+    }
+    
+    .quiz-title {
+        font-size: 1.75rem;
+    }
+    
+    .puzzle-board {
+        max-width: 560px;
+    }
+    
+    .quiz-card {
+        padding: 20px;
+    }
+    
+    .question-text {
+        font-size: 1.125rem;
+    }
+    
+    .answers-grid {
+        gap: 12px;
+    }
+    
+    .answer-button {
+        padding: 16px 20px;
+        font-size: 16px;
+    }
 }
 
-@keyframes popIn {
-    from { transform: scale(0.8); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
+@media (min-width: 768px) {
+    .quiz-container {
+        max-width: 680px;
+        margin: 0 auto;
+    }
+    
+    .puzzle-wrapper {
+        margin-bottom: 40px;
+    }
+    
+    .questions-list {
+        gap: 20px;
+    }
 }

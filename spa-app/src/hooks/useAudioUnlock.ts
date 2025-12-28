@@ -1,5 +1,11 @@
 import { useEffect } from 'react';
 
+declare global {
+    interface Window {
+        webkitAudioContext?: typeof AudioContext;
+    }
+}
+
 /**
  * Хук для разблокировки AudioContext на iOS Safari при первом взаимодействии пользователя.
  * Это необходимо для того, чтобы SpeechSynthesis работал на iPhone.
@@ -11,7 +17,8 @@ export const useAudioUnlock = () => {
             
             try {
                 // Создаём временный AudioContext для разблокировки
-                const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                const audioContext = new AudioContextClass();
                 
                 // Создаём пустой буфер и проигрываем его (это требуется для разблокировки)
                 const bufferSize = audioContext.sampleRate * 0.1; // 0.1 сек
