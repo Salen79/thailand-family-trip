@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAppStateContext } from '../context/AppContext';
 import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, Timestamp } from 'firebase/firestore';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../firebase';
 import type { DiaryPost } from '../types';
 import './DiaryScreen.css';
@@ -250,33 +250,11 @@ export const DiaryScreen = () => {
                         type: mediaFile.type || 'image/jpeg' 
                     });
                     
-                    // Используем Promise для асинхронной загрузки
-                    mediaUrl = await new Promise<string>((resolve, reject) => {
-                        const uploadTask = uploadBytesResumable(storageRef, fileToUpload);
-                        
-                        uploadTask.on('state_changed', 
-                            (snapshot) => {
-                                const progress = 50 + (snapshot.bytesTransferred / snapshot.totalBytes) * 50;
-                                setUploadProgress(progress);
-                                addLog(`📤 Загружено: ${Math.round(progress)}%`);
-                            }, 
-                            (error) => {
-                                addLog(`❌ Ошибка при загрузке: ${error instanceof Error ? error.message : String(error)}`);
-                                reject(error);
-                            }, 
-                            async () => {
-                                try {
-                                    const url = await getDownloadURL(uploadTask.snapshot.ref);
-                                    addLog(`✅ Фото успешно загружено! URL: ${url.substring(0, 50)}...`);
-                                    setUploadProgress(100);
-                                    resolve(url);
-                                } catch (urlError) {
-                                    addLog(`❌ Ошибка при получении URL: ${urlError instanceof Error ? urlError.message : String(urlError)}`);
-                                    reject(urlError);
-                                }
-                            }
-                        );
-                    });
+                    // Используем uploadBytes для загрузки
+                    await uploadBytes(storageRef, fileToUpload);
+                    mediaUrl = await getDownloadURL(storageRef);
+                    addLog(`✅ Фото успешно загружено! URL: ${mediaUrl.substring(0, 50)}...`);
+                    setUploadProgress(100);
                 } catch (compressionError) {
                     addLog(`❌ Ошибка при обработке/загрузке фото: ${compressionError instanceof Error ? compressionError.message : String(compressionError)}`);
                     throw compressionError;
