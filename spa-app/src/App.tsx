@@ -5,6 +5,7 @@ import './App.css';
 
 import type { AppState, QuizQuestion, RawQuizQuestion } from './types';
 import { AppContext } from './context/AppContext';
+import { useAudioUnlock } from './hooks/useAudioUnlock';
 import { LoginScreen } from './screens/LoginScreen';
 import { HomeScreen } from './screens/HomeScreen';
 import { PlanScreen } from './screens/PlanScreen';
@@ -17,6 +18,9 @@ import { BottomNav } from './components/BottomNav';
 // Контекст и хук вынесены в `src/context/AppContext.tsx`
 
 function App() {
+    // Разблокируем звук при первом взаимодействии пользователя (для iOS)
+    useAudioUnlock();
+
     const [appState, setAppState] = useState<AppState>((() => { 
         // Проверяем localStorage при инициализации
         const savedAuth = localStorage.getItem('thailand-trip-auth');

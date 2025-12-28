@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { getBestVoiceForLanguage } from '../hooks/useAudioUnlock';
 import './DictionaryScreen.css';
 
 interface DictionaryEntry {
@@ -115,16 +116,27 @@ export const DictionaryScreen = () => {
         console.log('🛑 Отмена предыдущего озвучивания');
         window.speechSynthesis.cancel();
 
+        // ВАЖНО: Создаём utterance внутри функции клика
         const utterance = new SpeechSynthesisUtterance(entry.thai);
         utterance.lang = 'th-TH';
         utterance.rate = 0.8;
         utterance.pitch = 1.0;
         utterance.volume = 1.0;
         
+        // Явно устанавливаем голос (хак для Safari)
+        const voice = getBestVoiceForLanguage('th-TH');
+        if (voice) {
+            utterance.voice = voice;
+            console.log('🎤 Голос установлен:', voice.name);
+        } else {
+            console.warn('⚠️ Голос для тайского языка не найден, используется голос по умолчанию');
+        }
+        
         console.log('🎤 Создан utterance:', {
             text: entry.thai,
             lang: utterance.lang,
-            rate: utterance.rate
+            rate: utterance.rate,
+            voice: utterance.voice?.name || 'default'
         });
         
         utterance.onstart = () => {
@@ -153,6 +165,7 @@ export const DictionaryScreen = () => {
             });
         } catch (error) {
             console.error('❌ Ошибка при вызове speak():', error);
+            setPlayingId(null);
         }
     };
 
