@@ -96,10 +96,18 @@ export const DictionaryScreen = () => {
     });
 
     const handlePlayAudio = (id: number) => {
+        console.log('🎵 handlePlayAudio вызвана с ID:', id);
+        
         const entry = DICTIONARY_DATA.find(e => e.id === id);
-        if (!entry) return;
+        console.log('📝 Найдена запись:', entry);
+        
+        if (!entry) {
+            console.error('❌ Запись не найдена');
+            return;
+        }
 
-        // Останавливаем предыдущее озвучивание
+        //停止前面的语音
+        console.log('🛑 Отмена предыдущего озвучивания');
         window.speechSynthesis.cancel();
 
         const utterance = new SpeechSynthesisUtterance(entry.thai);
@@ -108,20 +116,30 @@ export const DictionaryScreen = () => {
         utterance.pitch = 1.0;
         utterance.volume = 1.0;
         
+        console.log('🎤 Создан utterance:', {
+            text: entry.thai,
+            lang: utterance.lang,
+            rate: utterance.rate
+        });
+        
         utterance.onstart = () => {
+            console.log('▶️ Озвучивание началось');
             setPlayingId(id);
         };
 
         utterance.onend = () => {
+            console.log('⏹️ Озвучивание завершилось');
             setPlayingId(null);
         };
 
         utterance.onerror = (event) => {
-            console.warn('Ошибка синтеза речи:', event.error);
+            console.warn('⚠️ Ошибка синтеза речи:', event.error);
             setPlayingId(null);
         };
 
+        console.log('🔊 Запуск speak()...');
         window.speechSynthesis.speak(utterance);
+        console.log('✅ speak() был вызван');
     };
 
     return (
