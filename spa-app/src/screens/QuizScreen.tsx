@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState, useEffect } from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 import { useAppStateContext } from '../context/AppContext';
 import { useNavigate } from 'react-router-dom';
 import './QuizScreen.css';
@@ -8,7 +8,18 @@ export const QuizScreen: React.FC = () => {
     const { state, handleQuizAnswer, updateAppState } = useAppStateContext();
     const navigate = useNavigate();
     const currentUserIndex = state.currentFamily;
-    const [pieceOrder, setPieceOrder] = useState<number[]>([]);
+    const [pieceOrder] = useState<number[]>(() => {
+        const totalPieces = state.quizQuestions.length;
+        if (totalPieces === 0) return [];
+        
+        const indices = Array.from({ length: totalPieces }, (_, i) => i);
+        // Перетасовываем (Fisher-Yates shuffle)
+        for (let i = indices.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [indices[i], indices[j]] = [indices[j], indices[i]];
+        }
+        return indices;
+    });
 
     // Логика пазла
     const puzzleImage = "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=800";
@@ -40,20 +51,6 @@ export const QuizScreen: React.FC = () => {
     const puzzlePieces = useMemo(() => {
         return state.quizQuestions.map(q => isQuestionFullySolved(q));
     }, [state.quizQuestions, isQuestionFullySolved]);
-
-    // Инициализируем случайный порядок кусочков один раз
-    useEffect(() => {
-        const totalPieces = puzzlePieces.length;
-        if (pieceOrder.length === 0 && totalPieces > 0) {
-            const indices = Array.from({ length: totalPieces }, (_, i) => i);
-            // Перетасовываем (Fisher-Yates shuffle)
-            for (let i = indices.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [indices[i], indices[j]] = [indices[j], indices[i]];
-            }
-            setPieceOrder(indices);
-        }
-    }, [puzzlePieces.length]);
 
     const isPuzzleComplete = puzzlePieces.every(p => p === true);
     const solvedCount = puzzlePieces.filter(p => p).length;

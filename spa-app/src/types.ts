@@ -14,6 +14,15 @@ export interface RawQuizQuestion {
     placeName?: string; // Привязка вопроса к месту
 }
 
+// Структура для хранения ответа одного участника в Firestore
+export interface CloudQuizAnswer {
+    questionId: number;
+    familyIndex: number;
+    answerKey: string;
+    isCorrect: boolean;
+    timestamp: number;
+}
+
 // Полный интерфейс для вопроса квиза (включая свойства, добавляемые логикой)
 export interface QuizQuestion {
     id: number;

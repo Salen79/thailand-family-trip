@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import { appStateData } from './data/initialState.ts';
 import './App.css'; 
@@ -14,6 +14,12 @@ import { DiaryScreen } from './screens/DiaryScreen';
 import { PhrasebookScreen } from './screens/PhrasebookScreen';
 import { DictionaryScreen } from './screens/DictionaryScreen.tsx';
 import { BottomNav } from './components/BottomNav';
+import { 
+    loadAllQuizAnswersFromCloud, 
+    applyCloudAnswersToQuestions,
+    saveQuizAnswerToCloud,
+    subscribeToQuestionAnswers
+} from './services/quizService';
 
 // Контекст и хук вынесены в `src/context/AppContext.tsx`
 
@@ -62,8 +68,54 @@ function App() {
             })) as QuizQuestion[], 
         };
     })());
+
+    // Загружаем облачные ответы при инициализации
+    useEffect(() => {
+        if (appState.isAuthenticated && appState.currentFamily !== -1) {
+            loadAllQuizAnswersFromCloud()
+                .then(cloudAnswers => {
+                    setAppState(prevState => ({
+                        ...prevState,
+                        quizQuestions: applyCloudAnswersToQuestions(
+                            prevState.quizQuestions,
+                            cloudAnswers
+                        )
+                    }));
+                })
+                .catch(error => {
+                    console.error('Ошибка при загрузке облачных ответов:', error);
+                });
+        }
+    }, [appState.isAuthenticated, appState.currentFamily]);
+
+    // Подписываемся на real-time обновления текущего вопроса
+    useEffect(() => {
+        if (!appState.isAuthenticated || appState.currentFamily === -1) {
+            return;
+        }
+
+        const currentQuestion = appState.quizQuestions[appState.currentQuizIndex];
+        if (!currentQuestion) {
+            return;
+        }
+
+        const unsubscribe = subscribeToQuestionAnswers(currentQuestion.id, (cloudAnswers) => {
+            setAppState(prevState => ({
+                ...prevState,
+                quizQuestions: applyCloudAnswersToQuestions(
+                    prevState.quizQuestions,
+                    cloudAnswers
+                )
+            }));
+        });
+
+        return () => {
+            unsubscribe();
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [appState.isAuthenticated, appState.currentFamily, appState.currentQuizIndex]);
   
-    const handleQuizAnswer = (quizId: number, answerKey: string) => {
+    const handleQuizAnswer = useCallback((quizId: number, answerKey: string) => {
         setAppState(prevState => {
             const currentFamilyIndex = prevState.currentFamily;
             if (currentFamilyIndex === -1) return prevState;
@@ -88,18 +140,31 @@ function App() {
             
             return { ...prevState, quizQuestions: updatedQuestions };
         });
-    };
 
-    const updateAppState = (updates: Partial<AppState>) => {
+        // Сохраняем ответ в облако
+        setAppState(prevState => {
+            const question = prevState.quizQuestions.find(q => q.id === quizId);
+            if (question) {
+                const isCorrect = answerKey === question.correctAnswer;
+                saveQuizAnswerToCloud(quizId, prevState.currentFamily, answerKey, isCorrect)
+                    .catch(error => {
+                        console.error('Ошибка при сохранении ответа в облако:', error);
+                    });
+            }
+            return prevState;
+        });
+    }, []);
+
+    const updateAppState = useCallback((updates: Partial<AppState>) => {
         setAppState(prevState => ({ ...prevState, ...updates }));
-    };
+    }, []);
 
     const contextValue = useMemo(() => ({ 
             state: appState, 
             setAppState, 
             updateAppState,
             handleQuizAnswer 
-    }), [appState]);
+    }), [appState, updateAppState, handleQuizAnswer]);
 
     // Если пользователь не авторизован, показываем экран входа
     if (!appState.isAuthenticated) {

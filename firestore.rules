@@ -18,5 +18,9 @@ service cloud.firestore {
     match /diary_posts/{postId} {
       allow read, write: if true; // TODO: Add proper auth rules later
     }
+    
+    match /quiz_answers/{answerId} {
+      allow read, write: if true; // TODO: Add proper auth rules later
+    }
   }
 }

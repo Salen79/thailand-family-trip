@@ -88,7 +88,7 @@ export const HomeScreen = () => {
     // Установлена дата: 2025 год, 11 (декабрь), 28 число, 18:45:00
     const targetDate = new Date(2025, 11, 28, 18, 45, 0).getTime();
     
-    const [currentTime, setCurrentTime] = useState(Date.now());
+    const [currentTime, setCurrentTime] = useState(() => Date.now());
 
     useEffect(() => {
         const timer = setInterval(() => {
