@@ -106,13 +106,18 @@ export const DictionaryScreen = () => {
             return;
         }
 
-        //停止前面的语音
+        // Добавляем вибрацию для обратной связи на мобильных
+        if (navigator.vibrate) {
+            console.log('📳 Вибрация включена');
+            navigator.vibrate(50);
+        }
+
         console.log('🛑 Отмена предыдущего озвучивания');
         window.speechSynthesis.cancel();
 
         const utterance = new SpeechSynthesisUtterance(entry.thai);
         utterance.lang = 'th-TH';
-        utterance.rate = 0.9;
+        utterance.rate = 0.8;
         utterance.pitch = 1.0;
         utterance.volume = 1.0;
         
@@ -133,13 +138,22 @@ export const DictionaryScreen = () => {
         };
 
         utterance.onerror = (event) => {
-            console.warn('⚠️ Ошибка синтеза речи:', event.error);
+            console.error('⚠️ Ошибка синтеза речи:', event.error);
             setPlayingId(null);
         };
 
         console.log('🔊 Запуск speak()...');
-        window.speechSynthesis.speak(utterance);
-        console.log('✅ speak() был вызван');
+        try {
+            const result = window.speechSynthesis.speak(utterance);
+            console.log('✅ speak() был вызван, результат:', result);
+            console.log('📊 Статус speechSynthesis:', {
+                pending: window.speechSynthesis.pending,
+                speaking: window.speechSynthesis.speaking,
+                paused: window.speechSynthesis.paused
+            });
+        } catch (error) {
+            console.error('❌ Ошибка при вызове speak():', error);
+        }
     };
 
     return (
