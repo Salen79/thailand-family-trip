@@ -245,13 +245,14 @@ export const DiaryScreen = () => {
                     const fileName = `${state.currentFamily}_${timestamp}_${mediaFile.name}`;
                     const storageRef = ref(storage, `diary/${state.currentFamily}/${fileName}`);
                     
-                    const metadata = {
-                        contentType: mediaFile.type || 'image/jpeg'
-                    };
+                    // Преобразуем Blob в File для лучшей совместимости с iOS
+                    const fileToUpload = new File([compressedBlob], fileName, { 
+                        type: mediaFile.type || 'image/jpeg' 
+                    });
                     
                     // Используем Promise для асинхронной загрузки
                     mediaUrl = await new Promise<string>((resolve, reject) => {
-                        const uploadTask = uploadBytesResumable(storageRef, compressedBlob, metadata);
+                        const uploadTask = uploadBytesResumable(storageRef, fileToUpload);
                         
                         uploadTask.on('state_changed', 
                             (snapshot) => {
