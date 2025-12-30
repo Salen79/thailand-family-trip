@@ -65,6 +65,41 @@ export const onDiaryPostCreated = onDocumentCreated(
 );
 
 /**
+ * Cloud Function, которая срабатывает при создании нового ответа в квизе
+ */
+export const onQuizAnswerCreated = onDocumentCreated(
+  {
+    document: "quiz_answers/{answerId}",
+    region: "asia-east1",
+  },
+  async (event) => {
+    try {
+      const snap = event.data;
+      if (!snap) {
+        logger.error("No data in snapshot");
+        return;
+      }
+
+      const data = snap.data();
+      const userName = data.userName || "Кто-то";
+      const questionNum = data.questionId;
+
+      const message =
+        `❓ <b>${escapeHtml(userName)}</b> ответил(а) на ${questionNum}-й вопрос квиза. ` +
+        `Узнать как и ответить самому - по ссылке\n\n` +
+        `🔗 <a href="https://secret-bangkog.web.app">Открыть приложение</a>`;
+
+      await sendTelegramMessage(message);
+      logger.log("✅ Quiz notification sent", { questionId: questionNum, user: userName });
+    } catch (error) {
+      logger.error("❌ Error processing quiz answer notification", {
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  }
+);
+
+/**
  * Форматирует подпись для фото в Telegram
  */
 function formatDiaryPostCaption(
