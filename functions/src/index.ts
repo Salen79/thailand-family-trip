@@ -1,6 +1,6 @@
 import * as functions from "firebase-functions/v2";
 import * as admin from "firebase-admin";
-import { sendTelegramMessage } from "./telegram";
+import { sendTelegramMessage, sendTelegramPhoto } from "./telegram";
 
 // Инициализируем Firebase Admin SDK
 admin.initializeApp();
@@ -26,8 +26,9 @@ export const onDiaryPostCreated = functions.firestore.onDocumentCreated(
       functions.logger.log("New diary post created", { postId, data: postData });
 
       // Если есть фото, отправляем фото с подписью
-      if (postData.media && postData.media.url) {
-        await sendTelegramPhoto(postData, postId);
+      if (postData.media?.url) {
+        const caption = formatDiaryPostCaption(postData, postId);
+        await sendTelegramPhoto(postData.media.url, caption);
       } else {
         // Иначе отправляем текстовое сообщение
         const message = formatDiaryPostMessage(postData, postId);
@@ -43,48 +44,6 @@ export const onDiaryPostCreated = functions.firestore.onDocumentCreated(
     }
   }
 );
-
-/**
- * Отправляет фото с подписью в Telegram
- */
-async function sendTelegramPhoto(
-  postData: admin.firestore.DocumentData,
-  postId: string
-): Promise<void> {
-  try {
-    const caption = formatDiaryPostCaption(postData, postId);
-    const axios = await import("axios");
-    const { getConfig, validateConfig } = await import("./config");
-
-    validateConfig();
-    const config = getConfig();
-
-    const telegramApiUrl =
-      `https://api.telegram.org/bot${config.telegramBotToken}/sendPhoto`;
-
-    const response = await axios.default.post(telegramApiUrl, {
-      chat_id: config.telegramChatId,
-      photo: postData.media.url,
-      caption: caption,
-      parse_mode: "HTML",
-    });
-
-    if (!response.data.ok) {
-      throw new Error(
-        `Telegram API error: ${response.data.description || "Unknown error"}`
-      );
-    }
-
-    functions.logger.log("Telegram photo sent successfully", {
-      messageId: response.data.result.message_id,
-    });
-  } catch (error) {
-    functions.logger.error("Failed to send Telegram photo", {
-      error: error instanceof Error ? error.message : String(error),
-    });
-    throw error;
-  }
-}
 
 /**
  * Форматирует подпись для фото в Telegram
