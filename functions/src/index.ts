@@ -72,20 +72,20 @@ function formatDiaryPostCaption(
   postId: string
 ): string {
   const emoji = postData.emoji || "📷";
-  const author = postData.author?.name || "Неизвестный автор";
+  const author = postData.author?.name || "Пользователь";
   const content = postData.content || "";
   const date = postData.timestamp
     ? new Date(postData.timestamp.toDate()).toLocaleDateString("ru-RU")
     : new Date().toLocaleDateString("ru-RU");
 
-  // Обрезаем контент если он слишком длинный
   const truncatedContent =
     content.length > 150 ? content.substring(0, 147) + "..." : content;
 
   return (
-    `${emoji} <b>${escapeHtml(author)}</b>\n` +
+    `${emoji} <b>${escapeHtml(author)}</b> запостил(а) новое фото в наш дневник!\n` +
     `📅 ${date}\n\n` +
     (truncatedContent ? `${escapeHtml(truncatedContent)}\n\n` : "") +
+    `🔗 <a href="https://secret-bangkog.web.app">Открыть дневник</a>\n\n` +
     `<i>#photo #${postId}</i>`
   );
 }
@@ -98,20 +98,20 @@ function formatDiaryPostMessage(
   postId: string
 ): string {
   const emoji = postData.emoji || "📝";
-  const author = postData.author?.name || "Неизвестный автор";
+  const author = postData.author?.name || "Пользователь";
   const content = postData.content || "";
   const date = postData.timestamp
     ? new Date(postData.timestamp.toDate()).toLocaleDateString("ru-RU")
     : new Date().toLocaleDateString("ru-RU");
 
-  // Обрезаем контент если он слишком длинный
   const truncatedContent =
     content.length > 200 ? content.substring(0, 197) + "..." : content;
 
   return (
-    `${emoji} <b>${escapeHtml(author)}</b>\n` +
+    `${emoji} <b>${escapeHtml(author)}</b> запостил(а) новую запись в наш дневник!\n` +
     `📅 ${date}\n\n` +
     `${escapeHtml(truncatedContent)}\n\n` +
+    `🔗 <a href="https://secret-bangkog.web.app">Открыть дневник</a>\n\n` +
     `<i>#diary #${postId}</i>`
   );
 }
