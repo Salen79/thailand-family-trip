@@ -1,46 +1,65 @@
-import * as functions from "firebase-functions/v2";
+import { onDocumentCreated } from "firebase-functions/v2/firestore";
+import * as logger from "firebase-functions/logger";
 import * as admin from "firebase-admin";
 import { sendTelegramMessage, sendTelegramPhoto } from "./telegram";
 
 // Инициализируем Firebase Admin SDK
-admin.initializeApp();
+if (admin.apps.length === 0) {
+  admin.initializeApp();
+}
 
 /**
  * Cloud Function, которая срабатывает при создании новой записи в коллекции diary_posts
  * и отправляет уведомление в Telegram группу
  */
-export const onDiaryPostCreated = functions.firestore.onDocumentCreated(
-  "diary_posts/{postId}",
+export const onDiaryPostCreated = onDocumentCreated(
+  {
+    document: "diary_posts/{postId}",
+    region: "asia-east1",
+  },
   async (event) => {
     try {
       const snap = event.data;
       const postId = event.params.postId;
 
       if (!snap) {
-        functions.logger.error("No data in snapshot");
+        logger.error("No data in snapshot");
         return;
       }
 
       const postData = snap.data();
 
-      functions.logger.log("New diary post created", { postId, data: postData });
+      // === ДЕТАЛЬНОЕ ЛОГИРОВАНИЕ ===
+      logger.log("📝 New diary post created", {
+        postId,
+        hasMedia: !!postData.media,
+        mediaUrl: postData.media?.url?.substring(0, 50),
+      });
 
-      // Если есть фото, отправляем фото с подписью
-      if (postData.media?.url) {
+      // Проверяем структуру
+      if (!postData.author) {
+        logger.error("❌ Missing author field", { postId });
+        return;
+      }
+
+      // === ОСНОВНАЯ ЛОГИКА ===
+      const hasMediaUrl = postData.media && postData.media.url;
+
+      if (hasMediaUrl) {
+        logger.log("🖼️ Sending photo", { postId });
         const caption = formatDiaryPostCaption(postData, postId);
         await sendTelegramPhoto(postData.media.url, caption);
       } else {
-        // Иначе отправляем текстовое сообщение
+        logger.log("📄 Sending message", { postId });
         const message = formatDiaryPostMessage(postData, postId);
         await sendTelegramMessage(message);
       }
 
-      return { success: true, postId };
+      logger.log("✅ Successfully processed post", { postId });
     } catch (error) {
-      functions.logger.error("Error processing diary post", {
+      logger.error("❌ Error processing diary post", {
         error: error instanceof Error ? error.message : String(error),
       });
-      throw error;
     }
   }
 );
