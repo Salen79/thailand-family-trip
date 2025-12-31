@@ -207,6 +207,26 @@
     font-style: italic;
 }
 
+.windguru-link {
+    display: block;
+    margin-top: 12px;
+    padding: 10px;
+    background: #e0f2fe;
+    color: #0369a1;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+    transition: all 0.2s;
+    border: 1px solid #bae6fd;
+}
+
+.windguru-link:active {
+    transform: scale(0.98);
+    background: #bae6fd;
+}
+
 /* Wisdom Card */
 .wisdom-label {
     font-size: 11px;

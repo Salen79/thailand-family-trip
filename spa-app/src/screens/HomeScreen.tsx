@@ -415,6 +415,16 @@ export const HomeScreen = () => {
                         ) : (
                             <div className="weather-loading">Загрузка погоды...</div>
                         )}
+                        {weather?.locationName === 'Самуи' && (
+                            <a 
+                                href="https://www.windguru.cz/208558" 
+                                target="_blank" 
+                                rel="noreferrer" 
+                                className="windguru-link"
+                            >
+                                🌊 Прогноз Windguru (Maenam)
+                            </a>
+                        )}
                     </div>
 
                     {/* Виджет Турнирной таблицы */}
