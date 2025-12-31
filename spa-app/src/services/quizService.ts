@@ -132,6 +132,35 @@ export const subscribeToQuestionAnswers = (
 };
 
 /**
+ * Подписывается на изменения ВСЕХ ответов (real-time)
+ */
+export const subscribeToAllQuizAnswers = (
+  onUpdate: (answers: CloudQuizAnswer[]) => void
+): (() => void) => {
+  try {
+    const unsubscribe = onSnapshot(collection(db, QUIZ_ANSWERS_COLLECTION), (snapshot) => {
+      const answers = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          questionId: data.questionId,
+          familyIndex: data.familyIndex,
+          answerKey: data.answerKey,
+          isCorrect: data.isCorrect,
+          points: data.points || 0,
+          timestamp: data.timestamp?.toMillis?.() || 0,
+        } as CloudQuizAnswer;
+      });
+      onUpdate(answers);
+    });
+    
+    return unsubscribe;
+  } catch (error) {
+    console.error('Ошибка при подписке на все ответы:', error);
+    return () => {};
+  }
+};
+
+/**
  * Применяет облачные ответы к вопросам в локальном состоянии
  */
 export const applyCloudAnswersToQuestions = (
@@ -152,7 +181,14 @@ export const applyCloudAnswersToQuestions = (
     questionAnswers.forEach(answer => {
       answersByUser[answer.familyIndex] = answer.answerKey;
       isCorrectByUser[answer.familyIndex] = answer.isCorrect;
-      pointsByUser[answer.familyIndex] = answer.points;
+      
+      // Ретроспективное начисление: если ответ верный, но очков 0 или нет (старая запись), даем 3 балла
+      let points = answer.points || 0;
+      if (answer.isCorrect && points === 0) {
+        points = 3;
+      }
+      
+      pointsByUser[answer.familyIndex] = points;
     });
     
     return {
@@ -160,7 +196,7 @@ export const applyCloudAnswersToQuestions = (
       answersByUser,
       isCorrectByUser,
       pointsByUser,
-      attemptsByUser: question.attemptsByUser || {} // Попытки считаем локально или берем из существующих
+      attemptsByUser: question.attemptsByUser || {} 
     };
   });
 };

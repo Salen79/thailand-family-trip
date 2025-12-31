@@ -64,21 +64,21 @@ export const HomeScreen = () => {
         fetchDiaryPoints();
     }, [state.currentFamily]);
 
-    // Функция для администратора: проставить баллы всем старым постам в БД
+    // Функция для администратора: проставить баллы всем старым постам и ответам квиза в БД
     const syncAllPoints = async () => {
-        if (!window.confirm('Начислить очки за все старые посты в базе данных?')) return;
+        if (!window.confirm('Начислить очки за все старые посты и ответы квиза в базе данных?')) return;
         setIsSyncing(true);
         try {
-            const q = query(collection(db, 'diary_posts'), orderBy('timestamp', 'asc'));
-            const querySnapshot = await getDocs(q);
             const batch = writeBatch(db);
-            const userDailyCounts: Record<string, Record<string, number>> = {};
             let updateCount = 0;
 
-            querySnapshot.forEach((document) => {
-                const data = document.data();
-                if (data.points !== undefined) return;
+            // 1. Синхронизация Дневника
+            const diaryQ = query(collection(db, 'diary_posts'), orderBy('timestamp', 'asc'));
+            const diarySnapshot = await getDocs(diaryQ);
+            const userDailyCounts: Record<string, Record<string, number>> = {};
 
+            diarySnapshot.forEach((document) => {
+                const data = document.data();
                 const authorId = data.author.id;
                 const ts = data.timestamp?.toDate() || new Date();
                 const dateKey = ts.toISOString().split('T')[0];
@@ -87,33 +87,47 @@ export const HomeScreen = () => {
                 if (!userDailyCounts[authorId][dateKey]) userDailyCounts[authorId][dateKey] = 0;
 
                 const count = userDailyCounts[authorId][dateKey];
-                const hasPhoto = !!data.media;
-                const hasCaption = !!(data.content && data.content.trim());
                 
-                let points = 0;
-                if (hasPhoto && hasCaption) {
-                    if (count === 0) points = 3;
-                    else if (count === 1) points = 2;
-                    else if (count === 2) points = 1;
-                    else points = 0.1;
-                } else {
-                    if (count === 0) points = 2;
-                    else if (count === 1) points = 1;
-                    else if (count === 2) points = 0.5;
-                    else points = 0.1;
-                }
+                if (data.points === undefined) {
+                    const hasPhoto = !!data.media;
+                    const hasCaption = !!(data.content && data.content.trim());
+                    
+                    let points = 0;
+                    if (hasPhoto && hasCaption) {
+                        if (count === 0) points = 3;
+                        else if (count === 1) points = 2;
+                        else if (count === 2) points = 1;
+                        else points = 0.1;
+                    } else {
+                        if (count === 0) points = 2;
+                        else if (count === 1) points = 1;
+                        else if (count === 2) points = 0.5;
+                        else points = 0.1;
+                    }
 
-                batch.update(doc(db, 'diary_posts', document.id), { points });
+                    batch.update(doc(db, 'diary_posts', document.id), { points });
+                    updateCount++;
+                }
                 userDailyCounts[authorId][dateKey]++;
-                updateCount++;
+            });
+
+            // 2. Синхронизация Квиза
+            const quizSnapshot = await getDocs(collection(db, 'quiz_answers'));
+            quizSnapshot.forEach((document) => {
+                const data = document.data();
+                // Если ответ правильный, но очков 0 или нет поля points
+                if (data.isCorrect === true && (data.points === undefined || data.points === 0)) {
+                    batch.update(doc(db, 'quiz_answers', document.id), { points: 3 });
+                    updateCount++;
+                }
             });
 
             if (updateCount > 0) {
                 await batch.commit();
-                alert(`Успешно начислено очков для ${updateCount} постов!`);
+                alert(`Успешно обновлено объектов: ${updateCount}`);
                 window.location.reload();
             } else {
-                alert('Все посты уже имеют начисленные очки.');
+                alert('Все данные уже актуальны.');
             }
         } catch (error) {
             console.error("Error syncing points:", error);

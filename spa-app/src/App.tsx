@@ -18,7 +18,7 @@ import {
     loadAllQuizAnswersFromCloud, 
     applyCloudAnswersToQuestions,
     saveQuizAnswerToCloud,
-    subscribeToQuestionAnswers
+    subscribeToAllQuizAnswers
 } from './services/quizService';
 
 // Контекст и хук вынесены в `src/context/AppContext.tsx`
@@ -73,37 +73,29 @@ function App() {
         };
     })());
 
-    // Загружаем облачные ответы при инициализации
-    useEffect(() => {
-        if (appState.isAuthenticated && appState.currentFamily !== -1) {
-            loadAllQuizAnswersFromCloud()
-                .then(cloudAnswers => {
-                    setAppState(prevState => ({
-                        ...prevState,
-                        quizQuestions: applyCloudAnswersToQuestions(
-                            prevState.quizQuestions,
-                            cloudAnswers
-                        )
-                    }));
-                })
-                .catch(error => {
-                    console.error('Ошибка при загрузке облачных ответов:', error);
-                });
-        }
-    }, [appState.isAuthenticated, appState.currentFamily]);
-
-    // Подписываемся на real-time обновления текущего вопроса
+    // Загружаем облачные ответы при инициализации и подписываемся на ВСЕ обновления
     useEffect(() => {
         if (!appState.isAuthenticated || appState.currentFamily === -1) {
             return;
         }
 
-        const currentQuestion = appState.quizQuestions[appState.currentQuizIndex];
-        if (!currentQuestion) {
-            return;
-        }
+        // 1. Первоначальная загрузка
+        loadAllQuizAnswersFromCloud()
+            .then(cloudAnswers => {
+                setAppState(prevState => ({
+                    ...prevState,
+                    quizQuestions: applyCloudAnswersToQuestions(
+                        prevState.quizQuestions,
+                        cloudAnswers
+                    )
+                }));
+            })
+            .catch(error => {
+                console.error('Ошибка при загрузке облачных ответов:', error);
+            });
 
-        const unsubscribe = subscribeToQuestionAnswers(currentQuestion.id, (cloudAnswers) => {
+        // 2. Подписка на изменения ВСЕХ ответов (чтобы таблица лидеров обновлялась сразу)
+        const unsubscribe = subscribeToAllQuizAnswers((cloudAnswers) => {
             setAppState(prevState => ({
                 ...prevState,
                 quizQuestions: applyCloudAnswersToQuestions(
@@ -116,9 +108,8 @@ function App() {
         return () => {
             unsubscribe();
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [appState.isAuthenticated, appState.currentFamily, appState.currentQuizIndex]);
-  
+    }, [appState.isAuthenticated, appState.currentFamily]);
+
     const handleQuizAnswer = useCallback(async (quizId: number, answerKey: string) => {
         let calculatedPoints = 0;
         let isCorrect = false;
