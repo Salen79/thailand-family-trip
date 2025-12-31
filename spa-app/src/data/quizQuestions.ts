@@ -1,6 +1,7 @@
 export const quizQuestions = [
 
     { 
+      id: 1,
       day: 1, 
       question: 'На каком этаже находится смотровая площадка SkyWalk в небоскребе Mahanakhon?', 
       answer: '78-м этаже', 
@@ -9,6 +10,7 @@ export const quizQuestions = [
       placeName: 'Mahanakhon SkyWalk'
     },
     { 
+      id: 2,
       day: 1, 
       question: 'Какая высота открытой стеклянной платформы SkyWalk в небоскребе Mahanakhon?', 
       answer: '314 метров', 
@@ -17,6 +19,7 @@ export const quizQuestions = [
       placeName: 'Mahanakhon SkyWalk'
     },
     { 
+      id: 3,
       day: 2, 
       question: 'Сколько животных из скольких видов находится в Safari World?', 
       answer: '2000 животных из 100+ видов', 
@@ -25,6 +28,7 @@ export const quizQuestions = [
       placeName: 'Safari World Bangkok'
     },
     { 
+      id: 4,
       day: 2, 
       question: 'Во сколько проходит шоу дельфинов в Safari World?', 
       answer: '11:00, 13:30 и 15:30', 
@@ -33,6 +37,7 @@ export const quizQuestions = [
       placeName: 'Safari World Bangkok'
     },
     { 
+      id: 5,
       day: 3, 
       question: 'Сколько метров в длину статуя лежащего Будды в Wat Pho?', 
       answer: '46 метров', 
@@ -41,6 +46,7 @@ export const quizQuestions = [
       placeName: 'Храм Лежащего Будды'
     },
     { 
+      id: 6,
       day: 3, 
       question: 'На подошвах ног статуи Будды в Wat Pho изображено сколько перламутровых символов?', 
       answer: '108 символов', 
@@ -49,6 +55,7 @@ export const quizQuestions = [
       placeName: 'Храм Лежащего Будды'
     },
     { 
+      id: 7,
       day: 3, 
       question: 'Какова высота центральной башни храма Wat Arun?', 
       answer: '79 метров', 
@@ -57,6 +64,7 @@ export const quizQuestions = [
       placeName: 'Храм Утренней Зари'
     },
     { 
+      id: 8,
       day: 3, 
       question: 'Чем украшена центральная башня храма Wat Arun?', 
       answer: 'Китайским фарфором и ракушками', 
@@ -65,6 +73,7 @@ export const quizQuestions = [
       placeName: 'Храм Утренней Зари'
     },
     { 
+      id: 9,
       day: 1, 
       question: 'Какого цвета знаменитый Будда в Большом Королевском Дворце?', 
       answer: 'Изумрудный', 
@@ -73,6 +82,7 @@ export const quizQuestions = [
       placeName: 'Большой Королевский Дворец'
     },
     { 
+      id: 10,
       day: 2, 
       question: 'Какие животные живут в парке Люмпини?', 
       answer: 'Вараны', 
@@ -81,6 +91,7 @@ export const quizQuestions = [
       placeName: 'Парк Люмпини'
     },
     { 
+      id: 11,
       day: 2, 
       question: 'Сколько варанов живет в парке Люмпини?', 
       answer: '400+', 
@@ -89,6 +100,7 @@ export const quizQuestions = [
       placeName: 'Парк Люмпини'
     },
     { 
+      id: 12,
       day: 1, 
       question: 'Как называется огромный торговый центр с этажами в стиле разных городов мира?', 
       answer: 'ICONSIAM', 
@@ -97,6 +109,7 @@ export const quizQuestions = [
       placeName: 'ICONSIAM'
     },
     { 
+      id: 13,
       day: 1, 
       question: 'Сколько магазинов и ресторанов находится в ICONSIAM?', 
       answer: '500+', 
@@ -105,6 +118,7 @@ export const quizQuestions = [
       placeName: 'ICONSIAM'
     },
     { 
+      id: 14,
       day: 2, 
       question: 'Сколько магазинов находится на ночном рынке Asiatique The Riverfront?', 
       answer: '1500+', 
@@ -113,6 +127,7 @@ export const quizQuestions = [
       placeName: 'Asiatique The Riverfront'
     },
     { 
+      id: 15,
       day: 3, 
       question: 'Как называется столица Таиланда?', 
       answer: 'Бангкок', 
@@ -121,6 +136,7 @@ export const quizQuestions = [
       placeName: 'Бангкок'
     },
     { 
+      id: 16,
       day: 4, 
       question: 'Как называется ваш "домашний" пляж на Самуи, где вы будете ждать заселения?', 
       answer: 'Chaweng Noi', 
@@ -129,6 +145,7 @@ export const quizQuestions = [
       placeName: 'Пляж Chaweng Noi'
     },
     { 
+      id: 17,
       day: 5, 
       question: 'Какая высота у золотой статуи Биг Будды на Самуи?', 
       answer: '12 метров', 
@@ -137,6 +154,7 @@ export const quizQuestions = [
       placeName: 'Биг Будда (Wat Phra Yai)'
     },
     { 
+      id: 18,
       day: 5, 
       question: 'Кого принято кормить в озере у храма Wat Plai Laem?', 
       answer: 'Гигантских сомов', 
@@ -145,6 +163,7 @@ export const quizQuestions = [
       placeName: 'Wat Plai Laem'
     },
     { 
+      id: 19,
       day: 6, 
       question: 'В каком году местный фермер начал создавать Магический сад Будды?', 
       answer: '1976', 
@@ -153,6 +172,7 @@ export const quizQuestions = [
       placeName: 'Магический сад Будды'
     },
     { 
+      id: 20,
       day: 7, 
       question: 'Сколько островов входит в состав национального морского парка Анг Тонг?', 
       answer: '42 острова', 
@@ -161,6 +181,7 @@ export const quizQuestions = [
       placeName: 'Национальный морской парк Анг Тонг'
     },
     { 
+      id: 21,
       day: 8, 
       question: 'Какое традиционное лакомство (кокосовую карамель) нужно обязательно купить у скал Бабушка и Дедушка?', 
       answer: 'Галаме (Galamae)', 

@@ -111,67 +111,60 @@ function App() {
     }, [appState.isAuthenticated, appState.currentFamily]);
 
     const handleQuizAnswer = useCallback(async (quizId: number, answerKey: string) => {
-        let calculatedPoints = 0;
-        let isCorrect = false;
-
         setAppState(prevState => {
             const currentFamilyIndex = prevState.currentFamily;
             if (currentFamilyIndex === -1) return prevState;
 
-            const updatedQuestions = prevState.quizQuestions.map(q => {
-                if (q.id === quizId) {
-                    isCorrect = answerKey === q.correctAnswer;
-                    const currentAttempts = (q.attemptsByUser[currentFamilyIndex] || 0) + 1;
-                    
-                    if (isCorrect) {
-                        // 1-й раз = 3, 2-й = 2, 3-й = 1, 4-й+ = 0
-                        calculatedPoints = Math.max(0, 4 - currentAttempts);
-                    }
+            const questionIndex = prevState.quizQuestions.findIndex(q => q.id === quizId);
+            if (questionIndex === -1) return prevState;
 
-                    return {
-                        ...q,
-                        attemptsByUser: {
-                            ...q.attemptsByUser,
-                            [currentFamilyIndex]: currentAttempts
-                        },
-                        answersByUser: {
-                            ...q.answersByUser,
-                            [currentFamilyIndex]: answerKey
-                        },
-                        isCorrectByUser: {
-                            ...q.isCorrectByUser,
-                            [currentFamilyIndex]: isCorrect
-                        },
-                        pointsByUser: {
-                            ...q.pointsByUser,
-                            [currentFamilyIndex]: isCorrect ? calculatedPoints : (q.pointsByUser[currentFamilyIndex] || 0)
-                        }
-                    };
+            const q = prevState.quizQuestions[questionIndex];
+            const isCorrect = answerKey === q.correctAnswer;
+            const currentAttempts = (q.attemptsByUser[currentFamilyIndex] || 0) + 1;
+            
+            let calculatedPoints = 0;
+            if (isCorrect) {
+                // 1-й раз = 3, 2-й = 2, 3-й = 1, 4-й+ = 0
+                calculatedPoints = Math.max(0, 4 - currentAttempts);
+            }
+
+            const updatedQuestions = [...prevState.quizQuestions];
+            updatedQuestions[questionIndex] = {
+                ...q,
+                attemptsByUser: {
+                    ...q.attemptsByUser,
+                    [currentFamilyIndex]: currentAttempts
+                },
+                answersByUser: {
+                    ...q.answersByUser,
+                    [currentFamilyIndex]: answerKey
+                },
+                isCorrectByUser: {
+                    ...q.isCorrectByUser,
+                    [currentFamilyIndex]: isCorrect
+                },
+                pointsByUser: {
+                    ...q.pointsByUser,
+                    [currentFamilyIndex]: isCorrect ? calculatedPoints : (q.pointsByUser[currentFamilyIndex] || 0)
                 }
-                return q;
+            };
+
+            // Сохраняем в облако, используя актуальные данные из текущего обновления
+            const currentFamilyMember = prevState.familyMembers[currentFamilyIndex];
+            saveQuizAnswerToCloud(
+                quizId, 
+                currentFamilyIndex, 
+                currentFamilyMember.name,
+                answerKey, 
+                isCorrect,
+                isCorrect ? calculatedPoints : (q.pointsByUser[currentFamilyIndex] || 0)
+            ).catch(error => {
+                console.error('Ошибка при сохранении ответа в облако:', error);
             });
             
             return { ...prevState, quizQuestions: updatedQuestions };
         });
-
-        // Сохраняем ответ в облако (только если ответили правильно или это окончательный выбор)
-        // Для простоты сохраняем каждый ответ, но очки фиксируем при правильном
-        const currentState = appState; // Note: this might be stale, but we'll use the values we just calculated
-        const currentFamilyMember = currentState.familyMembers[currentState.currentFamily];
-        
-        try {
-            await saveQuizAnswerToCloud(
-                quizId, 
-                currentState.currentFamily, 
-                currentFamilyMember.name,
-                answerKey, 
-                isCorrect,
-                calculatedPoints
-            );
-        } catch (error) {
-            console.error('Ошибка при сохранении ответа в облако:', error);
-        }
-    }, [appState]);
+    }, []); // Убираем зависимость от appState, так как используем функциональное обновление
 
     const updateAppState = useCallback((updates: Partial<AppState>) => {
         setAppState(prevState => ({ ...prevState, ...updates }));
