@@ -119,5 +119,53 @@ export const quizQuestions = [
       answers: { a: 'Пхукет', b: 'Чиангмай', c: 'Паттайя', d: 'Бангкок' },
       correctAnswer: 'd',
       placeName: 'Бангкок'
+    },
+    { 
+      day: 4, 
+      question: 'Как называется ваш "домашний" пляж на Самуи, где вы будете ждать заселения?', 
+      answer: 'Chaweng Noi', 
+      answers: { a: 'Lamai', b: 'Chaweng Noi', c: 'Maenam', d: 'Bophut' },
+      correctAnswer: 'b',
+      placeName: 'Пляж Chaweng Noi'
+    },
+    { 
+      day: 5, 
+      question: 'Какая высота у золотой статуи Биг Будды на Самуи?', 
+      answer: '12 метров', 
+      answers: { a: '10 метров', b: '12 метров', c: '15 метров', d: '18 метров' },
+      correctAnswer: 'b',
+      placeName: 'Биг Будда (Wat Phra Yai)'
+    },
+    { 
+      day: 5, 
+      question: 'Кого принято кормить в озере у храма Wat Plai Laem?', 
+      answer: 'Гигантских сомов', 
+      answers: { a: 'Черепах', b: 'Крокодилов', c: 'Гигантских сомов', d: 'Карпов кои' },
+      correctAnswer: 'c',
+      placeName: 'Wat Plai Laem'
+    },
+    { 
+      day: 6, 
+      question: 'В каком году местный фермер начал создавать Магический сад Будды?', 
+      answer: '1976', 
+      answers: { a: '1965', b: '1976', c: '1982', d: '1990' },
+      correctAnswer: 'b',
+      placeName: 'Магический сад Будды'
+    },
+    { 
+      day: 7, 
+      question: 'Сколько островов входит в состав национального морского парка Анг Тонг?', 
+      answer: '42 острова', 
+      answers: { a: '30 островов', b: '42 острова', c: '55 островов', d: '100 островов' },
+      correctAnswer: 'b',
+      placeName: 'Национальный морской парк Анг Тонг'
+    },
+    { 
+      day: 8, 
+      question: 'Какое традиционное лакомство (кокосовую карамель) нужно обязательно купить у скал Бабушка и Дедушка?', 
+      answer: 'Галаме (Galamae)', 
+      answers: { a: 'Манго-стикки райс', b: 'Галаме (Galamae)', c: 'Кокосовое мороженое', d: 'Дуриан' },
+      correctAnswer: 'b',
+      placeName: 'Скалы Бабушка и Дедушка'
     }
 ];
