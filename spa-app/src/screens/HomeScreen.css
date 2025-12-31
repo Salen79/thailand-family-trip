@@ -58,26 +58,9 @@
     line-height: 1.3;
 }
 
-.trip-target {
-    font-size: 15px;
-    margin-bottom: 12px;
-}
-
-.birthday-reminder {
-    background: rgba(255, 255, 255, 0.25);
-    padding: 10px 16px;
-    border-radius: 14px;
-    font-size: 13px;
-    font-weight: 600;
-    margin: 12px 0;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.02); }
+.home-hero h1 {
+    margin: 0;
+    font-size: 2rem;
 }
 
 .countdown-container {
@@ -277,6 +260,85 @@
     transform: scale(0.98);
 }
 
+/* Leaderboard Card */
+.leaderboard-card {
+    background: white;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.leaderboard-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #5c6470;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: block;
+}
+
+.leaderboard-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.leaderboard-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 12px;
+    background: #f9fafb;
+    transition: transform 0.2s;
+}
+
+.leaderboard-item.current-user {
+    background: #fff4ed;
+    border: 1px solid #ff6b35;
+}
+
+.member-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.member-rank {
+    font-size: 12px;
+    font-weight: 800;
+    color: #9ca3af;
+    width: 16px;
+}
+
+.member-emoji {
+    font-size: 1.2rem;
+}
+
+.member-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.member-score {
+    text-align: right;
+}
+
+.score-value {
+    font-size: 16px;
+    font-weight: 800;
+    color: #ff6b35;
+    margin-right: 4px;
+}
+
+.score-label {
+    font-size: 10px;
+    color: #6b7280;
+    text-transform: uppercase;
+}
+
 /* Tablet & Desktop */
 @media (min-width: 640px) {
     .home-hero h1 {
@@ -302,6 +364,10 @@
         grid-template-columns: 1.2fr 1fr;
         gap: 16px;
         align-items: start;
+    }
+    
+    .wisdom-card {
+        grid-column: span 2;
     }
     
     .widget-photo {

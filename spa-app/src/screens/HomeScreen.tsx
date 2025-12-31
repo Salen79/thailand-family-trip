@@ -6,10 +6,13 @@ export const HomeScreen = () => {
     const { state, setAppState } = useAppStateContext();
     const currentUser = state.familyMembers[state.currentFamily];
 
-    // Подсчет общего количества очков пользователя
-    const totalPoints = state.quizQuestions.reduce((sum, q) => {
-        return sum + (q.pointsByUser?.[state.currentFamily] || 0);
-    }, 0);
+    // Подсчет очков для всех участников семьи
+    const leaderboard = state.familyMembers.map((member, idx) => {
+        const points = state.quizQuestions.reduce((sum, q) => {
+            return sum + (q.pointsByUser?.[idx] || 0);
+        }, 0);
+        return { ...member, points, isCurrentUser: idx === state.currentFamily };
+    }).sort((a, b) => b.points - a.points);
 
     // Данные для ежедневного виджета
     const photoPool = [
@@ -136,11 +139,6 @@ export const HomeScreen = () => {
                 <h1>{getTimeBasedGreeting()}, {currentUser.name}! 👋</h1>
                 <p className="trip-target">Новый год 2026 в Тайланде</p>
                 
-                <div className="user-stats-badge">
-                    <span className="stats-emoji">🏆</span>
-                    <span className="stats-count">{totalPoints} очков</span>
-                </div>
-                
                 {upcomingBirthday && (
                     <div className="birthday-reminder">
                         🎂 Скоро день рождения у {upcomingBirthday.name}!
@@ -158,6 +156,11 @@ export const HomeScreen = () => {
             </div>
 
             <div className="daily-widget">
+                <div className="widget-card wisdom-card">
+                    <div className="wisdom-label">Тайская мудрость дня</div>
+                    <div className="wisdom-text">“{selectedWisdom}”</div>
+                </div>
+
                 <div className="widget-photo" style={{ backgroundImage: `url(${selectedPhoto.url})` }}>
                     <div className="widget-photo-overlay">
                         <div className="photo-label">Сегодня в Таиланде</div>
@@ -181,9 +184,26 @@ export const HomeScreen = () => {
                         </div>
                     </div>
 
-                    <div className="widget-card wisdom-card">
-                        <div className="wisdom-label">Тайская мудрость дня</div>
-                        <div className="wisdom-text">“{selectedWisdom}”</div>
+                    {/* Виджет Турнирной таблицы */}
+                    <div className="widget-card leaderboard-card">
+                        <div className="leaderboard-header">
+                            <span className="leaderboard-label">Турнирная таблица 🏆</span>
+                        </div>
+                        <div className="leaderboard-list">
+                            {leaderboard.map((member, index) => (
+                                <div key={index} className={`leaderboard-item ${member.isCurrentUser ? 'current-user' : ''}`}>
+                                    <div className="member-info">
+                                        <span className="member-rank">{index + 1}</span>
+                                        <span className="member-emoji">{member.emoji}</span>
+                                        <span className="member-name">{member.name}</span>
+                                    </div>
+                                    <div className="member-score">
+                                        <span className="score-value">{member.points}</span>
+                                        <span className="score-label">очков</span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
                     {isVarvaraBirthday ? (
