@@ -119,6 +119,7 @@ function formatDiaryPostCaption(
   const emoji = postData.emoji || "📷";
   const author = postData.author?.name || "Пользователь";
   const content = postData.content || "";
+  const points = postData.points || 0;
   const date = postData.timestamp
     ? new Date(postData.timestamp.toDate()).toLocaleDateString("ru-RU")
     : new Date().toLocaleDateString("ru-RU");
@@ -128,7 +129,8 @@ function formatDiaryPostCaption(
 
   return (
     `${emoji} <b>${escapeHtml(author)}</b> запостил(а) новое фото в наш дневник!\n` +
-    `📅 ${date}\n\n` +
+    `📅 ${date}\n` +
+    `💰 Получено очков: <b>${points}</b>\n\n` +
     (truncatedContent ? `${escapeHtml(truncatedContent)}\n\n` : "") +
     `🔗 <a href="https://secret-bangkog.web.app">Открыть дневник</a>\n\n` +
     `<i>#photo #${postId}</i>`
@@ -145,6 +147,7 @@ function formatDiaryPostMessage(
   const emoji = postData.emoji || "📝";
   const author = postData.author?.name || "Пользователь";
   const content = postData.content || "";
+  const points = postData.points || 0;
   const date = postData.timestamp
     ? new Date(postData.timestamp.toDate()).toLocaleDateString("ru-RU")
     : new Date().toLocaleDateString("ru-RU");
@@ -154,7 +157,8 @@ function formatDiaryPostMessage(
 
   return (
     `${emoji} <b>${escapeHtml(author)}</b> запостил(а) новую запись в наш дневник!\n` +
-    `📅 ${date}\n\n` +
+    `📅 ${date}\n` +
+    `💰 Получено очков: <b>${points}</b>\n\n` +
     `${escapeHtml(truncatedContent)}\n\n` +
     `🔗 <a href="https://secret-bangkog.web.app">Открыть дневник</a>\n\n` +
     `<i>#diary #${postId}</i>`

@@ -278,6 +278,23 @@
     display: block;
 }
 
+.leaderboard-table {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.table-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    padding: 0 12px 8px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
 .leaderboard-list {
     display: flex;
     flex-direction: column;
@@ -285,10 +302,10 @@
 }
 
 .leaderboard-item {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
     align-items: center;
-    padding: 8px 12px;
+    padding: 10px 12px;
     border-radius: 12px;
     background: #f9fafb;
     transition: transform 0.2s;
@@ -299,44 +316,45 @@
     border: 1px solid #ff6b35;
 }
 
+.col-stat {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: #4b5563;
+}
+
+.col-stat.total {
+    font-weight: 800;
+    color: #ff6b35;
+}
+
 .member-info {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+    overflow: hidden;
 }
 
 .member-rank {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 800;
     color: #9ca3af;
-    width: 16px;
+    width: 14px;
+    flex-shrink: 0;
 }
 
 .member-emoji {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+    flex-shrink: 0;
 }
 
 .member-name {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     color: #374151;
-}
-
-.member-score {
-    text-align: right;
-}
-
-.score-value {
-    font-size: 16px;
-    font-weight: 800;
-    color: #ff6b35;
-    margin-right: 4px;
-}
-
-.score-label {
-    font-size: 10px;
-    color: #6b7280;
-    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Tablet & Desktop */

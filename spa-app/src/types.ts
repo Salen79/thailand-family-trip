@@ -56,6 +56,7 @@ export interface DiaryPost {
         url: string;
         type: 'image';
     } | null;
+    points?: number;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     timestamp: any;
 }

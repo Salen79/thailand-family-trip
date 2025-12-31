@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAppStateContext } from '../context/AppContext';
-import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, Timestamp, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, Timestamp, getDocs, deleteDoc, doc, where } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../firebase';
 import type { DiaryPost } from '../types';
@@ -247,6 +247,36 @@ export const DiaryScreen = () => {
         setIsSubmitting(true);
         
         try {
+            // 1. Сначала определим, сколько постов пользователь уже сделал сегодня
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const startOfToday = Timestamp.fromDate(today);
+            
+            const q = query(
+                collection(db, 'diary_posts'), 
+                where('author.id', '==', String(state.currentFamily)),
+                where('timestamp', '>=', startOfToday)
+            );
+            const querySnapshot = await getDocs(q);
+            const postsTodayCount = querySnapshot.size;
+
+            // 2. Рассчитаем очки
+            const hasPhoto = !!mediaFile;
+            const hasCaption = !!content.trim();
+            let points = 0;
+
+            if (hasPhoto && hasCaption) {
+                if (postsTodayCount === 0) points = 3;
+                else if (postsTodayCount === 1) points = 2;
+                else if (postsTodayCount === 2) points = 1;
+                else points = 0.1;
+            } else {
+                if (postsTodayCount === 0) points = 2;
+                else if (postsTodayCount === 1) points = 1;
+                else if (postsTodayCount === 2) points = 0.5;
+                else points = 0.1;
+            }
+
             let mediaUrl: string | null = null;
             
             // Upload image to Firebase Storage
@@ -286,7 +316,7 @@ export const DiaryScreen = () => {
             }
 
             // Save to Firestore with Storage URL
-            addLog('💾 Сохранение записи в Firestore...');
+            addLog(`💾 Сохранение записи в Firestore (очков: ${points})...`);
             await addDoc(collection(db, 'diary_posts'), {
                 author: {
                     id: String(state.currentFamily),
@@ -296,6 +326,7 @@ export const DiaryScreen = () => {
                 content,
                 emoji: selectedEmoji,
                 media: mediaUrl ? { url: mediaUrl, type: 'image' } : null,
+                points: points, // Сохраняем начисленные очки
                 timestamp: serverTimestamp()
             });
             

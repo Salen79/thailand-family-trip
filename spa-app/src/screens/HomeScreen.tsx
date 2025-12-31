@@ -1,18 +1,56 @@
 import { useState, useEffect } from 'react';
 import { useAppStateContext } from '../context/AppContext';
+import { collection, query, getDocs } from 'firebase/firestore';
+import { db } from '../firebase';
 import './HomeScreen.css';
 
 export const HomeScreen = () => {
     const { state, setAppState } = useAppStateContext();
     const currentUser = state.familyMembers[state.currentFamily];
+    const [diaryPoints, setDiaryPoints] = useState<Record<number, number>>({});
+
+    // Загрузка очков за дневник
+    useEffect(() => {
+        const fetchDiaryPoints = async () => {
+            try {
+                const q = query(collection(db, 'diary_posts'));
+                const querySnapshot = await getDocs(q);
+                const pointsMap: Record<number, number> = {};
+                
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const authorId = parseInt(data.author.id);
+                    const points = data.points || 0;
+                    if (!isNaN(authorId)) {
+                        pointsMap[authorId] = (pointsMap[authorId] || 0) + points;
+                    }
+                });
+                
+                setDiaryPoints(pointsMap);
+            } catch (error) {
+                console.error("Error fetching diary points:", error);
+            }
+        };
+
+        fetchDiaryPoints();
+    }, [state.currentFamily]);
 
     // Подсчет очков для всех участников семьи
     const leaderboard = state.familyMembers.map((member, idx) => {
-        const points = state.quizQuestions.reduce((sum, q) => {
+        const quizPoints = state.quizQuestions.reduce((sum, q) => {
             return sum + (q.pointsByUser?.[idx] || 0);
         }, 0);
-        return { ...member, points, isCurrentUser: idx === state.currentFamily };
-    }).sort((a, b) => b.points - a.points);
+        const dPoints = diaryPoints[idx] || 0;
+        const totalPoints = quizPoints + dPoints;
+
+        return { 
+            ...member, 
+            quizPoints, 
+            diaryPoints: dPoints, 
+            totalPoints, 
+            isCurrentUser: idx === state.currentFamily 
+        };
+    }).sort((a, b) => b.totalPoints - a.totalPoints);
 
     // Данные для ежедневного виджета
     const photoPool = [
@@ -189,20 +227,27 @@ export const HomeScreen = () => {
                         <div className="leaderboard-header">
                             <span className="leaderboard-label">Турнирная таблица 🏆</span>
                         </div>
-                        <div className="leaderboard-list">
-                            {leaderboard.map((member, index) => (
-                                <div key={index} className={`leaderboard-item ${member.isCurrentUser ? 'current-user' : ''}`}>
-                                    <div className="member-info">
-                                        <span className="member-rank">{index + 1}</span>
-                                        <span className="member-emoji">{member.emoji}</span>
-                                        <span className="member-name">{member.name}</span>
+                        <div className="leaderboard-table">
+                            <div className="table-header">
+                                <div className="col-member">Участник</div>
+                                <div className="col-stat">Квиз</div>
+                                <div className="col-stat">Заметки</div>
+                                <div className="col-stat total">Итого</div>
+                            </div>
+                            <div className="leaderboard-list">
+                                {leaderboard.map((member, index) => (
+                                    <div key={index} className={`leaderboard-item ${member.isCurrentUser ? 'current-user' : ''}`}>
+                                        <div className="member-info col-member">
+                                            <span className="member-rank">{index + 1}</span>
+                                            <span className="member-emoji">{member.emoji}</span>
+                                            <span className="member-name">{member.name}</span>
+                                        </div>
+                                        <div className="col-stat">{member.quizPoints}</div>
+                                        <div className="col-stat">{member.diaryPoints.toFixed(1).replace('.0', '')}</div>
+                                        <div className="col-stat total">{member.totalPoints.toFixed(1).replace('.0', '')}</div>
                                     </div>
-                                    <div className="member-score">
-                                        <span className="score-value">{member.points}</span>
-                                        <span className="score-label">очков</span>
-                                    </div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
                     </div>
 
