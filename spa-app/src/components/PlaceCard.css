@@ -5,23 +5,24 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.7);
     display: flex;
-    align-items: flex-end;
+    align-items: center;
+    justify-content: center;
     z-index: 1000;
-    padding: 0;
+    padding: 20px;
+    backdrop-filter: blur(4px);
 }
 
 .place-card-modal {
-    width: 100%;
-    max-height: 90vh;
     background: white;
-    border-radius: 24px 24px 0 0;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    border-radius: 24px;
     position: relative;
+    overflow-y: auto;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
     animation: slideUp 0.3s ease-out;
 }
 
@@ -38,26 +39,26 @@
 
 .place-card-close {
     position: absolute;
-    top: 12px;
-    right: 12px;
+    top: 16px;
+    right: 16px;
     width: 36px;
     height: 36px;
-    border: none;
+    border-radius: 18px;
     background: rgba(255, 255, 255, 0.9);
-    border-radius: 50%;
+    border: none;
     font-size: 20px;
-    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
     z-index: 10;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    color: #333;
+    transition: transform 0.2s;
 }
 
 .place-card-close:active {
-    background: rgba(255, 255, 255, 1);
-    transform: scale(0.95);
+    transform: scale(0.9);
 }
 
 /* Image Section */
