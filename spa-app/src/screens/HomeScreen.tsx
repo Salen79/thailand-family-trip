@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAppStateContext } from '../context/AppContext';
-import { collection, query, getDocs } from 'firebase/firestore';
+import { collection, query, getDocs, orderBy, writeBatch, doc } from 'firebase/firestore';
 import { db } from '../firebase';
 import './HomeScreen.css';
 
@@ -8,22 +8,51 @@ export const HomeScreen = () => {
     const { state, setAppState } = useAppStateContext();
     const currentUser = state.familyMembers[state.currentFamily];
     const [diaryPoints, setDiaryPoints] = useState<Record<number, number>>({});
+    const [isSyncing, setIsSyncing] = useState(false);
 
     // Загрузка очков за дневник
     useEffect(() => {
         const fetchDiaryPoints = async () => {
             try {
-                const q = query(collection(db, 'diary_posts'));
+                const q = query(collection(db, 'diary_posts'), orderBy('timestamp', 'asc'));
                 const querySnapshot = await getDocs(q);
                 const pointsMap: Record<number, number> = {};
+                const userDailyCounts: Record<string, Record<string, number>> = {};
                 
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
                     const authorId = parseInt(data.author.id);
-                    const points = data.points || 0;
-                    if (!isNaN(authorId)) {
-                        pointsMap[authorId] = (pointsMap[authorId] || 0) + points;
+                    if (isNaN(authorId)) return;
+
+                    let points = data.points;
+                    
+                    // Если очков нет в БД, рассчитываем их на лету для таблицы
+                    if (points === undefined) {
+                        const ts = data.timestamp?.toDate() || new Date();
+                        const dateKey = ts.toISOString().split('T')[0];
+                        
+                        if (!userDailyCounts[authorId]) userDailyCounts[authorId] = {};
+                        if (!userDailyCounts[authorId][dateKey]) userDailyCounts[authorId][dateKey] = 0;
+                        
+                        const count = userDailyCounts[authorId][dateKey];
+                        const hasPhoto = !!data.media;
+                        const hasCaption = !!(data.content && data.content.trim());
+                        
+                        if (hasPhoto && hasCaption) {
+                            if (count === 0) points = 3;
+                            else if (count === 1) points = 2;
+                            else if (count === 2) points = 1;
+                            else points = 0.1;
+                        } else {
+                            if (count === 0) points = 2;
+                            else if (count === 1) points = 1;
+                            else if (count === 2) points = 0.5;
+                            else points = 0.1;
+                        }
+                        userDailyCounts[authorId][dateKey]++;
                     }
+                    
+                    pointsMap[authorId] = (pointsMap[authorId] || 0) + (points || 0);
                 });
                 
                 setDiaryPoints(pointsMap);
@@ -34,6 +63,65 @@ export const HomeScreen = () => {
 
         fetchDiaryPoints();
     }, [state.currentFamily]);
+
+    // Функция для администратора: проставить баллы всем старым постам в БД
+    const syncAllPoints = async () => {
+        if (!window.confirm('Начислить очки за все старые посты в базе данных?')) return;
+        setIsSyncing(true);
+        try {
+            const q = query(collection(db, 'diary_posts'), orderBy('timestamp', 'asc'));
+            const querySnapshot = await getDocs(q);
+            const batch = writeBatch(db);
+            const userDailyCounts: Record<string, Record<string, number>> = {};
+            let updateCount = 0;
+
+            querySnapshot.forEach((document) => {
+                const data = document.data();
+                if (data.points !== undefined) return;
+
+                const authorId = data.author.id;
+                const ts = data.timestamp?.toDate() || new Date();
+                const dateKey = ts.toISOString().split('T')[0];
+
+                if (!userDailyCounts[authorId]) userDailyCounts[authorId] = {};
+                if (!userDailyCounts[authorId][dateKey]) userDailyCounts[authorId][dateKey] = 0;
+
+                const count = userDailyCounts[authorId][dateKey];
+                const hasPhoto = !!data.media;
+                const hasCaption = !!(data.content && data.content.trim());
+                
+                let points = 0;
+                if (hasPhoto && hasCaption) {
+                    if (count === 0) points = 3;
+                    else if (count === 1) points = 2;
+                    else if (count === 2) points = 1;
+                    else points = 0.1;
+                } else {
+                    if (count === 0) points = 2;
+                    else if (count === 1) points = 1;
+                    else if (count === 2) points = 0.5;
+                    else points = 0.1;
+                }
+
+                batch.update(doc(db, 'diary_posts', document.id), { points });
+                userDailyCounts[authorId][dateKey]++;
+                updateCount++;
+            });
+
+            if (updateCount > 0) {
+                await batch.commit();
+                alert(`Успешно начислено очков для ${updateCount} постов!`);
+                window.location.reload();
+            } else {
+                alert('Все посты уже имеют начисленные очки.');
+            }
+        } catch (error) {
+            console.error("Error syncing points:", error);
+            alert('Ошибка при синхронизации');
+        } finally {
+            setIsSyncing(false);
+        }
+    };
 
     // Подсчет очков для всех участников семьи
     const leaderboard = state.familyMembers.map((member, idx) => {
@@ -226,6 +314,16 @@ export const HomeScreen = () => {
                     <div className="widget-card leaderboard-card">
                         <div className="leaderboard-header">
                             <span className="leaderboard-label">Турнирная таблица 🏆</span>
+                            {state.currentFamily === 0 && (
+                                <button 
+                                    className="sync-points-btn" 
+                                    onClick={syncAllPoints}
+                                    disabled={isSyncing}
+                                    title="Синхронизировать очки за старые посты"
+                                >
+                                    {isSyncing ? '⏳' : '🔄'}
+                                </button>
+                            )}
                         </div>
                         <div className="leaderboard-table">
                             <div className="table-header">
