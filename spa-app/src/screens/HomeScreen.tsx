@@ -157,7 +157,7 @@ export const HomeScreen = () => {
     // Данные для ежедневного виджета
     const photoPool = [
         { url: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=1200', title: 'Закат над Чао Прайя', location: 'Бангкок' },
-        { url: 'https://images.unsplash.com/photo-1563492065213-f0e6c7d29e52?w=1200', title: 'Изумрудный Будда', location: 'Большой Королевский дворец' },
+        { url: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=1200', title: 'Изумрудный Будда', location: 'Большой Королевский дворец' },
         { url: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1200', title: 'Субботний шум', location: 'Рынок Чатучак' },
         { url: 'https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=1200', title: 'Тайский шелк и сады', location: 'Дом Джима Томпсона' },
         { url: 'https://images.unsplash.com/photo-1578986175247-7d60c6df07e7?w=1200', title: 'Неон и уличная еда', location: 'Khao San Road' }
@@ -301,7 +301,7 @@ export const HomeScreen = () => {
                     <div className="wisdom-text">“{selectedWisdom}”</div>
                 </div>
 
-                <div className="widget-photo" style={{ backgroundImage: `url(${selectedPhoto.url})` }}>
+                <div className="widget-photo" style={{ backgroundImage: `url("${selectedPhoto.url}")` }}>
                     <div className="widget-photo-overlay">
                         <div className="photo-label">Сегодня в Таиланде</div>
                         <div className="photo-title">{selectedPhoto.title}</div>
