@@ -2,13 +2,76 @@ import { useState, useEffect } from 'react';
 import { useAppStateContext } from '../context/AppContext';
 import { collection, query, getDocs, orderBy, writeBatch, doc } from 'firebase/firestore';
 import { db } from '../firebase';
+import { itinerary } from '../data/itinerary';
+import { places } from '../data/places';
 import './HomeScreen.css';
+
+interface WeatherData {
+    temp: number;
+    feels: number;
+    condition: string;
+    icon: string;
+    windSpeed: number;
+    windGusts: number;
+    windDir: number;
+    humidity: number;
+    uv: number;
+    locationName: string;
+}
 
 export const HomeScreen = () => {
     const { state, setAppState } = useAppStateContext();
     const currentUser = state.familyMembers[state.currentFamily];
     const [diaryPoints, setDiaryPoints] = useState<Record<number, number>>({});
     const [isSyncing, setIsSyncing] = useState(false);
+    const [weather, setWeather] = useState<WeatherData | null>(null);
+
+    // Загрузка погоды
+    useEffect(() => {
+        const fetchWeather = async () => {
+            const today = new Date();
+            const isSamui = today.getMonth() === 0 && today.getDate() >= 1; // Январь и позже
+            const lat = isSamui ? 9.5120 : 13.7563;
+            const lon = isSamui ? 100.0136 : 100.5018;
+            const locationName = isSamui ? 'Самуи' : 'Бангкок';
+
+            try {
+                const response = await fetch(
+                    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m&daily=uv_index_max&timezone=Asia%2FBangkok&forecast_days=1`
+                );
+                const data = await response.json();
+                
+                const code = data.current.weather_code;
+                let condition = 'Ясно';
+                let icon = '☀️';
+                
+                if (code >= 1 && code <= 3) { condition = 'Переменная облачность'; icon = '🌤️'; }
+                else if (code >= 45 && code <= 48) { condition = 'Туман'; icon = '🌫️'; }
+                else if (code >= 51 && code <= 67) { condition = 'Дождь'; icon = '🌦️'; }
+                else if (code >= 80 && code <= 82) { condition = 'Ливень'; icon = '🌧️'; }
+                else if (code >= 95) { condition = 'Гроза'; icon = '⛈️'; }
+
+                setWeather({
+                    temp: Math.round(data.current.temperature_2m),
+                    feels: Math.round(data.current.apparent_temperature),
+                    condition,
+                    icon,
+                    windSpeed: Math.round(data.current.wind_speed_10m),
+                    windGusts: Math.round(data.current.wind_gusts_10m),
+                    windDir: data.current.wind_direction_10m,
+                    humidity: data.current.relative_humidity_2m,
+                    uv: Math.round(data.daily.uv_index_max[0]),
+                    locationName
+                });
+            } catch (error) {
+                console.error("Weather fetch error:", error);
+            }
+        };
+
+        fetchWeather();
+        const interval = setInterval(fetchWeather, 1800000); // Обновлять каждые 30 мин
+        return () => clearInterval(interval);
+    }, []);
 
     // Загрузка очков за дневник
     useEffect(() => {
@@ -155,33 +218,55 @@ export const HomeScreen = () => {
     }).sort((a, b) => b.totalPoints - a.totalPoints);
 
     // Данные для ежедневного виджета
-    const photoPool = [
-        { url: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=1200', title: 'Закат над Чао Прайя', location: 'Бангкок' },
-        { url: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=1200', title: 'Изумрудный Будда', location: 'Большой Королевский дворец' },
-        { url: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1200', title: 'Субботний шум', location: 'Рынок Чатучак' },
-        { url: 'https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=1200', title: 'Тайский шелк и сады', location: 'Дом Джима Томпсона' },
-        { url: 'https://images.unsplash.com/photo-1578986175247-7d60c6df07e7?w=1200', title: 'Неон и уличная еда', location: 'Khao San Road' }
-    ];
-
-    const weatherPool = [
-        { temp: 33, feels: 37, condition: 'Солнечно', icon: '☀️', uv: 10, humidity: 58 },
-        { temp: 31, feels: 35, condition: 'Переменная облачность', icon: '🌤️', uv: 8, humidity: 64 },
-        { temp: 30, feels: 33, condition: 'Лёгкий дождь', icon: '🌦️', uv: 7, humidity: 72 },
-        { temp: 32, feels: 36, condition: 'Жарко и влажно', icon: '🌡️', uv: 11, humidity: 70 }
-    ];
-
     const wisdomPool = [
         'Хорошие дела возвращаются к тому, кто их совершает.',
         'Терпение — ключ к счастью.',
         'Тот, кто знает, когда остановиться, избежит беды.',
-        'Счастье растёт там, где его делят.'
+        'Счастье растёт там, где его делят.',
+        'Спокойная вода глубока.',
+        'Не бойся идти медленно, бойся стоять на месте.',
+        'Улыбка открывает все двери.',
+        'Тот, кто сажает дерево, знает, что не он будет отдыхать в его тени.',
+        'Мудрость — это умение слушать свое сердце.',
+        'Каждый шаг оставляет след.',
+        'Жизнь — это путешествие, а не пункт назначения.',
+        'Истинное богатство — в довольстве малым.'
     ];
 
     const today = new Date();
-    const dayIndex = today.getDate();
-    const selectedPhoto = photoPool[dayIndex % photoPool.length];
-    const selectedWeather = weatherPool[dayIndex % weatherPool.length];
-    const selectedWisdom = wisdomPool[dayIndex % wisdomPool.length];
+    
+    // Логика выбора фото дня на основе плана
+    const getPhotoOfDay = () => {
+        const dayStr = today.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }).replace(' г.', '');
+        const dayPlan = itinerary.find(d => d.date.toLowerCase() === dayStr.toLowerCase());
+        
+        if (dayPlan) {
+            // Ищем первое событие с placeName, для которого есть фото в places
+            for (const event of dayPlan.events) {
+                if (event.placeName) {
+                    const place = places.find(p => p.name === event.placeName);
+                    if (place && place.image) {
+                        return {
+                            url: place.image,
+                            title: place.name,
+                            location: place.category || 'Таиланд'
+                        };
+                    }
+                }
+            }
+        }
+        
+        // Дефолтное фото, если ничего не нашли
+        return { 
+            url: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=1200', 
+            title: 'Закат над Чао Прайя', 
+            location: 'Бангкок' 
+        };
+    };
+
+    const selectedPhoto = getPhotoOfDay();
+    const selectedWisdom = wisdomPool[today.getDate() % wisdomPool.length];
+    
     const isVarvaraBirthday = today.getMonth() === 11 && today.getDate() === 29; // 29 декабря
     const birthdayVideoUrl = 'https://example.com/varvara-birthday-video'; // заменить на готовое видео
 
@@ -303,7 +388,7 @@ export const HomeScreen = () => {
 
                 <div className="widget-photo" style={{ backgroundImage: `url("${selectedPhoto.url}")` }}>
                     <div className="widget-photo-overlay">
-                        <div className="photo-label">Сегодня в Таиланде</div>
+                        <div className="photo-label">Сегодня в плане</div>
                         <div className="photo-title">{selectedPhoto.title}</div>
                         <div className="photo-location">{selectedPhoto.location}</div>
                     </div>
@@ -311,17 +396,25 @@ export const HomeScreen = () => {
 
                 <div className="widget-content">
                     <div className="widget-card weather-card">
-                        <div className="weather-top">
-                            <div>
-                                <div className="weather-label">Погода сегодня · Бангкок</div>
-                                <div className="weather-temp">{selectedWeather.icon} {selectedWeather.temp}°C</div>
-                                <div className="weather-sub">Ощущается как {selectedWeather.feels}°C — {selectedWeather.condition}</div>
+                        {weather ? (
+                            <div className="weather-top">
+                                <div>
+                                    <div className="weather-label">Погода сегодня · {weather.locationName}</div>
+                                    <div className="weather-temp">{weather.icon} {weather.temp}°C</div>
+                                    <div className="weather-sub">Ощущается как {weather.feels}°C — {weather.condition}</div>
+                                </div>
+                                <div className="weather-meta">
+                                    <div className="wind-info">
+                                        <span title="Скорость ветра">💨 {weather.windSpeed} км/ч</span>
+                                        <span title="Порывы ветра" className="wind-gusts"> (до {weather.windGusts})</span>
+                                    </div>
+                                    <div className="wind-dir" style={{ transform: `rotate(${weather.windDir}deg)`, display: 'inline-block' }}>⬆️</div>
+                                    <div>UV {weather.uv} · Влажность {weather.humidity}%</div>
+                                </div>
                             </div>
-                            <div className="weather-meta">
-                                <div>UV {selectedWeather.uv}</div>
-                                <div>Влажность {selectedWeather.humidity}%</div>
-                            </div>
-                        </div>
+                        ) : (
+                            <div className="weather-loading">Загрузка погоды...</div>
+                        )}
                     </div>
 
                     {/* Виджет Турнирной таблицы */}
