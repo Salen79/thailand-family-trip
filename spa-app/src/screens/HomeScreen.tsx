@@ -6,6 +6,11 @@ export const HomeScreen = () => {
     const { state, setAppState } = useAppStateContext();
     const currentUser = state.familyMembers[state.currentFamily];
 
+    // Подсчет общего количества очков пользователя
+    const totalPoints = state.quizQuestions.reduce((sum, q) => {
+        return sum + (q.pointsByUser?.[state.currentFamily] || 0);
+    }, 0);
+
     // Данные для ежедневного виджета
     const photoPool = [
         { url: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=1200', title: 'Закат над Чао Прайя', location: 'Бангкок' },
@@ -130,6 +135,11 @@ export const HomeScreen = () => {
                 <div className="today-date">Сегодня {capitalizedDate}</div>
                 <h1>{getTimeBasedGreeting()}, {currentUser.name}! 👋</h1>
                 <p className="trip-target">Новый год 2026 в Тайланде</p>
+                
+                <div className="user-stats-badge">
+                    <span className="stats-emoji">🏆</span>
+                    <span className="stats-count">{totalPoints} очков</span>
+                </div>
                 
                 {upcomingBirthday && (
                     <div className="birthday-reminder">

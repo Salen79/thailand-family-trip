@@ -18,8 +18,10 @@ export interface RawQuizQuestion {
 export interface CloudQuizAnswer {
     questionId: number;
     familyIndex: number;
+    userName?: string;
     answerKey: string;
     isCorrect: boolean;
+    points: number;
     timestamp: number;
 }
 
@@ -37,6 +39,8 @@ export interface QuizQuestion {
     // Храним ответы каждого члена семьи по индексу
     answersByUser: Record<number, string>; // familyIndex -> answerKey
     isCorrectByUser: Record<number, boolean>; // familyIndex -> isCorrect
+    pointsByUser: Record<number, number>; // familyIndex -> points
+    attemptsByUser: Record<number, number>; // familyIndex -> attempts count
 }
 
 export interface DiaryPost {

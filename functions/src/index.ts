@@ -83,14 +83,24 @@ export const onQuizAnswerCreated = onDocumentCreated(
       const data = snap.data();
       const userName = data.userName || "Кто-то";
       const questionNum = data.questionId;
+      const points = data.points || 0;
+      const isCorrect = data.isCorrect;
 
-      const message =
-        `❓ <b>${escapeHtml(userName)}</b> ответил(а) на ${questionNum}-й вопрос квиза. ` +
-        `Узнать как и ответить самому - по ссылке\n\n` +
-        `🔗 <a href="https://secret-bangkog.web.app">Открыть приложение</a>`;
+      let message = "";
+      if (isCorrect) {
+        message = 
+          `✅ <b>${escapeHtml(userName)}</b> правильно ответил(а) на ${questionNum}-й вопрос!\n` +
+          `💰 Получено очков: <b>${points}</b>\n\n` +
+          `🔗 <a href="https://secret-bangkog.web.app">Открыть приложение</a>`;
+      } else {
+        message = 
+          `❌ <b>${escapeHtml(userName)}</b> ошибся в ${questionNum}-м вопросе. ` +
+          `Пробует еще раз...\n\n` +
+          `🔗 <a href="https://secret-bangkog.web.app">Открыть приложение</a>`;
+      }
 
       await sendTelegramMessage(message);
-      logger.log("✅ Quiz notification sent", { questionId: questionNum, user: userName });
+      logger.log("✅ Quiz notification sent", { questionId: questionNum, user: userName, points });
     } catch (error) {
       logger.error("❌ Error processing quiz answer notification", {
         error: error instanceof Error ? error.message : String(error),

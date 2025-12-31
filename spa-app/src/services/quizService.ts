@@ -19,8 +19,10 @@ const QUIZ_ANSWERS_COLLECTION = 'quiz_answers';
 export const saveQuizAnswerToCloud = async (
   questionId: number,
   familyIndex: number,
+  userName: string,
   answerKey: string,
-  isCorrect: boolean
+  isCorrect: boolean,
+  points: number
 ): Promise<void> => {
   try {
     const docId = `q${questionId}_f${familyIndex}`;
@@ -29,8 +31,10 @@ export const saveQuizAnswerToCloud = async (
     await setDoc(docRef, {
       questionId,
       familyIndex,
+      userName,
       answerKey,
       isCorrect,
+      points,
       timestamp: Timestamp.now(),
     });
   } catch (error) {
@@ -59,6 +63,7 @@ export const loadQuestionAnswersFromCloud = async (
         familyIndex: data.familyIndex,
         answerKey: data.answerKey,
         isCorrect: data.isCorrect,
+        points: data.points || 0,
         timestamp: data.timestamp?.toMillis?.() || 0,
       } as CloudQuizAnswer;
     });
@@ -81,6 +86,7 @@ export const loadAllQuizAnswersFromCloud = async (): Promise<CloudQuizAnswer[]> 
         familyIndex: data.familyIndex,
         answerKey: data.answerKey,
         isCorrect: data.isCorrect,
+        points: data.points || 0,
         timestamp: data.timestamp?.toMillis?.() || 0,
       } as CloudQuizAnswer;
     });
@@ -111,6 +117,7 @@ export const subscribeToQuestionAnswers = (
           familyIndex: data.familyIndex,
           answerKey: data.answerKey,
           isCorrect: data.isCorrect,
+          points: data.points || 0,
           timestamp: data.timestamp?.toMillis?.() || 0,
         } as CloudQuizAnswer;
       });
@@ -140,16 +147,20 @@ export const applyCloudAnswersToQuestions = (
     
     const answersByUser: Record<number, string> = {};
     const isCorrectByUser: Record<number, boolean> = {};
+    const pointsByUser: Record<number, number> = {};
     
     questionAnswers.forEach(answer => {
       answersByUser[answer.familyIndex] = answer.answerKey;
       isCorrectByUser[answer.familyIndex] = answer.isCorrect;
+      pointsByUser[answer.familyIndex] = answer.points;
     });
     
     return {
       ...question,
       answersByUser,
       isCorrectByUser,
+      pointsByUser,
+      attemptsByUser: question.attemptsByUser || {} // Попытки считаем локально или берем из существующих
     };
   });
 };

@@ -66,7 +66,9 @@ function App() {
                 correctAnswer: q.correctAnswer ?? Object.keys(q.answers || {})[0] ?? '',
                 placeName: q.placeName,
                 answersByUser: {},
-                isCorrectByUser: {}
+                isCorrectByUser: {},
+                pointsByUser: {},
+                attemptsByUser: {}
             })) as QuizQuestion[], 
         };
     })());
@@ -117,16 +119,30 @@ function App() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [appState.isAuthenticated, appState.currentFamily, appState.currentQuizIndex]);
   
-    const handleQuizAnswer = useCallback((quizId: number, answerKey: string) => {
+    const handleQuizAnswer = useCallback(async (quizId: number, answerKey: string) => {
+        let calculatedPoints = 0;
+        let isCorrect = false;
+
         setAppState(prevState => {
             const currentFamilyIndex = prevState.currentFamily;
             if (currentFamilyIndex === -1) return prevState;
 
             const updatedQuestions = prevState.quizQuestions.map(q => {
                 if (q.id === quizId) {
-                    const isCorrect = answerKey === q.correctAnswer;
+                    isCorrect = answerKey === q.correctAnswer;
+                    const currentAttempts = (q.attemptsByUser[currentFamilyIndex] || 0) + 1;
+                    
+                    if (isCorrect) {
+                        // 1-й раз = 3, 2-й = 2, 3-й = 1, 4-й+ = 0
+                        calculatedPoints = Math.max(0, 4 - currentAttempts);
+                    }
+
                     return {
                         ...q,
+                        attemptsByUser: {
+                            ...q.attemptsByUser,
+                            [currentFamilyIndex]: currentAttempts
+                        },
                         answersByUser: {
                             ...q.answersByUser,
                             [currentFamilyIndex]: answerKey
@@ -134,6 +150,10 @@ function App() {
                         isCorrectByUser: {
                             ...q.isCorrectByUser,
                             [currentFamilyIndex]: isCorrect
+                        },
+                        pointsByUser: {
+                            ...q.pointsByUser,
+                            [currentFamilyIndex]: isCorrect ? calculatedPoints : (q.pointsByUser[currentFamilyIndex] || 0)
                         }
                     };
                 }
@@ -143,19 +163,24 @@ function App() {
             return { ...prevState, quizQuestions: updatedQuestions };
         });
 
-        // Сохраняем ответ в облако
-        setAppState(prevState => {
-            const question = prevState.quizQuestions.find(q => q.id === quizId);
-            if (question) {
-                const isCorrect = answerKey === question.correctAnswer;
-                saveQuizAnswerToCloud(quizId, prevState.currentFamily, answerKey, isCorrect)
-                    .catch(error => {
-                        console.error('Ошибка при сохранении ответа в облако:', error);
-                    });
-            }
-            return prevState;
-        });
-    }, []);
+        // Сохраняем ответ в облако (только если ответили правильно или это окончательный выбор)
+        // Для простоты сохраняем каждый ответ, но очки фиксируем при правильном
+        const currentState = appState; // Note: this might be stale, but we'll use the values we just calculated
+        const currentFamilyMember = currentState.familyMembers[currentState.currentFamily];
+        
+        try {
+            await saveQuizAnswerToCloud(
+                quizId, 
+                currentState.currentFamily, 
+                currentFamilyMember.name,
+                answerKey, 
+                isCorrect,
+                calculatedPoints
+            );
+        } catch (error) {
+            console.error('Ошибка при сохранении ответа в облако:', error);
+        }
+    }, [appState]);
 
     const updateAppState = useCallback((updates: Partial<AppState>) => {
         setAppState(prevState => ({ ...prevState, ...updates }));

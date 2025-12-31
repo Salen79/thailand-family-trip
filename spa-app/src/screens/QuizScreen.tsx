@@ -56,7 +56,7 @@ export const QuizScreen: React.FC = () => {
 
     // Проверяем, ответили ли все члены семьи на текущий вопрос
     const allMembersAnswered = currentQuestion && 
-        state.familyMembers.every((_, idx) => currentQuestion.answersByUser?.[idx] !== undefined);
+        state.familyMembers.every((_, idx) => currentQuestion.isCorrectByUser?.[idx] === true);
 
     // Обработчик для переход к следующему вопросу
     const handleNextQuestion = () => {
@@ -145,18 +145,20 @@ export const QuizScreen: React.FC = () => {
                             {state.familyMembers.map((member, idx) => {
                                 const hasAnswered = currentQuestion.answersByUser?.[idx] !== undefined;
                                 const isCorrect = currentQuestion.isCorrectByUser?.[idx];
+                                const points = currentQuestion.pointsByUser?.[idx] || 0;
                                 
                                 let statusClass = 'pending';
                                 if (hasAnswered) statusClass = isCorrect ? 'correct' : 'wrong';
 
                                 return (
-                                    <div key={idx} className={`member-status ${statusClass}`} title={member.name}>
+                                    <div key={idx} className={`member-status ${statusClass}`} title={`${member.name}: ${points} очков`}>
                                         <span className="member-emoji">{member.emoji}</span>
                                         {hasAnswered && (
                                             <span className="status-icon">
                                                 {isCorrect ? '✅' : '❌'}
                                             </span>
                                         )}
+                                        {isCorrect && points > 0 && <span className="member-points">+{points}</span>}
                                     </div>
                                 );
                             })}
@@ -166,13 +168,14 @@ export const QuizScreen: React.FC = () => {
                             {Object.entries(currentQuestion.answers).map(([key, value]) => {
                                 const isSelected = currentQuestion.answersByUser?.[currentUserIndex] === key;
                                 const isCorrectAnswer = key === currentQuestion.correctAnswer;
+                                const hasCorrectlyAnswered = currentQuestion.isCorrectByUser?.[currentUserIndex] === true;
                                 
                                 let btnClass = 'answer-button';
-                                if (currentQuestion.answersByUser?.[currentUserIndex] !== undefined) {
-                                    if (isSelected) btnClass += isCorrectAnswer ? ' correct-choice' : ' wrong-choice';
-                                    if (isCorrectAnswer && !isSelected) btnClass += ' missed-correct';
-                                } else if (isSelected) {
-                                    btnClass += ' selected';
+                                if (hasCorrectlyAnswered) {
+                                    if (isSelected) btnClass += ' correct-choice';
+                                    else if (isCorrectAnswer) btnClass += ' missed-correct';
+                                } else if (currentQuestion.answersByUser?.[currentUserIndex] !== undefined) {
+                                    if (isSelected) btnClass += ' wrong-choice';
                                 }
 
                                 return (
@@ -180,11 +183,11 @@ export const QuizScreen: React.FC = () => {
                                         key={`${currentQuestion.id}-${key}`}
                                         className={btnClass}
                                         onClick={() => {
-                                            if (currentQuestion.answersByUser?.[currentUserIndex] === undefined) {
+                                            if (!hasCorrectlyAnswered) {
                                                 handleQuizAnswer(currentQuestion.id, key);
                                             }
                                         }}
-                                        disabled={currentQuestion.answersByUser?.[currentUserIndex] !== undefined}
+                                        disabled={hasCorrectlyAnswered}
                                     >
                                         {value}
                                     </button>
@@ -193,8 +196,12 @@ export const QuizScreen: React.FC = () => {
                         </div>
                         
                         {currentQuestion.answersByUser?.[currentUserIndex] !== undefined && !currentQuestion.isCorrectByUser?.[currentUserIndex] && (
-                            <div className="feedback-msg">
-                                Попробуйте обсудить с семьей правильный ответ!
+                            <div className="feedback-msg error">
+                                ❌ Неверно! Хотите попробовать еще раз?
+                                <p className="attempts-hint">
+                                    Попытка №{(currentQuestion.attemptsByUser?.[currentUserIndex] || 0) + 1}. 
+                                    Осталось очков за этот вопрос: {Math.max(0, 3 - (currentQuestion.attemptsByUser?.[currentUserIndex] || 0))}
+                                </p>
                             </div>
                         )}
 
