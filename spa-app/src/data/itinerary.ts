@@ -47,7 +47,7 @@ export const itinerary = [
         { time: '09:30 – 10:30', title: 'Завтрак', description: 'Завтрак на вилле', icon: '☕' },
         { time: '11:30 – 14:00', title: 'Silver Beach (Crystal Bay)', description: 'Красивые валуны, снорклинг у камней', icon: '🐠', placeName: 'Пляж Silver Beach' },
         { time: '14:30 – 16:30', title: 'Сиеста', description: 'Отдых на вилле в самое пекло', icon: '😴' },
-        { time: '17:00', title: 'Lamai Viewpoint', description: 'Подъем на фуникулере, вид на Камни Бабушка и Дедушка', icon: '📸', placeName: 'Lamai Viewpoint' },
+        { time: '17:00', title: 'Lamai Viewpoint и Скалы', description: 'Подъем на фуникулере и прогулка к камням Бабушка и Дедушка', icon: '📸', placeName: 'Lamai Viewpoint' },
         { time: '19:00', title: 'Lamai Night Market', description: 'Ужин на ночном рынке, уличная еда и сувениры', icon: '🍢', placeName: 'Ночной рынок Ламаи' }
       ]
     },
@@ -88,8 +88,9 @@ export const itinerary = [
         { time: '10:00', title: 'Завтрак', description: 'Завтрак на вилле', icon: '☕' },
         { time: '11:30', title: 'Samui Elephant Sanctuary', description: 'Этичный приют: кормление и прогулка со слонами', icon: '🐘', placeName: 'Samui Elephant Sanctuary' },
         { time: '14:00', title: 'Обед в The Giant Summit', description: 'Ресторан в джунглях с видом на юг острова', icon: '🍲', placeName: 'The Giant Summit' },
-        { time: '16:00', title: 'Водопад Na Muang 2', description: 'Купание в природной чаше', icon: '🌊', placeName: 'Водопад Na Muang 2' },
-        { time: '18:00', title: 'Закат на Lipa Noi', description: 'Ужин на западном берегу, мелкий белый песок', icon: '🌅', placeName: 'Пляж Lipa Noi' }
+        { time: '15:30', title: 'Магический сад Будды', description: 'Таинственные статуи в джунглях', icon: '🗿', placeName: 'Магический сад Будды' },
+        { time: '16:30', title: 'Водопад Na Muang 2', description: 'Купание в природной чаше', icon: '🌊', placeName: 'Водопад Na Muang 2' },
+        { time: '18:30', title: 'Закат на Lipa Noi', description: 'Ужин на западном берегу, мелкий белый песок', icon: '🌅', placeName: 'Пляж Lipa Noi' }
       ]
     },
     {
